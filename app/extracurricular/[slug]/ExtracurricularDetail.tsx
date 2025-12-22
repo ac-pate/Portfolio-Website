@@ -9,6 +9,7 @@ import remarkGfm from 'remark-gfm';
 import type { ContentItem, ExtracurricularFrontmatter } from '@/lib/mdx';
 import { formatDateRange } from '@/lib/utils';
 import GlowWrapper from '@/components/ui/GlowWrapper';
+import { HorizontalGallery } from '@/components/ui/HorizontalGallery';
 
 interface ExtracurricularDetailProps {
   extracurricular: ContentItem<ExtracurricularFrontmatter>;
@@ -178,6 +179,17 @@ export function ExtracurricularDetail({ extracurricular }: ExtracurricularDetail
               </ReactMarkdown>
             </div>
           </motion.div>
+        )}
+
+        {/* Horizontal Gallery */}
+        {frontmatter.galleryImages && frontmatter.galleryImages.length > 0 && (
+          <div className="mt-16">
+            <h2 className="text-2xl font-display font-bold text-foreground mb-8">Gallery</h2>
+            <HorizontalGallery
+              images={frontmatter.galleryImages}
+              altPrefix={`${frontmatter.title} gallery`}
+            />
+          </div>
         )}
       </article>
     </div>

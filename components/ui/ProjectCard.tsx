@@ -25,7 +25,7 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ slug, frontmatter, index = 0 }: ProjectCardProps) {
-  const { title, description, tags, image, github, demo, status } = frontmatter;
+  const { title, description, tags, image, github, demo, status, projectType } = frontmatter;
 
   // Status badge overlay
   const statusOverlay =
@@ -113,6 +113,15 @@ export function ProjectCard({ slug, frontmatter, index = 0 }: ProjectCardProps) 
             </h3>
             <ArrowUpRight className="w-5 h-5 text-muted transition-all duration-300 group-hover:text-accent group-hover:translate-x-0.5 group-hover:-translate-y-0.5 flex-shrink-0" />
           </div>
+
+          {/* Project Type - Hidden by default, appears on hover */}
+          {projectType && projectType.length > 0 && (
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 mb-2">
+              <span className="text-xs text-foreground-secondary font-normal">
+                {projectType.join(' • ')}
+              </span>
+            </div>
+          )}
 
           <p className="text-foreground-secondary text-sm leading-relaxed mb-4 line-clamp-3">
             {description}

@@ -32,6 +32,8 @@ export interface ProjectFrontmatter {
   demo?: string;
   featured?: boolean;
   status?: 'completed' | 'in-progress' | 'archived';
+  projectType?: ('Personal' | 'Competition' | 'IEEE Concordia' | 'Academic' | 'Job')[];
+  galleryImages?: string[];
 }
 
 export interface JobFrontmatter {
@@ -46,6 +48,7 @@ export interface JobFrontmatter {
   image?: string;
   coverImage?: string;
   featured?: boolean;
+  galleryImages?: string[];
 }
 
 export interface EducationFrontmatter {
@@ -61,6 +64,7 @@ export interface EducationFrontmatter {
   image?: string;
   coverImage?: string;
   featured?: boolean;
+  galleryImages?: string[];
 }
 
 export interface VolunteerFrontmatter {
@@ -72,6 +76,7 @@ export interface VolunteerFrontmatter {
   image?: string;
   coverImage?: string;
   featured?: boolean;
+  galleryImages?: string[];
 }
 
 export interface ExtracurricularFrontmatter {
@@ -87,6 +92,7 @@ export interface ExtracurricularFrontmatter {
   link?: string;
   award?: string;
   featured?: boolean;
+  galleryImages?: string[];
 }
 
 export interface ContentItem<T> {

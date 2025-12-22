@@ -35,8 +35,21 @@ collections:
       - {label: "Start Date", name: "startDate", widget: "datetime", format: "YYYY-MM-DD", time_format: false}
       - {label: "End Date", name: "endDate", widget: "datetime", format: "YYYY-MM-DD", time_format: false, required: false}
       - {label: "Tags", name: "tags", widget: "list", default: []}
+      - label: "Project Type"
+        name: "projectType"
+        widget: "select"
+        multiple: true
+        options: ["Personal", "Competition", "IEEE Concordia", "Academic", "Job"]
+        required: false
+        default: []
       - {label: "Image", name: "image", widget: "image", required: false}
       - {label: "Cover Image", name: "coverImage", widget: "image", required: false, hint: "Large header image for the detail page (different from thumbnail)"}
+      - label: "Gallery Images"
+        name: "galleryImages"
+        widget: "list"
+        required: false
+        field: {label: "Image", name: "image", widget: "image"}
+        default: []
       - {label: "GitHub", name: "github", widget: "string", required: false}
       - {label: "Demo", name: "demo", widget: "string", required: false}
       - {label: "Featured", name: "featured", widget: "boolean", default: false}
@@ -61,6 +74,12 @@ collections:
       - {label: "Type", name: "type", widget: "select", options: ["full-time", "part-time", "internship", "contract"], required: false}
       - {label: "Image", name: "image", widget: "image", required: false}
       - {label: "Cover Image", name: "coverImage", widget: "image", required: false, hint: "Large header image for the detail page (different from thumbnail)"}
+      - label: "Gallery Images"
+        name: "galleryImages"
+        widget: "list"
+        required: false
+        field: {label: "Image", name: "image", widget: "image"}
+        default: []
       - {label: "Featured", name: "featured", widget: "boolean", default: false}
       - {label: "Body", name: "body", widget: "markdown"}
 
@@ -83,6 +102,12 @@ collections:
       - {label: "Coursework", name: "coursework", widget: "list", default: []}
       - {label: "Image", name: "image", widget: "image", required: false}
       - {label: "Cover Image", name: "coverImage", widget: "image", required: false, hint: "Large header image for the detail page (different from thumbnail)"}
+      - label: "Gallery Images"
+        name: "galleryImages"
+        widget: "list"
+        required: false
+        field: {label: "Image", name: "image", widget: "image"}
+        default: []
       - {label: "Featured", name: "featured", widget: "boolean", default: false}
       - {label: "Body", name: "body", widget: "markdown"}
 
@@ -101,6 +126,12 @@ collections:
       - {label: "Description", name: "description", widget: "text"}
       - {label: "Image", name: "image", widget: "image", required: false}
       - {label: "Cover Image", name: "coverImage", widget: "image", required: false, hint: "Large header image for the detail page (different from thumbnail)"}
+      - label: "Gallery Images"
+        name: "galleryImages"
+        widget: "list"
+        required: false
+        field: {label: "Image", name: "image", widget: "image"}
+        default: []
       - {label: "Featured", name: "featured", widget: "boolean", default: false}
       - {label: "Body", name: "body", widget: "markdown"}
 
@@ -121,6 +152,12 @@ collections:
       - {label: "Tags", name: "tags", widget: "list", default: []}
       - {label: "Image", name: "image", widget: "image", required: false}
       - {label: "Cover Image", name: "coverImage", widget: "image", required: false, hint: "Large header image for the detail page (different from thumbnail)"}
+      - label: "Gallery Images"
+        name: "galleryImages"
+        widget: "list"
+        required: false
+        field: {label: "Image", name: "image", widget: "image"}
+        default: []
       - {label: "Featured", name: "featured", widget: "boolean", default: false}
       - {label: "Link", name: "link", widget: "string", required: false}
       - {label: "Award", name: "award", widget: "string", required: false}

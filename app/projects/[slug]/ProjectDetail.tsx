@@ -9,6 +9,7 @@ import { formatDateRange } from '@/lib/utils';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import GlowWrapper from '@/components/ui/GlowWrapper';
+import { HorizontalGallery } from '@/components/ui/HorizontalGallery';
 
 interface ProjectDetailProps {
   project: ContentItem<ProjectFrontmatter>;
@@ -87,6 +88,11 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
               <Calendar className="w-4 h-4" />
               <span>{formatDateRange(frontmatter.startDate, frontmatter.endDate)}</span>
             </div>
+            {frontmatter.projectType && frontmatter.projectType.length > 0 && (
+              <span className="text-foreground-secondary">
+                {frontmatter.projectType.join(' • ')}
+              </span>
+            )}
             {frontmatter.status && (
               <div className="flex items-center gap-2">
                 <span
@@ -245,6 +251,17 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
             </ReactMarkdown>
           </div>
         </motion.div>
+
+        {/* Horizontal Gallery */}
+        {frontmatter.galleryImages && frontmatter.galleryImages.length > 0 && (
+          <div className="mt-16">
+            <h2 className="text-2xl font-display font-bold text-foreground mb-8">Gallery</h2>
+            <HorizontalGallery
+              images={frontmatter.galleryImages}
+              altPrefix={`${frontmatter.title} gallery`}
+            />
+          </div>
+        )}
       </article>
     </div>
   );
