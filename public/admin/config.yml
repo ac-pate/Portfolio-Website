@@ -1,5 +1,5 @@
 backend:
-  name: git-gateway
+  name: github
   repo: ac-pate/Portfolio-Website
   branch: main
   base_url: https://github-com-auth-proxy.vercel.app
