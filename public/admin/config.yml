@@ -1,0 +1,114 @@
+backend:
+  name: git-gateway
+  branch: main # Branch to update (optional; defaults to master)
+
+# Enable local backend for local development
+local_backend: true
+
+# Publish mode - Use editorial workflow for better draft management
+publish_mode: editorial_workflow
+
+# Slug configuration for uploads (sanitizes filenames)
+slug:
+  encoding: "ascii"
+  clean_accents: true
+  sanitize_replacement: "-"
+
+media_folder: "public/images/uploads" # Media files will be stored in the repo under public/
+public_folder: "/images/uploads" # The src attribute for uploaded media will begin with /
+
+collections:
+  - name: "projects"
+    label: "Projects"
+    folder: "content/projects"
+    create: true
+    slug: "{{slug}}"
+    extension: "mdx"
+    format: "frontmatter"
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Description", name: "description", widget: "text"}
+      - {label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false}
+      - {label: "End Date", name: "endDate", widget: "datetime", format: "YYYY-MM-DD", time_format: false, required: false}
+      - {label: "Tags", name: "tags", widget: "list", default: []}
+      - {label: "Image", name: "image", widget: "image", required: false}
+      - {label: "GitHub", name: "github", widget: "string", required: false}
+      - {label: "Demo", name: "demo", widget: "string", required: false}
+      - {label: "Featured", name: "featured", widget: "boolean", default: false}
+      - {label: "Status", name: "status", widget: "select", options: ["completed", "in-progress", "archived"], default: "completed"}
+      - {label: "Body", name: "body", widget: "markdown"}
+
+  - name: "jobs"
+    label: "Jobs / Experience"
+    folder: "content/jobs"
+    create: true
+    slug: "{{slug}}"
+    extension: "mdx"
+    format: "frontmatter"
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Company", name: "company", widget: "string"}
+      - {label: "Location", name: "location", widget: "string"}
+      - {label: "Start Date", name: "startDate", widget: "datetime", format: "YYYY-MM-DD", time_format: false}
+      - {label: "End Date", name: "endDate", widget: "datetime", format: "YYYY-MM-DD", time_format: false, required: false}
+      - {label: "Description", name: "description", widget: "text"}
+      - {label: "Technologies", name: "technologies", widget: "list", default: []}
+      - {label: "Type", name: "type", widget: "select", options: ["full-time", "part-time", "internship", "contract"], required: false}
+      - {label: "Image", name: "image", widget: "image", required: false}
+      - {label: "Body", name: "body", widget: "markdown"}
+
+  - name: "education"
+    label: "Education"
+    folder: "content/education"
+    create: true
+    slug: "{{slug}}"
+    extension: "mdx"
+    format: "frontmatter"
+    fields:
+      - {label: "Institution", name: "institution", widget: "string"}
+      - {label: "Degree", name: "degree", widget: "string"}
+      - {label: "Field", name: "field", widget: "string"}
+      - {label: "Start Date", name: "startDate", widget: "datetime", format: "YYYY-MM-DD", time_format: false}
+      - {label: "End Date", name: "endDate", widget: "datetime", format: "YYYY-MM-DD", time_format: false, required: false}
+      - {label: "Location", name: "location", widget: "string", required: false}
+      - {label: "GPA", name: "gpa", widget: "string", required: false}
+      - {label: "Honors", name: "honors", widget: "list", default: []}
+      - {label: "Coursework", name: "coursework", widget: "list", default: []}
+      - {label: "Image", name: "image", widget: "image", required: false}
+      - {label: "Body", name: "body", widget: "markdown"}
+
+  - name: "volunteer"
+    label: "Volunteer Work"
+    folder: "content/volunteer"
+    create: true
+    slug: "{{slug}}"
+    extension: "mdx"
+    format: "frontmatter"
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Organization", name: "organization", widget: "string"}
+      - {label: "Start Date", name: "startDate", widget: "datetime", format: "YYYY-MM-DD", time_format: false}
+      - {label: "End Date", name: "endDate", widget: "datetime", format: "YYYY-MM-DD", time_format: false, required: false}
+      - {label: "Description", name: "description", widget: "text"}
+      - {label: "Image", name: "image", widget: "image", required: false}
+      - {label: "Body", name: "body", widget: "markdown"}
+
+  - name: "extracurricular"
+    label: "Extracurricular"
+    folder: "content/extracurricular"
+    create: true
+    slug: "{{slug}}"
+    extension: "mdx"
+    format: "frontmatter"
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Description", name: "description", widget: "text"}
+      - {label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false}
+      - {label: "End Date", name: "endDate", widget: "datetime", format: "YYYY-MM-DD", time_format: false, required: false}
+      - {label: "Type", name: "type", widget: "select", options: ["competition", "workshop", "photography", "event", "other"]}
+      - {label: "Location", name: "location", widget: "string", required: false}
+      - {label: "Tags", name: "tags", widget: "list", default: []}
+      - {label: "Image", name: "image", widget: "image", required: false}
+      - {label: "Link", name: "link", widget: "string", required: false}
+      - {label: "Award", name: "award", widget: "string", required: false}
+      - {label: "Body", name: "body", widget: "markdown"}

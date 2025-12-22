@@ -1,0 +1,399 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #ffffff;
+    --background-secondary: #fafafa;
+    --foreground: #0a0a0a;
+    --foreground-secondary: #525252;
+    --border: #e5e5e5;
+    --muted: #a3a3a3;
+    --accent: #800020;
+    --accent-light: #a3002a;
+    --accent-dark: #5c0017;
+    --accent-rgb: 128, 0, 32;
+  }
+
+  .dark {
+    /* Film aesthetic static black - not animated */
+    /* TWEAKABLE: Change #1C1C1C to lighter/darker for different black tones */
+    /* --background: #1C1C1C; */
+    --background: #0a0a0a;
+    --background-secondary: #242424;
+    --foreground: #fafafa;
+    --foreground-secondary: #a3a3a3;
+    --border: #1f1f1f;
+    --muted: #737373;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    position: relative;
+  }
+
+  /* ===========================================
+     FILM GRAIN is now handled by GrainOverlay.tsx component
+     using GSAP for animation. See layout.tsx.
+     =========================================== */
+
+  ::selection {
+    background: rgba(var(--accent-rgb), 0.2);
+    color: var(--accent);
+  }
+}
+
+@layer components {
+  .section-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* ===========================================
+     STAR WARS 3D TIMELINE PERSPECTIVE
+     Content recedes into the screen on scroll
+     =========================================== */
+  [data-term-key] {
+    transform-style: preserve-3d;
+  }
+
+  .term-content {
+    transform-style: preserve-3d;
+    will-change: transform, opacity;
+  }
+
+  .timeline-item {
+    transform-style: preserve-3d;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+  }
+
+  /* Subtle depth shadow for receding content */
+  .timeline-item:hover {
+    z-index: 10;
+  }
+
+  /* ===========================================
+     GLASSMORPHISM - Clean glass without grain
+     =========================================== */
+  .glass {
+    @apply relative rounded-xl border transition-all duration-300;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  /* Dark mode glass - More opaque to hide glow behind card */
+  .dark .glass {
+    background: rgba(15, 15, 15, 0.85) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  /* Glow cards need to be more opaque to hide glow behind them */
+  .dark .glow-card.glass {
+    background: rgba(15, 15, 15, 0.95) !important;
+  }
+
+  /* Light mode glow cards */
+  :root:not(.dark) .glow-card.glass {
+    background: rgba(255, 255, 255, 0.95) !important;
+  }
+
+  /* Light mode glass */
+  :root:not(.dark) .glass {
+    background: rgba(255, 255, 255, 0.7) !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+  }
+
+  .glass-strong {
+    @apply relative rounded-xl transition-all duration-300;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+  }
+
+  /* Dark mode navbar glass - TRANSPARENT with blur */
+  .dark .glass-strong {
+    background: rgba(10, 10, 10, 0.7) !important;
+  }
+
+  /* Light mode navbar glass */
+  :root:not(.dark) .glass-strong {
+    background: rgba(255, 255, 255, 0.85) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* ===========================================
+     GLOW CARD
+     Base styles for card layout. 
+     Glow is now handled by GlowWrapper.tsx (Three.js)
+     =========================================== */
+  .glow-card {
+    @apply relative;
+    isolation: isolate;
+  }
+
+
+
+  /* ===========================================
+     SHADOWS
+     =========================================== */
+  .shadow-glass {
+    box-shadow:
+      0 4px 30px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .shadow-glass-lg {
+    box-shadow:
+      0 8px 40px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .shadow-glow {
+    box-shadow: 0 0 30px rgba(var(--accent-rgb), 0.7);
+  }
+
+  .shadow-glow-sm {
+    box-shadow: 0 0 15px rgba(var(--accent-rgb), 0.7);
+  }
+
+  /* ===========================================
+     BUTTONS
+     =========================================== */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 font-medium rounded-lg transition-all duration-300;
+    background: var(--accent);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: var(--accent-dark);
+    box-shadow: 0 0 30px rgba(var(--accent-rgb), 0.5);
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 font-medium rounded-lg transition-all duration-300 border;
+    border-color: var(--border);
+    color: var(--foreground);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 25px rgba(var(--accent-rgb), 0.25);
+  }
+
+  /* ===========================================
+     TEXT UTILITIES
+     =========================================== */
+  .text-accent {
+    color: var(--accent);
+  }
+
+  .text-accent-glow {
+    color: var(--accent);
+    text-shadow: 0 0 30px rgba(var(--accent-rgb), 0.5);
+  }
+
+  .animated-underline {
+    @apply relative;
+  }
+
+  .animated-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--accent);
+    transition: width 0.3s ease;
+  }
+
+  .animated-underline:hover::after {
+    width: 100%;
+  }
+
+  /* ===========================================
+     GLITCH/DISTORTION HOVER EFFECT (Studio Lumio Style)
+     Creates grainy shadow with chromatic aberration
+     =========================================== */
+  .glitch-hover {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+  }
+
+  .glitch-hover::before,
+  .glitch-hover::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  /* Chromatic aberration - Red channel */
+  .glitch-hover::before {
+    color: rgba(255, 0, 0, 0.8);
+    z-index: -1;
+    animation: none;
+  }
+
+  /* Chromatic aberration - Cyan channel */
+  .glitch-hover::after {
+    color: rgba(0, 255, 255, 0.8);
+    z-index: -2;
+    animation: none;
+  }
+
+  .glitch-hover:hover::before {
+    opacity: 0.8;
+    animation: glitchRed 0.3s ease-in-out infinite alternate;
+  }
+
+  .glitch-hover:hover::after {
+    opacity: 0.8;
+    animation: glitchCyan 0.3s ease-in-out infinite alternate-reverse;
+  }
+
+  @keyframes glitchRed {
+    0% {
+      transform: translate(-2px, 1px);
+    }
+
+    25% {
+      transform: translate(2px, -1px);
+    }
+
+    50% {
+      transform: translate(-1px, 2px);
+    }
+
+    75% {
+      transform: translate(1px, -2px);
+    }
+
+    100% {
+      transform: translate(-2px, 1px);
+    }
+  }
+
+  @keyframes glitchCyan {
+    0% {
+      transform: translate(2px, -1px);
+    }
+
+    25% {
+      transform: translate(-2px, 1px);
+    }
+
+    50% {
+      transform: translate(1px, -2px);
+    }
+
+    75% {
+      transform: translate(-1px, 2px);
+    }
+
+    100% {
+      transform: translate(2px, -1px);
+    }
+  }
+
+  /* Grainy glow shadow effect for cards */
+  .grainy-glow-shadow {
+    position: relative;
+    overflow: visible;
+  }
+
+  .grainy-glow-shadow::before {
+    content: '';
+    position: absolute;
+    inset: -20px;
+    background:
+      radial-gradient(ellipse at center,
+        rgba(var(--accent-rgb), 0.4) 0%,
+        rgba(var(--accent-rgb), 0.1) 40%,
+        transparent 70%);
+    filter: blur(20px);
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+
+  .grainy-glow-shadow:hover::before {
+    opacity: 1;
+    animation: glowPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes glowPulse {
+
+    0%,
+    100% {
+      filter: blur(20px) brightness(1);
+    }
+
+    50% {
+      filter: blur(25px) brightness(1.2);
+    }
+  }
+
+  /* Distortion effect for images/cards on hover */
+  .distort-hover {
+    transition: filter 0.3s ease, transform 0.3s ease;
+  }
+
+  .distort-hover:hover {
+    filter:
+      blur(0.5px) contrast(1.1) saturate(1.2);
+    animation: distortShake 0.15s ease-in-out;
+  }
+
+  @keyframes distortShake {
+
+    0%,
+    100% {
+      transform: translate(0, 0) skew(0deg);
+    }
+
+    25% {
+      transform: translate(-1px, 1px) skew(-0.5deg);
+    }
+
+    50% {
+      transform: translate(1px, -1px) skew(0.5deg);
+    }
+
+    75% {
+      transform: translate(-1px, -1px) skew(-0.5deg);
+    }
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Film grain is now applied directly to body background (see body styles above) */
+
+/* ===========================================
+   MDX CONTENT STYLING
+   =========================================== */
+.prose-custom {
+  @apply prose prose-lg dark:prose-invert max-w-none;
+  @apply prose-headings:font-display prose-headings:font-bold;
+  @apply prose-a:text-accent prose-a:no-underline hover:prose-a:underline;
+  @apply prose-code:text-accent prose-code:bg-accent/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded;
+}

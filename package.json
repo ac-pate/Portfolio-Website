@@ -1,44 +1,47 @@
 {
-  "name": "portfolio_site",
-  "version": "0.1.0",
+  "name": "portfolio-site",
+  "version": "1.0.0",
   "private": true,
-  "dependencies": {
-    "@testing-library/dom": "^10.4.1",
-    "@testing-library/jest-dom": "^6.7.0",
-    "@testing-library/react": "^16.3.0",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.126",
-    "@types/react": "^19.1.10",
-    "@types/react-dom": "^19.1.7",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "react-scripts": "5.0.1",
-    "typescript": "^4.9.5",
-    "web-vitals": "^2.1.4"
-  },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev": "npm run clean && next dev",
+    "dev:fresh": "npm run kill && npm run clean && next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "clean": "rimraf .next/dev/lock .next/cache/dev-cache 2>nul || true",
+    "kill": "taskkill /F /IM node.exe 2>nul || true"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+  "dependencies": {
+    "@mdx-js/loader": "^3.1.0",
+    "@mdx-js/react": "^3.1.0",
+    "@next/mdx": "^14.2.18",
+    "@types/three": "^0.182.0",
+    "clsx": "^2.1.1",
+    "framer-motion": "^11.11.17",
+    "gray-matter": "^4.0.3",
+    "gsap": "^3.14.2",
+    "lucide-react": "^0.460.0",
+    "next": "^16.0.10",
+    "next-mdx-remote": "^5.0.0",
+    "next-themes": "^0.4.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-markdown": "^10.1.0",
+    "rehype-pretty-code": "^0.14.0",
+    "rehype-slug": "^6.0.0",
+    "remark-gfm": "^4.0.0",
+    "shiki": "^1.22.2",
+    "three": "^0.182.0"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.15",
+    "@types/node": "^22.9.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "rimraf": "^6.1.2",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.6.3"
   }
 }

@@ -1,46 +1,182 @@
-# Getting Started with Create React App
+# Portfolio Site
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern, professional portfolio website built with Next.js 14, Tailwind CSS, and MDX for content management.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **Static-first**: Fast, SEO-friendly static site generation
+- **MDX Content**: Projects, jobs, and education managed via MDX files
+- **Auto-generated Timeline**: Timeline automatically updates from content
+- **Dark/Light Mode**: System-aware theme switching
+- **Responsive Design**: Mobile-first, works on all devices
+- **Smooth Animations**: Subtle, professional Framer Motion animations
 
-### `npm start`
+## Tech Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- **Framework**: Next.js 14 (App Router)
+- **Styling**: Tailwind CSS
+- **Animations**: Framer Motion
+- **Content**: MDX with gray-matter
+- **Hosting**: Vercel
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Getting Started
 
-### `npm test`
+### Prerequisites
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Node.js 18+ 
+- npm or yarn
 
-### `npm run build`
+### Installation
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+# Install dependencies
+npm install
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# Run development server
+npm run dev
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+# Build for production
+npm run build
 
-### `npm run eject`
+# Start production server
+npm start
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Visit [http://localhost:3000](http://localhost:3000) to see the site.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Project Structure
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```
+├── app/                    # Next.js App Router pages
+│   ├── about/             # About page
+│   ├── photography/       # Photography page (placeholder)
+│   ├── projects/          # Projects listing & detail pages
+│   ├── resume/            # Resume page
+│   ├── globals.css        # Global styles
+│   ├── layout.tsx         # Root layout
+│   └── page.tsx           # Homepage
+├── components/            # React components
+│   ├── layout/           # Navbar, Footer
+│   ├── sections/         # Homepage sections
+│   ├── providers/        # Theme provider
+│   └── ui/               # Reusable UI components
+├── content/              # MDX content files
+│   ├── projects/         # Project MDX files
+│   ├── jobs/             # Job/experience MDX files
+│   └── education/        # Education MDX files
+├── lib/                  # Utility functions
+│   ├── config.ts         # Site configuration
+│   ├── mdx.ts           # MDX parsing utilities
+│   └── utils.ts         # Helper functions
+└── public/              # Static assets
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## Adding Content
 
-## Learn More
+### Projects
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Create a new `.mdx` file in `content/projects/`:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```mdx
+---
+title: "Project Name"
+description: "Brief description of the project"
+date: "2024-01-01"
+endDate: "2024-06-01"
+tags: ["React", "TypeScript", "Node.js"]
+image: "/projects/my-project.jpg"
+github: "https://github.com/username/repo"
+demo: "https://demo.example.com"
+featured: true
+status: "completed"
+---
+
+Write your project content here using Markdown...
+```
+
+### Jobs
+
+Create a new `.mdx` file in `content/jobs/`:
+
+```mdx
+---
+title: "Job Title"
+company: "Company Name"
+location: "City, State"
+startDate: "2024-01-01"
+endDate: "2024-06-01"
+description: "Brief description of role and responsibilities"
+technologies: ["Python", "AWS", "Docker"]
+type: "internship"
+---
+```
+
+### Education
+
+Create a new `.mdx` file in `content/education/`:
+
+```mdx
+---
+institution: "University Name"
+degree: "Bachelor of Science"
+field: "Computer Engineering"
+startDate: "2021-09-01"
+endDate: "2025-05-01"
+gpa: "3.85"
+honors: ["Dean's List", "Honors Society"]
+coursework: ["Data Structures", "Algorithms"]
+---
+```
+
+## Configuration
+
+Edit `lib/config.ts` to update:
+
+- Your name
+- Title and tagline
+- Email address
+- Social media links
+- Navigation items
+
+## Deployment
+
+### Vercel (Recommended)
+
+1. Push your code to GitHub
+2. Import the repository in Vercel
+3. Deploy automatically on every push
+
+### Manual Build
+
+```bash
+npm run build
+npm start
+```
+
+## Customization
+
+### Colors
+
+Edit the accent color in `tailwind.config.ts`:
+
+```ts
+colors: {
+  accent: {
+    DEFAULT: '#E91E8C',  // Change this
+    light: '#FF4DB8',
+    dark: '#B8156E',
+  },
+}
+```
+
+### Fonts
+
+The site uses:
+- **Inter**: Body text
+- **Space Grotesk**: Display headings
+- **JetBrains Mono**: Code blocks
+
+## License
+
+MIT License - feel free to use this template for your own portfolio!
+
