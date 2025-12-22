@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: https://github.com/ac-pate/Portfolio-Website
+  repo: ac-pate/Portfolio-Website
   branch: main
   base_url: https://www.achalpatel.xyz
   auth_endpoint: api/auth
