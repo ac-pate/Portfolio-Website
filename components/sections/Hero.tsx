@@ -19,6 +19,7 @@ export function Hero() {
     const stickyRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
+    const overlayRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (!heroRef.current || !stickyRef.current || !contentRef.current) return;
@@ -41,16 +42,21 @@ export function Hero() {
         });
 
         // Phase 1: Text Disappears (0 to 1/3 of the 300vh scroll)
-        tl.to(contentRef.current, {
+        tl.to([contentRef.current, overlayRef.current], {
             opacity: 0,
-            y: -100,
+            y: (index) => index === 0 ? -100 : 0, // Only translate text, not full-screen overlay
             duration: 1, 
             ease: 'none',
         });
 
         // Phase 2: Video Hold (1/3 to 2/3 of the scroll)
         // Video stays visually frozen while user scrolls through empty space
-        tl.to({}, { duration: 1 });
+        // Return video to full opacity during this phase
+        tl.to(videoRef.current, {
+            opacity: 1,
+            duration: 1,
+            ease: 'power2.inOut'
+        }, "-=0.5"); // Start slightly before Phase 1 ends for smoothness
 
         // Phase 3: Transition (2/3 to 3/3)
         // This phase is where the next section (starting at 300vh) moves from 100vh to 0vh
@@ -95,10 +101,13 @@ export function Hero() {
                     >
                         <source src="/videos/hero_bg_1.mp4" type="video/mp4" />
                     </video>
-
-                    {/* Dark Overlay for contrast */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black" />
                 </div>
+
+                {/* Dark Overlay for contrast (separate layer to animate out) */}
+                <div 
+                    ref={overlayRef}
+                    className="absolute inset-0 z-5 bg-gradient-to-b from-black/80 via-black/20 to-black pointer-events-none" 
+                />
 
                 {/* 
                     HERO TEXT CONTENT:

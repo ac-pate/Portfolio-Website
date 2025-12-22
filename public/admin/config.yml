@@ -1,6 +1,9 @@
 backend:
-  name: git-gateway
-  branch: main # Branch to update (optional; defaults to master)
+  name: github
+  repo: ac-pate/Portfolio-Website
+  branch: main
+  base_url: https://decap-cms-vercel.vercel.app # Community OAuth proxy for Vercel
+  auth_endpoint: api/auth
 
 # Enable local backend for local development
 local_backend: true
