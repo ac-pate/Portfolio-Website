@@ -13,7 +13,24 @@ interface TermIndicatorProps {
 }
 
 export function TermIndicator({ termKeys }: TermIndicatorProps) {
-  const [activeTerm, setActiveTerm] = useState<string>(termKeys[0] || '');
+  // Sort termKeys in descending order (newest first) using proper date/season logic
+  const sortedTermKeys = [...termKeys].sort((a, b) => {
+    const [aYear, aSeason] = a.split(' ');
+    const [bYear, bSeason] = b.split(' ');
+
+    // Compare years first (descending - newer years first)
+    const yearA = parseInt(aYear);
+    const yearB = parseInt(bYear);
+    if (yearA !== yearB) {
+      return yearB - yearA; // Descending order
+    }
+
+    // Then compare seasons (descending: Summer > Winter > Fall)
+    const seasonOrder: Record<string, number> = { Fall: 1, Winter: 2, Summer: 3 };
+    return seasonOrder[bSeason] - seasonOrder[aSeason]; // Descending order
+  });
+  
+  const [activeTerm, setActiveTerm] = useState<string>(sortedTermKeys[0] || '');
   const [isInTimeline, setIsInTimeline] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -80,7 +97,7 @@ export function TermIndicator({ termKeys }: TermIndicatorProps) {
         ${isInTimeline ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8 pointer-events-none'}
       `}
     >
-      {termKeys.map((termKey) => {
+      {sortedTermKeys.map((termKey) => {
         const isActive = activeTerm === termKey;
 
         return (

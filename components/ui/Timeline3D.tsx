@@ -52,8 +52,8 @@ export function Timeline3D({ items }: Timeline3DProps) {
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   
-  // Sort items by start date
-  const sortedItems = useMemo(() => sortTimelineItems(items, true), [items]);
+  // Sort items by start date (newest first - descending order)
+  const sortedItems = useMemo(() => sortTimelineItems(items, false), [items]);
   
   // Card positions calculated based on item order and lane
   const cardPositions = useMemo(() => {
@@ -260,9 +260,27 @@ export function Timeline3D({ items }: Timeline3DProps) {
     };
   }, [isMounted, cardPositions, currentIndex]);
 
-  // Get term info for indicator
-  const termGroups = useMemo(() => groupItemsByTerm(sortedItems), [sortedItems]);
-  const termKeys = useMemo(() => Array.from(termGroups.keys()), [termGroups]);
+  // Get term info for indicator (newest first - descending order)
+  const termGroups = useMemo(() => groupItemsByTerm(sortedItems, false), [sortedItems]);
+  const termKeys = useMemo(() => {
+    const keys = Array.from(termGroups.keys());
+    // Sort in descending order (newest first) using proper date/season logic
+    return keys.sort((a, b) => {
+      const [aYear, aSeason] = a.split(' ');
+      const [bYear, bSeason] = b.split(' ');
+
+      // Compare years first (descending - newer years first)
+      const yearA = parseInt(aYear);
+      const yearB = parseInt(bYear);
+      if (yearA !== yearB) {
+        return yearB - yearA; // Descending order
+      }
+
+      // Then compare seasons (descending: Summer > Winter > Fall)
+      const seasonOrder: Record<string, number> = { Fall: 1, Winter: 2, Summer: 3 };
+      return seasonOrder[bSeason] - seasonOrder[aSeason]; // Descending order
+    });
+  }, [termGroups]);
 
   if (!isMounted || sortedItems.length === 0) {
     return <div className="min-h-screen" />;

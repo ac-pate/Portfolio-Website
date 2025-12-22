@@ -195,10 +195,11 @@ export function getTermEndDate(term: AcademicTerm): Date {
 /**
  * Groups timeline items by academic term.
  * 
- * Items with date ranges that span multiple terms are included in all relevant terms.
+ * Items are placed ONLY in their starting term (no duplicates across terms).
  * Results are sorted chronologically (oldest → newest).
  * 
  * @param items - Array of timeline items with date and optional endDate
+ * @param includeAllTerms - If true, items spanning multiple terms appear in all terms (default: false)
  * @returns Map of term keys to grouped items
  * 
  * @example
@@ -209,45 +210,61 @@ export function getTermEndDate(term: AcademicTerm): Date {
  * const grouped = groupItemsByTerm(items);
  * // grouped has keys: "Fall 2022", "Winter 2023"
  */
-export function groupItemsByTerm(items: any[]): Map<string, any[]> {
+export function groupItemsByTerm(items: any[], includeAllTerms: boolean = false): Map<string, any[]> {
   const grouped = new Map<string, any[]>();
+  // Track items by unique identifier to prevent duplicates
+  const itemIds = new Set<string>();
 
   items.forEach((item) => {
+    // Create unique identifier for item (use slug, link, or title+date as fallback)
+    const itemId = item.slug || item.link || `${item.title}-${item.date}`;
+    
+    // Skip if we've already processed this item
+    if (itemIds.has(itemId)) {
+      return;
+    }
+    itemIds.add(itemId);
+
     // Get the starting term
     const { term, year } = getAcademicTerm(item.date);
+    const termKey = getTermLabel({ term, year });
 
-    // Get all terms this item spans
-    const termsToAdd: AcademicTerm[] = [{ term, year }];
-
-    // If item has endDate, check if it spans multiple terms
-    if (item.endDate) {
-      const endTerm = getAcademicTerm(item.endDate);
-
-      // Add intermediate terms if item spans multiple terms
-      let currentTerm: AcademicTerm = { term, year };
-
-      while (
-        currentTerm.year < endTerm.year ||
-        (currentTerm.year === endTerm.year && getTermOrder(currentTerm.term) < getTermOrder(endTerm.term))
-      ) {
-        const nextTerm = getNextTerm(currentTerm);
-        termsToAdd.push(nextTerm);
-        currentTerm = nextTerm;
-      }
+    if (!grouped.has(termKey)) {
+      grouped.set(termKey, []);
     }
 
-    // Add item to all relevant terms
-    termsToAdd.forEach((t) => {
-      const termKey = getTermLabel(t);
-
-      if (!grouped.has(termKey)) {
-        grouped.set(termKey, []);
-      }
+    // Only add to starting term unless includeAllTerms is true
+    if (!includeAllTerms) {
       grouped.get(termKey)!.push(item);
-    });
+    } else {
+      // Original behavior: add to all terms item spans
+      const termsToAdd: AcademicTerm[] = [{ term, year }];
+
+      if (item.endDate) {
+        const endTerm = getAcademicTerm(item.endDate);
+        let currentTerm: AcademicTerm = { term, year };
+
+        while (
+          currentTerm.year < endTerm.year ||
+          (currentTerm.year === endTerm.year && getTermOrder(currentTerm.term) < getTermOrder(endTerm.term))
+        ) {
+          const nextTerm = getNextTerm(currentTerm);
+          termsToAdd.push(nextTerm);
+          currentTerm = nextTerm;
+        }
+      }
+
+      termsToAdd.forEach((t) => {
+        const tk = getTermLabel(t);
+        if (!grouped.has(tk)) {
+          grouped.set(tk, []);
+        }
+        grouped.get(tk)!.push(item);
+      });
+    }
   });
 
-  // Sort terms chronologically
+  // Sort terms chronologically (oldest first) - will be reversed by components for display
   const sortedTerms = Array.from(grouped.keys()).sort((a, b) => {
     const [aYear, aSeason] = a.split(' ');
     const [bYear, bSeason] = b.split(' ');

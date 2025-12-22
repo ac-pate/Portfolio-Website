@@ -33,13 +33,28 @@ export function TimelineStatic({ items }: TimelineStaticProps) {
   // Sort items newest first
   const sortedItems = useMemo(() => sortTimelineItems(items, false), [items]);
   
-  // Group by term
-  const termGroups = useMemo(() => groupItemsByTerm(sortedItems), [sortedItems]);
+  // Group by term (only in starting term - no duplicates)
+  const termGroups = useMemo(() => groupItemsByTerm(sortedItems, false), [sortedItems]);
   
-  // Get terms in reverse order (newest first)
+  // Get terms in descending order (newest first) using proper date/season logic
   const termKeys = useMemo(() => {
     const keys = Array.from(termGroups.keys());
-    return keys.reverse();
+    // Sort in descending order (newest first) using proper date/season logic
+    return keys.sort((a, b) => {
+      const [aYear, aSeason] = a.split(' ');
+      const [bYear, bSeason] = b.split(' ');
+
+      // Compare years first (descending - newer years first)
+      const yearA = parseInt(aYear);
+      const yearB = parseInt(bYear);
+      if (yearA !== yearB) {
+        return yearB - yearA; // Descending order
+      }
+
+      // Then compare seasons (descending: Summer > Winter > Fall)
+      const seasonOrder: Record<string, number> = { Fall: 1, Winter: 2, Summer: 3 };
+      return seasonOrder[bSeason] - seasonOrder[aSeason]; // Descending order
+    });
   }, [termGroups]);
 
   return (
@@ -72,12 +87,24 @@ export function TimelineStatic({ items }: TimelineStaticProps) {
         {/* Term Sections */}
         {termKeys.map((termKey) => {
           const termItems = termGroups.get(termKey) || [];
-          const projects = filterItemsByType(termItems, 'project');
+          
+          // Deduplicate items within each term using unique identifier
+          const seenItems = new Set<string>();
+          const uniqueTermItems = termItems.filter((item) => {
+            const itemId = item.slug || item.link || `${item.title}-${item.date}`;
+            if (seenItems.has(itemId)) {
+              return false;
+            }
+            seenItems.add(itemId);
+            return true;
+          });
+          
+          const projects = filterItemsByType(uniqueTermItems, 'project');
           const experience = [
-            ...filterItemsByType(termItems, 'job'),
-            ...filterItemsByType(termItems, 'education'),
+            ...filterItemsByType(uniqueTermItems, 'job'),
+            ...filterItemsByType(uniqueTermItems, 'education'),
           ];
-          const activities = filterItemsByType(termItems, 'extracurricular');
+          const activities = filterItemsByType(uniqueTermItems, 'extracurricular');
 
           // Skip empty terms
           if (projects.length === 0 && experience.length === 0 && activities.length === 0) {
