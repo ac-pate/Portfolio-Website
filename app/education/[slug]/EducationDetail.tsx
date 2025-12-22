@@ -193,10 +193,10 @@ export function EducationDetail({ education }: EducationDetailProps) {
         {/* Horizontal Gallery */}
         {frontmatter.galleryImages && frontmatter.galleryImages.length > 0 && (
           <div className="mt-16">
-            <h2 className="text-2xl font-display font-bold text-foreground mb-8">Gallery</h2>
             <HorizontalGallery
               images={frontmatter.galleryImages}
               altPrefix={`${frontmatter.institution} gallery`}
+              heading="Gallery"
             />
           </div>
         )}

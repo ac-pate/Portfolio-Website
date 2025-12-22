@@ -28,9 +28,11 @@ interface HorizontalGalleryProps {
   images: string[] | Array<{ image: string }>;
   /** Optional alt text prefix for images (will append index) */
   altPrefix?: string;
+  /** Optional heading text to display at the top center */
+  heading?: string;
 }
 
-export function HorizontalGallery({ images, altPrefix = 'Gallery image' }: HorizontalGalleryProps) {
+export function HorizontalGallery({ images, altPrefix = 'Gallery image', heading = 'Gallery' }: HorizontalGalleryProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const galleryRef = useRef<HTMLDivElement>(null);
   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
@@ -82,7 +84,7 @@ export function HorizontalGallery({ images, altPrefix = 'Gallery image' }: Horiz
       requestAnimationFrame(() => {
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
-        const gap = 24;
+        const gap = 6;
         
         // Use consistent height for all cards (70% of viewport height, max 500px) - slightly smaller
         const cardHeight = Math.min(viewportHeight * 0.7, 500);
@@ -198,6 +200,12 @@ export function HorizontalGallery({ images, altPrefix = 'Gallery image' }: Horiz
       ref={containerRef}
       className="relative w-full h-screen flex items-center overflow-hidden bg-background"
     >
+      {/* Heading - stays visible at top center during horizontal scroll */}
+      {heading && (
+        <div className="absolute top-24 left-0 right-0 z-10 flex justify-center pointer-events-none">
+          <h2 className="text-4xl font-display font-bold text-foreground">{heading}</h2>
+        </div>
+      )}
       <div
         ref={galleryRef}
         className="flex items-center gap-6 px-4"
@@ -238,7 +246,7 @@ export function HorizontalGallery({ images, altPrefix = 'Gallery image' }: Horiz
                   width: 'auto',
                   height: 'auto',
                 }}
-                sizes="(max-width: 768px) 85vw, 500px"
+                sizes="(max-width: 768px) 85vw, 800px"
               />
             </div>
           );

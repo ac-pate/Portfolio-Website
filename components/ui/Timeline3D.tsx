@@ -309,7 +309,7 @@ export function Timeline3D({ items }: Timeline3DProps) {
       </div>
 
       {/* Lane Labels */}
-      <div className="absolute top-8 left-0 right-0 flex justify-between px-8 z-20 pointer-events-none">
+      <div className="absolute top-28 left-0 right-0 flex justify-between px-8 z-20 pointer-events-none">
         <span className="text-xs font-medium text-muted uppercase tracking-[0.2em]">Projects</span>
         <span className="text-xs font-medium text-muted uppercase tracking-[0.2em]">Experience</span>
         <span className="text-xs font-medium text-muted uppercase tracking-[0.2em]">Activities</span>
