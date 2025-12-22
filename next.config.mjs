@@ -15,6 +15,15 @@ const nextConfig = {
   },
   // Enable Turbopack
   turbopack: {},
+  // Rewrite /admin/config.yml to use our secure API route
+  async rewrites() {
+    return [
+      {
+        source: '/admin/config.yml',
+        destination: '/api/admin-config',
+      },
+    ];
+  },
 };
 
 const withMDX = createMDX({

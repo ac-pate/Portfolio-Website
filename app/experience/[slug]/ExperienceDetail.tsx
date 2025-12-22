@@ -45,6 +45,19 @@ export function ExperienceDetail({ job }: ExperienceDetailProps) {
           transition={{ duration: 0.5 }}
           className="mb-12"
         >
+          {/* Cover Image */}
+          {(frontmatter.coverImage || frontmatter.image) && (
+            <div className="relative aspect-[21/9] rounded-2xl overflow-hidden mb-8 bg-background-secondary">
+              <Image
+                src={frontmatter.coverImage || frontmatter.image!}
+                alt={frontmatter.company}
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+          )}
+
           <div className="flex items-start gap-6 mb-6">
             {/* Company logo/icon */}
             <div className="w-16 h-16 rounded-xl overflow-hidden bg-background-secondary flex-shrink-0">

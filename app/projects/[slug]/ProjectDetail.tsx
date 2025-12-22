@@ -45,11 +45,11 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
           transition={{ duration: 0.5 }}
           className="mb-12"
         >
-          {/* Image */}
-          {frontmatter.image && (
+          {/* Cover Image */}
+          {(frontmatter.coverImage || frontmatter.image) && (
             <div className="relative aspect-[21/9] rounded-2xl overflow-hidden mb-8 bg-background-secondary">
               <Image
-                src={frontmatter.image}
+                src={frontmatter.coverImage || frontmatter.image!}
                 alt={frontmatter.title}
                 fill
                 className="object-cover"

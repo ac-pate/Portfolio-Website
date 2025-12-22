@@ -27,6 +27,7 @@ export interface ProjectFrontmatter {
   endDate?: string;
   tags: string[];
   image?: string;
+  coverImage?: string;
   github?: string;
   demo?: string;
   featured?: boolean;
@@ -43,6 +44,7 @@ export interface JobFrontmatter {
   technologies?: string[];
   type?: 'full-time' | 'part-time' | 'internship' | 'contract';
   image?: string;
+  coverImage?: string;
   featured?: boolean;
 }
 
@@ -57,6 +59,7 @@ export interface EducationFrontmatter {
   honors?: string[];
   coursework?: string[];
   image?: string;
+  coverImage?: string;
   featured?: boolean;
 }
 
@@ -67,6 +70,7 @@ export interface VolunteerFrontmatter {
   endDate?: string;
   description: string;
   image?: string;
+  coverImage?: string;
   featured?: boolean;
 }
 
@@ -79,6 +83,7 @@ export interface ExtracurricularFrontmatter {
   location?: string;
   tags?: string[];
   image?: string;
+  coverImage?: string;
   link?: string;
   award?: string;
   featured?: boolean;
@@ -204,6 +209,23 @@ export function getVolunteer(): ContentItem<VolunteerFrontmatter>[] {
   return volunteer.sort((a, b) =>
     new Date(b.frontmatter.startDate).getTime() - new Date(a.frontmatter.startDate).getTime()
   );
+}
+
+export function getVolunteerBySlug(slug: string): ContentItem<VolunteerFrontmatter> | undefined {
+  const volunteer = getVolunteer();
+  return volunteer.find((v) => v.slug === slug);
+}
+
+export function getAllVolunteerSlugs(): string[] {
+  const volunteerPath = path.join(contentDirectory, 'volunteer');
+
+  if (!fs.existsSync(volunteerPath)) {
+    return [];
+  }
+
+  return fs.readdirSync(volunteerPath)
+    .filter((file) => file.endsWith('.mdx'))
+    .map((file) => file.replace('.mdx', ''));
 }
 
 export function getTimeline(): TimelineItem[] {

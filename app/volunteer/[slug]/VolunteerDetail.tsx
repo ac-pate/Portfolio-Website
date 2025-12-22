@@ -3,18 +3,19 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, GraduationCap, MapPin, Calendar, Award, BookOpen } from 'lucide-react';
+import { ArrowLeft, Heart, Calendar, MapPin } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import type { ContentItem, EducationFrontmatter } from '@/lib/mdx';
+import type { ContentItem, VolunteerFrontmatter } from '@/lib/mdx';
 import { formatDateRange } from '@/lib/utils';
+import GlowWrapper from '@/components/ui/GlowWrapper';
 
-interface EducationDetailProps {
-  education: ContentItem<EducationFrontmatter>;
+interface VolunteerDetailProps {
+  volunteer: ContentItem<VolunteerFrontmatter>;
 }
 
-export function EducationDetail({ education }: EducationDetailProps) {
-  const { frontmatter, content } = education;
+export function VolunteerDetail({ volunteer }: VolunteerDetailProps) {
+  const { frontmatter, content } = volunteer;
 
   return (
     <div className="pt-24 pb-16">
@@ -26,13 +27,15 @@ export function EducationDetail({ education }: EducationDetailProps) {
           transition={{ duration: 0.3 }}
           className="mb-8"
         >
-          <Link
-            href="/education"
-            className="inline-flex items-center gap-2 text-foreground-secondary hover:text-accent transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Education
-          </Link>
+          <GlowWrapper preset="badge" className="rounded-lg">
+            <Link
+              href="/volunteer"
+              className="inline-flex items-center gap-2 px-3 py-1.5 text-foreground-secondary hover:text-accent transition-colors rounded-lg"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Volunteer Work
+            </Link>
+          </GlowWrapper>
         </motion.div>
 
         {/* Header */}
@@ -47,7 +50,7 @@ export function EducationDetail({ education }: EducationDetailProps) {
             <div className="relative aspect-[21/9] rounded-2xl overflow-hidden mb-8 bg-background-secondary">
               <Image
                 src={frontmatter.coverImage || frontmatter.image!}
-                alt={frontmatter.institution}
+                alt={frontmatter.title}
                 fill
                 className="object-cover"
                 priority
@@ -57,80 +60,39 @@ export function EducationDetail({ education }: EducationDetailProps) {
 
           <div className="flex items-start gap-6 mb-6">
             {/* Icon */}
-            <div className="w-16 h-16 rounded-xl overflow-hidden bg-blue-500/10 flex items-center justify-center flex-shrink-0">
-              <GraduationCap className="w-8 h-8 text-blue-500" />
+            <div className="w-16 h-16 rounded-xl overflow-hidden bg-red-500/10 flex items-center justify-center flex-shrink-0">
+              {frontmatter.image && !frontmatter.coverImage ? (
+                <Image
+                  src={frontmatter.image}
+                  alt={frontmatter.organization}
+                  width={64}
+                  height={64}
+                  className="object-cover w-full h-full"
+                />
+              ) : (
+                <Heart className="w-8 h-8 text-red-500" />
+              )}
             </div>
 
             <div>
               <h1 className="text-display-sm md:text-display-md font-display font-bold text-foreground mb-2">
-                {frontmatter.degree}
+                {frontmatter.title}
               </h1>
-              <p className="text-xl text-accent mb-2">{frontmatter.institution}</p>
+              <p className="text-xl text-accent mb-2">{frontmatter.organization}</p>
               <div className="flex flex-wrap items-center gap-4 text-sm text-foreground-secondary">
                 <span className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
                   {formatDateRange(frontmatter.startDate, frontmatter.endDate)}
                 </span>
-                {frontmatter.location && (
-                  <span className="flex items-center gap-1">
-                    <MapPin className="w-4 h-4" />
-                    {frontmatter.location}
-                  </span>
-                )}
-                {frontmatter.gpa && (
-                  <span className="px-2 py-0.5 rounded bg-accent/10 text-accent text-xs">
-                    GPA: {frontmatter.gpa}
-                  </span>
-                )}
               </div>
             </div>
           </div>
 
-          {/* Field of Study */}
-          {frontmatter.field && (
-            <p className="text-lg text-foreground-secondary max-w-3xl mb-6">
-              {frontmatter.field}
+          {/* Description */}
+          {frontmatter.description && (
+            <p className="text-lg text-foreground-secondary max-w-3xl">
+              {frontmatter.description}
             </p>
-          )}
-
-          {/* Honors & Awards */}
-          {frontmatter.honors && frontmatter.honors.length > 0 && (
-            <div className="mb-6">
-              <h3 className="text-sm font-medium text-muted mb-3 flex items-center gap-2">
-                <Award className="w-4 h-4" />
-                Honors & Awards
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {frontmatter.honors.map((honor) => (
-                  <span
-                    key={honor}
-                    className="px-3 py-1 rounded-full bg-accent/10 text-accent text-sm"
-                  >
-                    {honor}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Coursework */}
-          {frontmatter.coursework && frontmatter.coursework.length > 0 && (
-            <div>
-              <h3 className="text-sm font-medium text-muted mb-3 flex items-center gap-2">
-                <BookOpen className="w-4 h-4" />
-                Relevant Coursework
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {frontmatter.coursework.map((course) => (
-                  <span
-                    key={course}
-                    className="px-3 py-1 rounded-full bg-background-secondary border border-border text-sm"
-                  >
-                    {course}
-                  </span>
-                ))}
-              </div>
-            </div>
           )}
         </motion.header>
 
@@ -166,9 +128,6 @@ export function EducationDetail({ education }: EducationDetailProps) {
                   ),
                   li: ({ children }) => (
                     <li className="text-foreground-secondary">{children}</li>
-                  ),
-                  strong: ({ children }) => (
-                    <strong className="text-foreground font-semibold">{children}</strong>
                   ),
                 }}
               >

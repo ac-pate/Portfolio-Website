@@ -13,8 +13,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import React from 'react';
-import { ExternalLink, Trophy } from 'lucide-react';
+import { ExternalLink, Trophy, ArrowUpRight } from 'lucide-react';
 import type { ExtracurricularFrontmatter } from '@/lib/mdx';
 import { formatDateRange } from '@/lib/utils';
 import { ContentCard } from '@/components/ui/ContentCard';
@@ -28,7 +29,8 @@ interface ExtracurricularCardProps {
 export function ExtracurricularCard({ slug, frontmatter, index = 0 }: ExtracurricularCardProps) {
   const { title, description, startDate, endDate, tags, image, link, award, type } = frontmatter;
 
-  // Determine link wrapper based on whether link exists
+  // Determine link wrapper based on whether external link exists
+  // If external link exists, use it; otherwise link to detail page
   const linkWrapper = link
     ? (children: React.ReactNode) => (
         <a
@@ -40,7 +42,11 @@ export function ExtracurricularCard({ slug, frontmatter, index = 0 }: Extracurri
           {children}
         </a>
       )
-    : (children: React.ReactNode) => <div className="block h-full">{children}</div>;
+    : (children: React.ReactNode) => (
+        <Link href={`/extracurricular/${slug}`} className="block h-full">
+          {children}
+        </Link>
+      );
 
   return (
     <motion.article
@@ -68,8 +74,10 @@ export function ExtracurricularCard({ slug, frontmatter, index = 0 }: Extracurri
               </h3>
               {type && <p className="text-accent text-sm mt-1 capitalize">{type}</p>}
             </div>
-            {link && (
+            {link ? (
               <ExternalLink className="w-5 h-5 text-muted transition-all duration-300 group-hover:text-accent group-hover:translate-x-0.5 group-hover:-translate-y-0.5 flex-shrink-0" />
+            ) : (
+              <ArrowUpRight className="w-5 h-5 text-muted transition-all duration-300 group-hover:text-accent group-hover:translate-x-0.5 group-hover:-translate-y-0.5 flex-shrink-0" />
             )}
           </div>
 
