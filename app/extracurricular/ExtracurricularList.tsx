@@ -1,19 +1,19 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ExperienceCard } from '@/components/ui/ExperienceCard';
-import type { ContentItem, JobFrontmatter } from '@/lib/mdx';
+import { ExtracurricularCard } from '@/components/ui/ExtracurricularCard';
+import type { ContentItem, ExtracurricularFrontmatter } from '@/lib/mdx';
 import { groupByAcademicTerm, getAcademicTerm, formatAcademicTermDateRange } from '@/lib/utils';
 
-interface ExperienceListProps {
-  jobs: ContentItem<JobFrontmatter>[];
+interface ExtracurricularListProps {
+  extracurricular: ContentItem<ExtracurricularFrontmatter>[];
 }
 
-export function ExperienceList({ jobs }: ExperienceListProps) {
-  // Group jobs by academic term
-  const groupedJobs = groupByAcademicTerm(
-    jobs,
-    (j) => j.frontmatter.startDate
+export function ExtracurricularList({ extracurricular }: ExtracurricularListProps) {
+  // Group extracurricular activities by academic term
+  const groupedActivities = groupByAcademicTerm(
+    extracurricular,
+    (ec) => ec.frontmatter.startDate
   );
 
   return (
@@ -26,18 +26,18 @@ export function ExperienceList({ jobs }: ExperienceListProps) {
           className="mb-12"
         >
           <h1 className="text-display-md md:text-display-lg font-display font-bold text-foreground mb-4">
-            Experience<span className="text-accent">.</span>
+            Extracurricular<span className="text-accent">.</span>
           </h1>
           <p className="text-lg text-foreground-secondary max-w-2xl">
-            Professional experience in robotics research, semiconductor validation, and engineering education.
+            Competitions, workshops, events, and other activities beyond academics.
           </p>
         </motion.div>
 
-        {groupedJobs.size > 0 ? (
-          Array.from(groupedJobs.entries()).map(([termLabel, termJobs]) => {
+        {groupedActivities.size > 0 ? (
+          Array.from(groupedActivities.entries()).map(([termLabel, termActivities]) => {
             // Get term date range for display
-            const firstJob = termJobs[0];
-            const termInfo = getAcademicTerm(firstJob.frontmatter.startDate);
+            const firstActivity = termActivities[0];
+            const termInfo = getAcademicTerm(firstActivity.frontmatter.startDate);
             const termDateRange = formatAcademicTermDateRange(termInfo);
             
             return (
@@ -47,15 +47,15 @@ export function ExperienceList({ jobs }: ExperienceListProps) {
                     {termLabel} ({termDateRange})
                   </h2>
                   <p className="text-sm text-foreground-secondary">
-                    {termJobs.length} {termJobs.length === 1 ? 'Position' : 'Positions'}
+                    {termActivities.length} {termActivities.length === 1 ? 'Activity' : 'Activities'}
                   </p>
                 </div>
                 <div className="grid md:grid-cols-2 gap-6">
-                  {termJobs.map((job, index) => (
-                    <ExperienceCard
-                      key={job.slug}
-                      slug={job.slug}
-                      frontmatter={job.frontmatter}
+                  {termActivities.map((activity, index) => (
+                    <ExtracurricularCard
+                      key={activity.slug}
+                      slug={activity.slug}
+                      frontmatter={activity.frontmatter}
                       index={index}
                     />
                   ))}
@@ -64,7 +64,7 @@ export function ExperienceList({ jobs }: ExperienceListProps) {
             );
           })
         ) : (
-          <p className="text-foreground-secondary">Experience details coming soon.</p>
+          <p className="text-foreground-secondary">Extracurricular activities coming soon.</p>
         )}
       </div>
     </div>

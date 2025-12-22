@@ -1,19 +1,19 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ExperienceCard } from '@/components/ui/ExperienceCard';
-import type { ContentItem, JobFrontmatter } from '@/lib/mdx';
+import { VolunteerCard } from '@/components/ui/VolunteerCard';
+import type { ContentItem, VolunteerFrontmatter } from '@/lib/mdx';
 import { groupByAcademicTerm, getAcademicTerm, formatAcademicTermDateRange } from '@/lib/utils';
 
-interface ExperienceListProps {
-  jobs: ContentItem<JobFrontmatter>[];
+interface VolunteerListProps {
+  volunteer: ContentItem<VolunteerFrontmatter>[];
 }
 
-export function ExperienceList({ jobs }: ExperienceListProps) {
-  // Group jobs by academic term
-  const groupedJobs = groupByAcademicTerm(
-    jobs,
-    (j) => j.frontmatter.startDate
+export function VolunteerList({ volunteer }: VolunteerListProps) {
+  // Group volunteer work by academic term
+  const groupedVolunteer = groupByAcademicTerm(
+    volunteer,
+    (v) => v.frontmatter.startDate
   );
 
   return (
@@ -26,18 +26,18 @@ export function ExperienceList({ jobs }: ExperienceListProps) {
           className="mb-12"
         >
           <h1 className="text-display-md md:text-display-lg font-display font-bold text-foreground mb-4">
-            Experience<span className="text-accent">.</span>
+            Volunteer Work<span className="text-accent">.</span>
           </h1>
           <p className="text-lg text-foreground-secondary max-w-2xl">
-            Professional experience in robotics research, semiconductor validation, and engineering education.
+            Leadership roles, community service, and volunteer activities.
           </p>
         </motion.div>
 
-        {groupedJobs.size > 0 ? (
-          Array.from(groupedJobs.entries()).map(([termLabel, termJobs]) => {
+        {groupedVolunteer.size > 0 ? (
+          Array.from(groupedVolunteer.entries()).map(([termLabel, termVolunteer]) => {
             // Get term date range for display
-            const firstJob = termJobs[0];
-            const termInfo = getAcademicTerm(firstJob.frontmatter.startDate);
+            const firstVolunteer = termVolunteer[0];
+            const termInfo = getAcademicTerm(firstVolunteer.frontmatter.startDate);
             const termDateRange = formatAcademicTermDateRange(termInfo);
             
             return (
@@ -47,15 +47,15 @@ export function ExperienceList({ jobs }: ExperienceListProps) {
                     {termLabel} ({termDateRange})
                   </h2>
                   <p className="text-sm text-foreground-secondary">
-                    {termJobs.length} {termJobs.length === 1 ? 'Position' : 'Positions'}
+                    {termVolunteer.length} {termVolunteer.length === 1 ? 'Position' : 'Positions'}
                   </p>
                 </div>
                 <div className="grid md:grid-cols-2 gap-6">
-                  {termJobs.map((job, index) => (
-                    <ExperienceCard
-                      key={job.slug}
-                      slug={job.slug}
-                      frontmatter={job.frontmatter}
+                  {termVolunteer.map((vol, index) => (
+                    <VolunteerCard
+                      key={vol.slug}
+                      slug={vol.slug}
+                      frontmatter={vol.frontmatter}
                       index={index}
                     />
                   ))}
@@ -64,7 +64,7 @@ export function ExperienceList({ jobs }: ExperienceListProps) {
             );
           })
         ) : (
-          <p className="text-foreground-secondary">Experience details coming soon.</p>
+          <p className="text-foreground-secondary">Volunteer work coming soon.</p>
         )}
       </div>
     </div>

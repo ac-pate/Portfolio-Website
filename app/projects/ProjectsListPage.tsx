@@ -1,16 +1,20 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ProjectCardWithThumbnail } from '@/components/ui/ProjectCardWithThumbnail';
+import { ProjectCard } from '@/components/ui/ProjectCard';
 import type { ContentItem, ProjectFrontmatter } from '@/lib/mdx';
+import { groupByAcademicTerm, getAcademicTerm, formatAcademicTermDateRange } from '@/lib/utils';
 
 interface ProjectsListPageProps {
   projects: ContentItem<ProjectFrontmatter>[];
 }
 
 export function ProjectsListPage({ projects }: ProjectsListPageProps) {
-  const featuredProjects = projects.filter(p => p.frontmatter.featured);
-  const otherProjects = projects.filter(p => !p.frontmatter.featured);
+  // Group projects by academic term
+  const groupedProjects = groupByAcademicTerm(
+    projects,
+    (p) => p.frontmatter.startDate
+  );
 
   return (
     <div className="pt-24 pb-16">
@@ -29,41 +33,38 @@ export function ProjectsListPage({ projects }: ProjectsListPageProps) {
           </p>
         </motion.div>
 
-        {/* Featured Projects */}
-        {featuredProjects.length > 0 && (
-          <section className="mb-16">
-            <h2 className="text-xl font-display font-semibold text-foreground mb-6">Featured</h2>
-            <div className="grid md:grid-cols-2 gap-4">
-              {featuredProjects.map((project, index) => (
-                <ProjectCardWithThumbnail
-                  key={project.slug}
-                  slug={project.slug}
-                  frontmatter={project.frontmatter}
-                  index={index}
-                />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Other Projects */}
-        {otherProjects.length > 0 && (
-          <section>
-            <h2 className="text-xl font-display font-semibold text-foreground mb-6">Other Projects</h2>
-            <div className="grid md:grid-cols-2 gap-4">
-              {otherProjects.map((project, index) => (
-                <ProjectCardWithThumbnail
-                  key={project.slug}
-                  slug={project.slug}
-                  frontmatter={project.frontmatter}
-                  index={index}
-                />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {projects.length === 0 && (
+        {/* Projects grouped by academic term */}
+        {groupedProjects.size > 0 ? (
+          Array.from(groupedProjects.entries()).map(([termLabel, termProjects]) => {
+            // Get term date range for display
+            const firstProject = termProjects[0];
+            const termInfo = getAcademicTerm(firstProject.frontmatter.startDate);
+            const termDateRange = formatAcademicTermDateRange(termInfo);
+            
+            return (
+              <section key={termLabel} className="mb-16">
+                <div className="mb-6">
+                  <h2 className="text-xl font-display font-semibold text-foreground mb-1">
+                    {termLabel} ({termDateRange})
+                  </h2>
+                  <p className="text-sm text-foreground-secondary">
+                    {termProjects.length} {termProjects.length === 1 ? 'Project' : 'Projects'}
+                  </p>
+                </div>
+                <div className="grid md:grid-cols-2 gap-6">
+                  {termProjects.map((project, index) => (
+                    <ProjectCard
+                      key={project.slug}
+                      slug={project.slug}
+                      frontmatter={project.frontmatter}
+                      index={index}
+                    />
+                  ))}
+                </div>
+              </section>
+            );
+          })
+        ) : (
           <p className="text-foreground-secondary">Projects coming soon.</p>
         )}
       </div>

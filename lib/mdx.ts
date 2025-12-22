@@ -128,8 +128,16 @@ function getContentFromDirectory<T>(directory: string): ContentItem<T>[] {
 }
 
 export function getProjects(): ContentItem<ProjectFrontmatter>[] {
-  const projects = getContentFromDirectory<ProjectFrontmatter>('projects');
-  return projects.sort((a, b) =>
+  const projects = getContentFromDirectory<any>('projects');
+  // Map 'date' field to 'startDate' for backward compatibility
+  const normalizedProjects = projects.map((project) => ({
+    ...project,
+    frontmatter: {
+      ...project.frontmatter,
+      startDate: project.frontmatter.startDate || project.frontmatter.date,
+    } as ProjectFrontmatter,
+  }));
+  return normalizedProjects.sort((a, b) =>
     new Date(b.frontmatter.startDate).getTime() - new Date(a.frontmatter.startDate).getTime()
   );
 }
