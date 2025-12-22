@@ -285,9 +285,25 @@ export function getTimeline(): TimelineItem[] {
     })),
   ];
 
-  return timelineItems.sort((a, b) =>
-    new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
+  // Sort timeline items:
+  // 1. Primary: by startDate (earlier start = appears earlier)
+  // 2. Secondary: if same startDate, by endDate (earlier end = appears earlier)
+  //    - Items without endDate (ongoing) are treated as having endDate = Infinity (appear later)
+  return timelineItems.sort((a, b) => {
+    const aStart = new Date(a.date).getTime();
+    const bStart = new Date(b.date).getTime();
+    
+    // Primary sort: startDate
+    if (aStart !== bStart) {
+      return aStart - bStart; // Earlier start = earlier in timeline
+    }
+    
+    // Secondary sort: endDate (if start dates are the same)
+    const aEnd = a.endDate ? new Date(a.endDate).getTime() : Infinity;
+    const bEnd = b.endDate ? new Date(b.endDate).getTime() : Infinity;
+    
+    return aEnd - bEnd; // Earlier end = earlier in timeline
+  });
 }
 
 export function getAllProjectSlugs(): string[] {

@@ -45,11 +45,22 @@ export function VolunteerDetail({ volunteer }: VolunteerDetailProps) {
           transition={{ duration: 0.5 }}
           className="mb-12"
         >
-          {/* Cover Image */}
-          {(frontmatter.coverImage || frontmatter.image) && (
+          {/* Cover Image - Use coverImage if provided, otherwise fallback to image */}
+          {frontmatter.coverImage && (
             <div className="relative aspect-[21/9] rounded-2xl overflow-hidden mb-8 bg-background-secondary">
               <Image
-                src={frontmatter.coverImage || frontmatter.image!}
+                src={frontmatter.coverImage}
+                alt={frontmatter.title}
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+          )}
+          {!frontmatter.coverImage && frontmatter.image && (
+            <div className="relative aspect-[21/9] rounded-2xl overflow-hidden mb-8 bg-background-secondary">
+              <Image
+                src={frontmatter.image}
                 alt={frontmatter.title}
                 fill
                 className="object-cover"

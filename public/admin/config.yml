@@ -5,26 +5,18 @@ backend:
   base_url: https://www.achalpatel.xyz
   auth_endpoint: api/auth
 
-# Enable local backend for local development
-local_backend: true
-
-# Publish mode - Use editorial workflow for better draft management
-publish_mode: editorial_workflow
-
 # Slug configuration for uploads (sanitizes filenames)
 slug:
   encoding: "ascii"
   clean_accents: true
   sanitize_replacement: "-"
 
-# Media library configuration - Cloudinary
-# Credentials are injected via environment variables at runtime
-# Set CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY in Vercel environment variables
+# Media library configuration - Local Git-based storage
+# Files are stored directly in the repository
 media_library:
-  name: cloudinary
+  name: default
   config:
-    cloud_name: dh1ok6n0q  # Injected from CLOUDINARY_CLOUD_NAME env var
-    api_key: 699633748744493         # Injected from CLOUDINARY_API_KEY env var
+    slugify_filename: true  # Slugify uploaded filenames (e.g., "My Image.jpg" -> "my-image.jpg")
 
 media_folder: "public/images/uploads" # Media files will be stored in the repo under public/
 public_folder: "/images/uploads" # The src attribute for uploaded media will begin with /

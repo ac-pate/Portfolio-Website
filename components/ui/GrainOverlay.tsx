@@ -87,7 +87,8 @@ export function GrainOverlay({
         // Using multiply for dark grain, or screen for light grain visible on dark
         mixBlendMode: 'screen',
         // Add contrast to make grain more pronounced
-        filter: 'contrast(100%) brightness(700%)',
+        filter: 'contrast(100%) brightness(300%)',
+        // filter: 'contrast(100%) brightness(300%)', // medium grain
       }}
     />
   );
