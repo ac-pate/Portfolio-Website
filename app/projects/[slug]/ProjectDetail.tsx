@@ -74,7 +74,7 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
           <div className="flex flex-wrap items-center gap-6 text-sm text-foreground-secondary mb-6">
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4" />
-              <span>{formatDateRange(frontmatter.date, frontmatter.endDate)}</span>
+              <span>{formatDateRange(frontmatter.startDate, frontmatter.endDate)}</span>
             </div>
             {frontmatter.status && (
               <div className="flex items-center gap-2">

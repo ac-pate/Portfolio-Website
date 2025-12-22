@@ -31,7 +31,7 @@ collections:
     fields:
       - {label: "Title", name: "title", widget: "string"}
       - {label: "Description", name: "description", widget: "text"}
-      - {label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false}
+      - {label: "Start Date", name: "startDate", widget: "datetime", format: "YYYY-MM-DD", time_format: false}
       - {label: "End Date", name: "endDate", widget: "datetime", format: "YYYY-MM-DD", time_format: false, required: false}
       - {label: "Tags", name: "tags", widget: "list", default: []}
       - {label: "Image", name: "image", widget: "image", required: false}
@@ -58,6 +58,7 @@ collections:
       - {label: "Technologies", name: "technologies", widget: "list", default: []}
       - {label: "Type", name: "type", widget: "select", options: ["full-time", "part-time", "internship", "contract"], required: false}
       - {label: "Image", name: "image", widget: "image", required: false}
+      - {label: "Featured", name: "featured", widget: "boolean", default: false}
       - {label: "Body", name: "body", widget: "markdown"}
 
   - name: "education"
@@ -78,6 +79,7 @@ collections:
       - {label: "Honors", name: "honors", widget: "list", default: []}
       - {label: "Coursework", name: "coursework", widget: "list", default: []}
       - {label: "Image", name: "image", widget: "image", required: false}
+      - {label: "Featured", name: "featured", widget: "boolean", default: false}
       - {label: "Body", name: "body", widget: "markdown"}
 
   - name: "volunteer"
@@ -94,6 +96,7 @@ collections:
       - {label: "End Date", name: "endDate", widget: "datetime", format: "YYYY-MM-DD", time_format: false, required: false}
       - {label: "Description", name: "description", widget: "text"}
       - {label: "Image", name: "image", widget: "image", required: false}
+      - {label: "Featured", name: "featured", widget: "boolean", default: false}
       - {label: "Body", name: "body", widget: "markdown"}
 
   - name: "extracurricular"
@@ -106,12 +109,13 @@ collections:
     fields:
       - {label: "Title", name: "title", widget: "string"}
       - {label: "Description", name: "description", widget: "text"}
-      - {label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false}
+      - {label: "Start Date", name: "startDate", widget: "datetime", format: "YYYY-MM-DD", time_format: false}
       - {label: "End Date", name: "endDate", widget: "datetime", format: "YYYY-MM-DD", time_format: false, required: false}
       - {label: "Type", name: "type", widget: "select", options: ["competition", "workshop", "photography", "event", "other"]}
       - {label: "Location", name: "location", widget: "string", required: false}
       - {label: "Tags", name: "tags", widget: "list", default: []}
       - {label: "Image", name: "image", widget: "image", required: false}
+      - {label: "Featured", name: "featured", widget: "boolean", default: false}
       - {label: "Link", name: "link", widget: "string", required: false}
       - {label: "Award", name: "award", widget: "string", required: false}
       - {label: "Body", name: "body", widget: "markdown"}

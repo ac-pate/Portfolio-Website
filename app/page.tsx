@@ -7,17 +7,17 @@ import { Contact } from '@/components/sections/Contact';
 import { getProjects, getJobs, getTimeline } from '@/lib/mdx';
 
 export default function HomePage() {
-  const projects = getProjects();
-  const jobs = getJobs();
-  const timelineItems = getTimeline();
+  const featuredProjects = getProjects().filter(p => p.frontmatter.featured);
+  const featuredJobs = getJobs().filter(j => j.frontmatter.featured);
+  const allTimelineItems = getTimeline();
 
   return (
     <>
       <Hero />
       <AboutPreview />
-      <ProjectsPreview projects={projects} />
-      <ExperiencePreview jobs={jobs} />
-      <TimelineSection items={timelineItems.slice(0, 8)} />
+      <ProjectsPreview projects={featuredProjects} />
+      <ExperiencePreview jobs={featuredJobs} />
+      <TimelineSection items={allTimelineItems} />
       <Contact />
     </>
   );

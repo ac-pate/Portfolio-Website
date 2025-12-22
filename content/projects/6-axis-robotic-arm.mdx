@@ -1,12 +1,21 @@
 ---
-title: "6-Axis Robotic Arm"
-description: "Leading a multidisciplinary team developing a modular, 3D-printed, 6-DOF robotic arm with custom cycloidal actuator and ROS2 framework."
-date: "2024-09-01"
-tags: ["ROS2", "Python", "Inverse Kinematics", "Computer Vision", "Jetson Nano", "3D Printing"]
-github: "https://github.com/ac-pate"
-featured: true
-status: "in-progress"
-image: "/images/projects/robotic-arm.jpg"
+title: 6-Axis Robotic Arm
+description: A, 3D-printed, 6-DOF robotic arm with custom cycloidal actuator and
+  build on ROS2 framework to use tool such as Gazebo and Moveit2 along with our
+  custom hardware, URDFs, Controllers interfaces for our custom robot.
+date: 2024-06-01
+endDate: 2025-04-30
+tags:
+  - ROS2
+  - Python
+  - Inverse Kinematics
+  - Computer Vision
+  - Jetson Nano
+  - 3D Printing
+image: /images/uploads/img_9902.jpg
+github: https://github.com/ieeeconcordia/The-ROS-Robotic-Arm-Project
+featured: false
+status: completed
 ---
 
 ## Overview
@@ -20,6 +29,11 @@ Leading a multidisciplinary team of 6 (MECH, ELEC, and SOEN students) in develop
 - Fully 3D-printed modular construction
 - 6 degrees of freedom for full workspace coverage
 - Optimized for repeatability and precision
+### Electronics 
+- CAN bus for robust single serial control of each joint 
+- ESP32 as the main hardware controller
+- Jetson Nano as the solver and Dev Machine
+
 
 ### Software Stack
 - ROS2 framework for control and coordination

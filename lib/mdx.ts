@@ -23,7 +23,7 @@ const contentDirectory = path.join(process.cwd(), 'content');
 export interface ProjectFrontmatter {
   title: string;
   description: string;
-  date: string;
+  startDate: string;
   endDate?: string;
   tags: string[];
   image?: string;
@@ -43,6 +43,7 @@ export interface JobFrontmatter {
   technologies?: string[];
   type?: 'full-time' | 'part-time' | 'internship' | 'contract';
   image?: string;
+  featured?: boolean;
 }
 
 export interface EducationFrontmatter {
@@ -56,6 +57,7 @@ export interface EducationFrontmatter {
   honors?: string[];
   coursework?: string[];
   image?: string;
+  featured?: boolean;
 }
 
 export interface VolunteerFrontmatter {
@@ -65,12 +67,13 @@ export interface VolunteerFrontmatter {
   endDate?: string;
   description: string;
   image?: string;
+  featured?: boolean;
 }
 
 export interface ExtracurricularFrontmatter {
   title: string;
   description: string;
-  date: string;
+  startDate: string;
   endDate?: string;
   type: 'competition' | 'workshop' | 'photography' | 'event' | 'other';
   location?: string;
@@ -78,6 +81,7 @@ export interface ExtracurricularFrontmatter {
   image?: string;
   link?: string;
   award?: string;
+  featured?: boolean;
 }
 
 export interface ContentItem<T> {
@@ -126,7 +130,7 @@ function getContentFromDirectory<T>(directory: string): ContentItem<T>[] {
 export function getProjects(): ContentItem<ProjectFrontmatter>[] {
   const projects = getContentFromDirectory<ProjectFrontmatter>('projects');
   return projects.sort((a, b) =>
-    new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime()
+    new Date(b.frontmatter.startDate).getTime() - new Date(a.frontmatter.startDate).getTime()
   );
 }
 
@@ -203,7 +207,7 @@ export function getTimeline(): TimelineItem[] {
   const timelineItems: TimelineItem[] = [
     ...projects.map((p) => ({
       type: 'project' as const,
-      date: p.frontmatter.date,
+      date: p.frontmatter.startDate,
       endDate: p.frontmatter.endDate,
       title: p.frontmatter.title,
       subtitle: p.frontmatter.tags.slice(0, 3).join(' • '),
@@ -239,7 +243,7 @@ export function getTimeline(): TimelineItem[] {
     })),
     ...extracurricular.map((ec) => ({
       type: 'extracurricular' as const,
-      date: ec.frontmatter.date,
+      date: ec.frontmatter.startDate,
       endDate: ec.frontmatter.endDate,
       title: ec.frontmatter.title,
       subtitle: ec.frontmatter.description,
@@ -271,7 +275,7 @@ export function getAllProjectSlugs(): string[] {
 export function getExtracurricular(): ContentItem<ExtracurricularFrontmatter>[] {
   const extracurricular = getContentFromDirectory<ExtracurricularFrontmatter>('extracurricular');
   return extracurricular.sort((a, b) =>
-    new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime()
+    new Date(b.frontmatter.startDate).getTime() - new Date(a.frontmatter.startDate).getTime()
   );
 }
 

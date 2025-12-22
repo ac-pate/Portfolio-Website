@@ -28,8 +28,6 @@ export function TimelineSection({ items }: TimelineSectionProps) {
   const [isDynamic, setIsDynamic] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
-  const stickyRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const setupScrollObserver = async () => {
@@ -37,7 +35,7 @@ export function TimelineSection({ items }: TimelineSectionProps) {
       const { default: ScrollTrigger } = await import('gsap/ScrollTrigger');
       gsap.registerPlugin(ScrollTrigger);
 
-      if (sectionRef.current && stickyRef.current && contentRef.current) {
+      if (sectionRef.current) {
         // Observer for the toggle button visibility
         ScrollTrigger.create({
           trigger: sectionRef.current,
@@ -47,27 +45,6 @@ export function TimelineSection({ items }: TimelineSectionProps) {
           onLeave: () => setIsVisible(false),
           onEnterBack: () => setIsVisible(true),
           onLeaveBack: () => setIsVisible(false),
-        });
-
-        // Pinning and Wipe logic
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top top',
-            end: '+=100%',
-            pin: stickyRef.current,
-            pinSpacing: false,
-            scrub: true,
-            invalidateOnRefresh: true,
-          },
-        });
-
-        // Animate content exit (for the next section, if any, or just to fade out)
-        tl.to(contentRef.current, {
-          opacity: 0,
-          y: -50,
-          duration: 1,
-          ease: 'power1.in',
         });
       }
     };
@@ -94,26 +71,25 @@ export function TimelineSection({ items }: TimelineSectionProps) {
   }
 
   return (
-    <section ref={sectionRef} id="timeline" className="relative h-screen bg-background z-40">
-      <div 
-        ref={stickyRef} 
-        className="h-screen w-full flex items-center justify-center overflow-hidden"
-      >
-        <div ref={contentRef} className="w-full h-full">
-          {/* View Toggle Button - Minimal text button with glow */}
-          <ViewToggle 
-            isDynamic={isDynamic} 
-            isVisible={isVisible} 
-            onToggle={() => setIsDynamic(!isDynamic)} 
-          />
+    <section 
+      ref={sectionRef} 
+      id="timeline" 
+      className="relative min-h-screen bg-background z-40"
+    >
+      <div className="w-full h-full">
+        {/* View Toggle Button - Minimal text button with glow */}
+        <ViewToggle 
+          isDynamic={isDynamic} 
+          isVisible={isVisible} 
+          onToggle={() => setIsDynamic(!isDynamic)} 
+        />
 
-          {/* Dynamic 3D View */}
-          {isDynamic ? (
-            <Timeline3D items={items} />
-          ) : (
-            <TimelineStatic items={items} />
-          )}
-        </div>
+        {/* Dynamic 3D View or Static View */}
+        {isDynamic ? (
+          <Timeline3D items={items} />
+        ) : (
+          <TimelineStatic items={items} />
+        )}
       </div>
     </section>
   );
