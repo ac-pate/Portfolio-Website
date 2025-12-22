@@ -27,18 +27,25 @@ export async function GET(request: Request) {
 
         const data = await response.json();
 
+        // Mapping GitHub response to Decap CMS expected format
+        const content = {
+            token: data.access_token,
+            provider: 'github',
+        };
+
         // Standard Decap CMS response format
         const script = `
       <script>
-        const receiveMessage = (message) => {
-          window.opener.postMessage(
-            'authorization:github:success:${JSON.stringify(data)}',
-            message.origin
-          );
-          window.removeEventListener('message', receiveMessage, false);
-        }
-        window.addEventListener('message', receiveMessage, false);
-        window.opener.postMessage('authorizing:github', '*');
+        (function() {
+          function receiveMessage(e) {
+            window.opener.postMessage(
+              'authorization:github:success:${JSON.stringify(content)}',
+              e.origin
+            );
+          }
+          window.addEventListener("message", receiveMessage, false);
+          window.opener.postMessage("authorizing:github", "*");
+        })()
       </script>
     `;
 
