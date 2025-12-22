@@ -4,9 +4,7 @@ company: Concordia University Aerospace Robotics Lab (CUARL)
 location: Montreal, QC
 startDate: 2025-05-01
 endDate: 2025-12-01
-description: Working on CRAWLR (Concordia Robotic Articulated Wheel-Legged
-  Rover), an experimental space-rover platform for push–pull locomotion research
-  in unstructured planetary terrain.
+description: Working on CRAWLR (Concordia Robotic Articulated Wheel-Legged Rover), an experimental space-rover platform for push–pull locomotion research in unstructured planetary terrain.
 technologies:
   - ROS2
   - Python
@@ -17,29 +15,32 @@ technologies:
   - ArUco
   - Xacro
 type: internship
-image: /images/jobs/cuarl.jpg
+image: /images/uploads/screenshot_2025-07-22_125922_uss6tt.png
+coverImage: /images/uploads/screenshot_2025-06-12_173712_vbkktl.png
 featured: true
 ---
-
 ## Key Contributions
 
 ### ROS2 Control Stack Development
+
 - Brought up and stabilized a ROS2 control stack for motor control over CAN (EPOS4)
 - Integrated ros2_control/ros2_controllers with Virtual CAN workflow using ros2_canopen
 - Enabled hardware-identical testing without the physical rover
 
 ### Simulation/Hardware Switching
+
 - Implemented Xacro conditional plugin loading and launch-time arguments
 - Removed manual config edits when moving between Gazebo simulation and real hardware
 - Streamlined development workflow for the entire team
 
 ### Teleoperation System
+
 - Built complete Xbox joystick teleoperation package
 - Pipeline: Joy → Twist → diff-drive/skid-steer solver → Float64MultiArray → CAN
 - Validated in Gazebo and on hardware during field trials
 
 ### Perception System
+
 - Implemented perception-based position tracking for closed-loop experiments
 - Used ZED2/ZED SDK and ArUco markers
 - Achieved 20–30 Hz tracking with ROS2 message type integration for Simulink control stack
-
