@@ -369,10 +369,44 @@ export function formatDateRange(startDate: string, endDate?: string): string {
  */
 export function sortTimelineItems(items: any[], ascending = false): any[] {
   const sorted = [...items].sort((a, b) => {
-    const aDate = new Date(a.date).getTime();
-    const bDate = new Date(b.date).getTime();
-
-    return ascending ? aDate - bDate : bDate - aDate;
+    const aStartDate = new Date(a.date);
+    const bStartDate = new Date(b.date);
+    
+    // Get start month (0-11, where 0 = January)
+    const aStartMonth = aStartDate.getMonth();
+    const bStartMonth = bStartDate.getMonth();
+    
+    // If start months are different, sort by start date
+    if (aStartMonth !== bStartMonth) {
+      const aTime = aStartDate.getTime();
+      const bTime = bStartDate.getTime();
+      return ascending ? aTime - bTime : bTime - aTime;
+    }
+    
+    // If start months are the same, sort by end date (whichever finishes first comes first)
+    // Items without endDate are treated as ongoing (come later if descending, earlier if ascending)
+    const aEndDate = a.endDate ? new Date(a.endDate).getTime() : null;
+    const bEndDate = b.endDate ? new Date(b.endDate).getTime() : null;
+    
+    if (aEndDate === null && bEndDate === null) {
+      // Both ongoing - sort by start date
+      const aTime = aStartDate.getTime();
+      const bTime = bStartDate.getTime();
+      return ascending ? aTime - bTime : bTime - aTime;
+    }
+    
+    if (aEndDate === null) {
+      // a is ongoing, b has end date - ongoing comes later if descending
+      return ascending ? -1 : 1;
+    }
+    
+    if (bEndDate === null) {
+      // b is ongoing, a has end date - ongoing comes later if descending
+      return ascending ? 1 : -1;
+    }
+    
+    // Both have end dates - sort by end date
+    return ascending ? aEndDate - bEndDate : bEndDate - aEndDate;
   });
 
   return sorted;

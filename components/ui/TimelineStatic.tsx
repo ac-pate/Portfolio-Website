@@ -69,7 +69,7 @@ export function TimelineStatic({ items }: TimelineStaticProps) {
         </div>
 
         {/* Column Headers */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8 px-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8 px-8 md:px-12 lg:px-16">
           <h3 className="text-xs font-medium text-accent uppercase tracking-[0.2em] flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-blue-500" />
             Projects
@@ -114,7 +114,7 @@ export function TimelineStatic({ items }: TimelineStaticProps) {
           return (
             <div key={termKey} className="mb-16 last:mb-0">
               {/* Term Header */}
-              <div className="flex items-center gap-4 mb-6 px-4">
+              <div className="flex items-center gap-4 mb-6 px-8 md:px-12 lg:px-16">
                 <h4 className="text-lg font-display font-semibold text-foreground">
                   {termKey}
                 </h4>
@@ -124,7 +124,7 @@ export function TimelineStatic({ items }: TimelineStaticProps) {
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 px-4">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 px-8 md:px-12 lg:px-16">
                 {/* Projects Column */}
                 <div className="space-y-3">
                   {projects.length > 0 ? (

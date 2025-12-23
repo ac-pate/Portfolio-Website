@@ -26,15 +26,81 @@ interface Timeline3DProps {
 
 // Lane configuration
 const LANES = {
-  project: { x: -3.5, parallaxSpeed: 1.0 },
+  project: { x: -2.5, parallaxSpeed: 1.0 },
   job: { x: 0, parallaxSpeed: 0.85 },
   education: { x: 0.5, parallaxSpeed: 0.85 },
-  extracurricular: { x: 3.5, parallaxSpeed: 0.7 },
+  extracurricular: { x: 2.5, parallaxSpeed: 0.7 },
 };
 
-// Card spacing in Z-depth
-const CARD_Z_SPACING = 12;
-const CAMERA_START_Z = 5;
+// ============================================
+// ANIMATION CONFIGURATION VARIABLES
+// ============================================
+//
+// ANIMATION PHASES:
+// 1. APPROACH: Card starts small, blurred, far back → grows and sharpens as camera approaches
+// 2. FOCUS: Card is at full size, sharp, fully visible (stays here for a while)
+// 3. FADE OUT: Card stays same size but blurs dramatically and fades to opacity 0
+//
+// Cards in the same lane are spaced apart so the previous card has time to fade out
+// before the next card comes into focus.
+//
+// ============================================
+
+// Card spacing in Z-depth (increase for more space between cards in same lane)
+const CARD_Z_SPACING = 50; // Distance between consecutive cards
+const CAMERA_START_Z = 5; // Initial camera Z position
+
+// Scroll speed control (increase to slow down animation)
+const SCROLL_DISTANCE_PER_CARD = 500; // Viewport heights (vh) per card (higher = slower)
+// Each card now takes 500vh of scroll = 5 full viewport heights per card
+const SCROLL_SCRUB_SPEED = 1.5; // Scroll smoothing (higher = more lag, smoother)
+
+// Card starting properties (when far back, before coming into focus)
+const CARD_START_SCALE = 0.15; // How small cards start (0.15 = 15% size)
+const CARD_START_BLUR = 12; // Blur amount when card is far back (in pixels)
+const CARD_START_OPACITY = 0.3; // Opacity when card is far back (0-1)
+
+// Focus zone properties (when card is in focus)
+const FOCUS_DISTANCE = 8; // Distance range where card is in focus (Z units)
+const FOCUS_SCALE = 1.0; // Scale when card is in focus (1.0 = 100% size)
+const FOCUS_BLUR = 0; // Blur when card is in focus (0 = sharp)
+const FOCUS_OPACITY = 1.0; // Opacity when card is in focus (1.0 = fully visible)
+
+// Focus hold properties (how long card stays in focus before zooming out)
+// Card stays in focus for 25% of card spacing distance (quarter scroll) after passing camera
+const FOCUS_HOLD_DISTANCE = CARD_Z_SPACING * 0.25; // Distance to hold in focus (Z units, positive value)
+
+// Fade-out properties (after focus, when card zooms out and disappears)
+const FADE_OUT_START_DISTANCE = -4; // When card moves behind camera, start fading (negative Z)
+const FADE_OUT_RANGE = 10; // Range over which card fades out completely (Z units)
+const FADE_OUT_MAX_BLUR = 25; // Maximum blur as card fades out (in pixels)
+const FADE_OUT_EXPONENT = 2.5; // Exponential curve for fade-out (higher = faster fade)
+
+// Zoom-out properties (how quickly card shrinks during fade-out)
+const ZOOM_OUT_START_DISTANCE = -FOCUS_HOLD_DISTANCE; // Start zooming out after focus hold (negative Z)
+const ZOOM_OUT_RANGE = 8; // Range over which card zooms out (Z units)
+const ZOOM_OUT_MIN_SCALE = 2.3; // Minimum scale when fully zoomed out (0.3 = 30% size)
+const ZOOM_OUT_EXPONENT = 2.0; // Exponential curve for zoom-out (higher = faster zoom)
+
+// Approach properties (as card comes from far back toward focus)
+const APPROACH_START_DISTANCE = 35; // Distance where card starts becoming visible (Z units)
+const APPROACH_RANGE = 47; // Range over which card grows from small to focus (Z units: APPROACH_START to FOCUS)
+const APPROACH_BLUR_DECAY = 12; // How quickly blur reduces as card approaches (matches CARD_START_BLUR)
+
+// Visibility boundaries (cards beyond these distances are hidden)
+const MAX_DISTANCE_BEHIND = 20; // Hide cards that are too far behind camera
+const MAX_DISTANCE_AHEAD = 70; // Hide cards that are too far ahead
+
+// Starfield configuration (inspired by studiolumio.com/labs)
+const STARFIELD_CONFIG = {
+  count: 5000, // Number of stars
+  depth: 300, // How far back stars extend (Z units)
+  speed: 0.5, // Base speed multiplier for star movement
+  twinkleSpeed: 0.5, // Speed of twinkling animation (lower = slower, softer blink)
+  size: 0.5, // Base star size
+  color: 0xffffff, // Star color (white)
+  opacity: 0.8, // Base star opacity
+};
 
 export function Timeline3D({ items }: Timeline3DProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -51,18 +117,28 @@ export function Timeline3D({ items }: Timeline3DProps) {
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const animationFrameRef = useRef<number | null>(null);
+  const starfieldRef = useRef<THREE.Points | null>(null);
+  const starfieldTimeRef = useRef<number>(0); // For twinkling animation
+  const starfieldDepthRef = useRef<number>(300); // Store dynamic starfield depth
   
   // Sort items by start date (newest first - descending order)
   const sortedItems = useMemo(() => sortTimelineItems(items, false), [items]);
   
-  // Card positions calculated based on item order and lane
+  // Card positions calculated based on item order
+  // ALL cards appear sequentially one at a time, regardless of lane
+  // Each card is spaced apart so the previous card has time to fade out
   const cardPositions = useMemo(() => {
     return sortedItems.map((item, index) => {
       const lane = LANES[item.type as keyof typeof LANES] || LANES.project;
+      
+      // Sequential Z positioning: each card appears one after another
+      // Cards go INTO the screen (negative Z)
+      const z = -(index * CARD_Z_SPACING);
+      
       return {
         x: lane.x,
         y: 0,
-        z: -(index * CARD_Z_SPACING), // Cards are positioned going INTO the screen (negative Z)
+        z: z,
         parallaxSpeed: lane.parallaxSpeed,
         item,
         index,
@@ -115,6 +191,127 @@ export function Timeline3D({ items }: Timeline3DProps) {
     directionalLight.position.set(0, 5, 10);
     scene.add(directionalLight);
 
+    // Calculate starfield depth to cover entire animation
+    // Camera starts at CAMERA_START_Z and moves to CAMERA_START_Z - totalDepth
+    // We need stars to extend from camera start position all the way to the end
+    const totalDepth = cardPositions.length * CARD_Z_SPACING;
+    const cameraEndZ = CAMERA_START_Z - totalDepth;
+    // Starfield should extend from slightly ahead of camera to well beyond the end
+    // Add extra buffer to ensure stars are always available
+    const starfieldDepth = Math.max(STARFIELD_CONFIG.depth, Math.abs(cameraEndZ) + 200);
+    starfieldDepthRef.current = starfieldDepth;
+    
+    // Create starfield particle system
+    const starGeometry = new THREE.BufferGeometry();
+    const starPositions = new Float32Array(STARFIELD_CONFIG.count * 3);
+    const starSizes = new Float32Array(STARFIELD_CONFIG.count);
+    const starOpacities = new Float32Array(STARFIELD_CONFIG.count);
+    const starDepths = new Float32Array(STARFIELD_CONFIG.count); // Store Z depth for parallax
+    
+    // Initialize stars with random positions across the full animation range
+    for (let i = 0; i < STARFIELD_CONFIG.count; i++) {
+      const i3 = i * 3;
+      
+      // Random X, Y positions (spread across viewport)
+      starPositions[i3] = (Math.random() - 0.5) * 20; // X
+      starPositions[i3 + 1] = (Math.random() - 0.5) * 20; // Y
+      
+      // Random Z depth (negative, going into screen) - cover entire animation range
+      const depth = -Math.random() * starfieldDepth;
+      starPositions[i3 + 2] = depth;
+      starDepths[i] = depth;
+      
+      // Random size variation
+      starSizes[i] = STARFIELD_CONFIG.size * (0.5 + Math.random() * 0.5);
+      
+      // Random opacity for twinkling variation
+      starOpacities[i] = STARFIELD_CONFIG.opacity * (0.6 + Math.random() * 0.4);
+    }
+    
+    starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+    starGeometry.setAttribute('size', new THREE.BufferAttribute(starSizes, 1));
+    starGeometry.setAttribute('opacity', new THREE.BufferAttribute(starOpacities, 1));
+    starGeometry.setAttribute('depth', new THREE.BufferAttribute(starDepths, 1));
+    
+    // Custom shader material for stars with twinkling
+    const starMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        time: { value: 0 },
+        cameraZ: { value: CAMERA_START_Z },
+        scrollProgress: { value: 0 },
+        starfieldDepth: { value: starfieldDepth }, // Pass dynamic depth to shader
+        twinkleSpeed: { value: STARFIELD_CONFIG.twinkleSpeed }, // Pass twinkle speed to shader
+      },
+      vertexShader: `
+        attribute float size;
+        attribute float opacity;
+        attribute float depth;
+        
+        varying float vOpacity;
+        varying float vDepth;
+        
+        uniform float time;
+        uniform float cameraZ;
+        uniform float scrollProgress;
+        uniform float starfieldDepth;
+        uniform float twinkleSpeed;
+        
+        void main() {
+          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+          
+          // Parallax effect: stars move toward camera based on scroll
+          // Closer stars (less negative Z) move faster - light speed effect
+          float depthNormalized = depth / -starfieldDepth;
+          float parallaxSpeed = 1.0 + depthNormalized;
+          float zOffset = scrollProgress * parallaxSpeed * 0.5;
+          mvPosition.z += zOffset;
+          
+          // Soft twinkling: gentle, slow opacity variation
+          // Each star has unique phase based on depth for natural variation
+          float starPhase = depth * 0.01;
+          // Slow, gentle sine wave with smooth curve
+          float twinkleWave = sin(time * twinkleSpeed * 0.01 + starPhase);
+          // Soft curve: use smoothstep for gentler transitions
+          float twinkle = twinkleWave * 0.15 + 0.85; // Range: 0.7 to 1.0 (gentle variation)
+          vOpacity = opacity * twinkle;
+          vDepth = depth;
+          
+          gl_PointSize = size * (300.0 / -mvPosition.z);
+          gl_Position = projectionMatrix * mvPosition;
+        }
+      `,
+      fragmentShader: `
+        varying float vOpacity;
+        varying float vDepth;
+        
+        void main() {
+          // Create circular star shape
+          vec2 center = gl_PointCoord - vec2(0.5);
+          float dist = length(center);
+          
+          // Soft edge with slight glow
+          float alpha = 1.0 - smoothstep(0.0, 0.5, dist);
+          alpha *= vOpacity;
+          
+          // Slight color variation based on depth
+          vec3 color = vec3(1.0, 1.0, 1.0);
+          if (vDepth > -50.0) {
+            // Closer stars slightly brighter
+            color = vec3(1.0, 1.0, 0.95);
+          }
+          
+          gl_FragColor = vec4(color, alpha);
+        }
+      `,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    
+    const stars = new THREE.Points(starGeometry, starMaterial);
+    starfieldRef.current = stars;
+    scene.add(stars);
+
     // Create card meshes (invisible - we use HTML overlay for actual content)
     // These are just for depth reference
     cardPositions.forEach((pos, i) => {
@@ -132,6 +329,13 @@ export function Timeline3D({ items }: Timeline3DProps) {
     // Animation loop
     const animate = () => {
       animationFrameRef.current = requestAnimationFrame(animate);
+      
+      // Update starfield twinkling
+      if (starfieldRef.current) {
+        starfieldTimeRef.current += 0.01;
+        (starfieldRef.current.material as THREE.ShaderMaterial).uniforms.time.value = starfieldTimeRef.current;
+      }
+      
       renderer.render(scene, camera);
     };
     animate();
@@ -174,7 +378,7 @@ export function Timeline3D({ items }: Timeline3DProps) {
           if (!container || !camera) return;
 
           const totalDepth = cardPositions.length * CARD_Z_SPACING;
-          const scrollDistance = cardPositions.length * 100; // 100vh per card
+          const scrollDistance = cardPositions.length * SCROLL_DISTANCE_PER_CARD; // vh per card
 
           ScrollTrigger.create({
             trigger: container,
@@ -182,7 +386,7 @@ export function Timeline3D({ items }: Timeline3DProps) {
             end: `+=${scrollDistance}vh`,
             pin: true,
             pinSpacing: true,
-            scrub: 1.5,
+            scrub: SCROLL_SCRUB_SPEED,
             onEnter: () => setIsActive(true),
             onLeave: () => setIsActive(false),
             onEnterBack: () => setIsActive(true),
@@ -192,6 +396,37 @@ export function Timeline3D({ items }: Timeline3DProps) {
               const progress = self.progress;
               const targetZ = CAMERA_START_Z - (progress * totalDepth);
               camera.position.z = targetZ;
+              
+              // Update starfield scroll progress for parallax effect
+              if (starfieldRef.current) {
+                const starMaterial = starfieldRef.current.material as THREE.ShaderMaterial;
+                starMaterial.uniforms.scrollProgress.value = progress;
+                starMaterial.uniforms.cameraZ.value = targetZ;
+                
+                // Recycle stars that pass the camera (infinite starfield)
+                const starGeometry = starfieldRef.current.geometry;
+                const positions = starGeometry.attributes.position.array as Float32Array;
+                const depths = starGeometry.attributes.depth.array as Float32Array;
+                
+                for (let i = 0; i < STARFIELD_CONFIG.count; i++) {
+                  const i3 = i * 3;
+                  const currentZ = positions[i3 + 2];
+                  
+                  // If star has passed the camera, reset it to the back
+                  if (currentZ > targetZ + 5) {
+                    // Reset to a position behind the camera, using dynamic starfield depth
+                    positions[i3 + 2] = targetZ - starfieldDepthRef.current * Math.random();
+                    depths[i] = positions[i3 + 2];
+                    
+                    // Also randomize X, Y slightly for variation
+                    positions[i3] = (Math.random() - 0.5) * 20;
+                    positions[i3 + 1] = (Math.random() - 0.5) * 20;
+                  }
+                }
+                
+                starGeometry.attributes.position.needsUpdate = true;
+                starGeometry.attributes.depth.needsUpdate = true;
+              }
 
               // DIRECT DOM CONTROL: Update HTML cards directly for 60fps performance
               // This bypasses React render loop for smooth animation
@@ -199,10 +434,10 @@ export function Timeline3D({ items }: Timeline3DProps) {
                 const cardEl = cardRefs.current[i];
                 if (!cardEl) return;
 
-                const distanceZ = targetZ - pos.z;
+                const distanceZ = targetZ - pos.z; // Positive = card ahead, Negative = card behind
                 
-                // Visibility optimization
-                if (distanceZ < -5 || distanceZ > CARD_Z_SPACING * 3) {
+                // Hide cards that are too far away
+                if (distanceZ < -MAX_DISTANCE_BEHIND || distanceZ > MAX_DISTANCE_AHEAD) {
                    if (cardEl.style.visibility !== 'hidden') {
                      cardEl.style.opacity = '0';
                      cardEl.style.visibility = 'hidden';
@@ -210,14 +445,82 @@ export function Timeline3D({ items }: Timeline3DProps) {
                    return;
                 }
 
-                // Calculate visual properties based on 3D distance
-                const maxDistance = CARD_Z_SPACING * 3;
-                const normalizedDistance = Math.min(distanceZ / maxDistance, 1);
-                const focusDistance = CARD_Z_SPACING * 0.8;
-                const isFocused = distanceZ > 0 && distanceZ < focusDistance;
-
-                const scale = isFocused ? 1 : Math.max(0.3, 1 - normalizedDistance * 0.7);
-                const opacity = isFocused ? 1 : Math.max(0.1, 1 - normalizedDistance);
+                // ============================================
+                // PHASE 1: APPROACH (card coming from far back toward focus)
+                // Card starts small, blurred, and grows as it approaches
+                // ============================================
+                let scale = FOCUS_SCALE;
+                let blur = FOCUS_BLUR;
+                let opacity = FOCUS_OPACITY;
+                
+                if (distanceZ > FOCUS_DISTANCE) {
+                  // Card is ahead (positive distanceZ) but not yet in focus
+                  const approachProgress = Math.min(
+                    (distanceZ - FOCUS_DISTANCE) / APPROACH_RANGE,
+                    1
+                  );
+                  const clampedProgress = Math.max(0, approachProgress);
+                  
+                  // Scale: grow from small to full size
+                  scale = CARD_START_SCALE + (FOCUS_SCALE - CARD_START_SCALE) * (1 - clampedProgress);
+                  
+                  // Blur: reduce from high blur to sharp
+                  blur = CARD_START_BLUR * clampedProgress;
+                  
+                  // Opacity: increase from low to full
+                  opacity = CARD_START_OPACITY + (FOCUS_OPACITY - CARD_START_OPACITY) * (1 - clampedProgress);
+                }
+                
+                // ============================================
+                // PHASE 2: FOCUS (card is in focus zone)
+                // Card is at full size, sharp, fully visible
+                // ============================================
+                else if (distanceZ >= 0 && distanceZ <= FOCUS_DISTANCE) {
+                  scale = FOCUS_SCALE;
+                  blur = FOCUS_BLUR;
+                  opacity = FOCUS_OPACITY;
+                }
+                
+                // ============================================
+                // PHASE 3: FOCUS HOLD (card behind camera, staying in focus)
+                // Card stays at focus size for a quarter scroll
+                // ============================================
+                else if (distanceZ < 0 && distanceZ >= ZOOM_OUT_START_DISTANCE) {
+                  // Card just passed focus, hold it at focus scale for quarter scroll
+                  scale = FOCUS_SCALE;
+                  blur = FOCUS_BLUR;
+                  opacity = FOCUS_OPACITY;
+                }
+                
+                // ============================================
+                // PHASE 4: ZOOM OUT + FADE OUT (card zooming out while fading)
+                // Card zooms out quickly while also blurring and fading
+                // ============================================
+                else if (distanceZ < ZOOM_OUT_START_DISTANCE) {
+                  // Calculate zoom-out progress
+                  const zoomOutProgress = Math.min(
+                    Math.abs(distanceZ - ZOOM_OUT_START_DISTANCE) / ZOOM_OUT_RANGE,
+                    1
+                  );
+                  
+                  // Calculate fade-out progress (starts from ZOOM_OUT_START_DISTANCE)
+                  const fadeOutStart = ZOOM_OUT_START_DISTANCE;
+                  const fadeOutProgress = Math.min(
+                    Math.abs(distanceZ - fadeOutStart) / FADE_OUT_RANGE,
+                    1
+                  );
+                  
+                  // Scale: zoom out from focus to minimum scale
+                  const scaleProgress = Math.pow(zoomOutProgress, ZOOM_OUT_EXPONENT);
+                  scale = FOCUS_SCALE - (FOCUS_SCALE - ZOOM_OUT_MIN_SCALE) * scaleProgress;
+                  
+                  // Blur: increases dramatically
+                  blur = Math.pow(fadeOutProgress, 2) * FADE_OUT_MAX_BLUR;
+                  
+                  // Opacity: decreases exponentially to 0
+                  opacity = Math.max(0, FOCUS_OPACITY - Math.pow(fadeOutProgress, FADE_OUT_EXPONENT));
+                }
+                
                 const zIndex = 100 - i;
                 const xPercent = 50 + (pos.x * 10);
 
@@ -226,10 +529,14 @@ export function Timeline3D({ items }: Timeline3DProps) {
                 cardEl.style.opacity = String(opacity);
                 // Important: Use translate3d for hardware acceleration
                 cardEl.style.transform = `translate(-50%, -50%) scale(${scale})`;
+                cardEl.style.filter = `blur(${blur}px)`;
                 cardEl.style.zIndex = String(zIndex);
                 cardEl.style.left = `${xPercent}%`;
                 // Add ring focus class manually if needed, or rely on React state for the ring (less critical if delayed)
-                if (isFocused) {
+                // Card is "focused" when in focus zone OR during focus hold period
+                const isFocusedNow = (distanceZ >= 0 && distanceZ <= FOCUS_DISTANCE) || 
+                                     (distanceZ < 0 && distanceZ >= ZOOM_OUT_START_DISTANCE);
+                if (isFocusedNow) {
                   cardEl.classList.add('ring-2', 'ring-accent/50');
                 } else {
                   cardEl.classList.remove('ring-2', 'ring-accent/50');
@@ -327,7 +634,7 @@ export function Timeline3D({ items }: Timeline3DProps) {
       </div>
 
       {/* Lane Labels */}
-      <div className="absolute top-28 left-0 right-0 flex justify-between px-8 z-20 pointer-events-none">
+      <div className="absolute top-28 left-0 right-0 flex justify-center gap-16 md:gap-24 lg:gap-32 px-8 z-20 pointer-events-none">
         <span className="text-xs font-medium text-muted uppercase tracking-[0.2em]">Projects</span>
         <span className="text-xs font-medium text-muted uppercase tracking-[0.2em]">Experience</span>
         <span className="text-xs font-medium text-muted uppercase tracking-[0.2em]">Activities</span>
