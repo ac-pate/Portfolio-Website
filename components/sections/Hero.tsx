@@ -134,35 +134,30 @@ export function Hero() {
                 {/* Video Background */}
                 <div className="absolute inset-0 z-0">
                     {shouldLoadVideo ? (
-                        <video
-                            ref={videoRef}
+                    <video
+                        ref={videoRef}
                             className={`absolute inset-0 h-full w-full object-cover opacity-50 transition-opacity duration-500 ${
                                 videoLoaded ? 'opacity-50' : 'opacity-0'
                             }`}
-                            autoPlay
-                            muted
-                            loop
-                            playsInline
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
                             preload="metadata" // Only loads metadata, not full video
+                            crossOrigin="anonymous" // Required for external video sources
                             poster="/images/hero/video-poster.jpg" // Show poster while loading (create this)
-                            style={{
-                                willChange: 'transform',
+                        style={{
+                            willChange: 'transform',
                                 transform: 'translateZ(0)', // HW acceleration
                                 objectFit: 'cover',
                                 // Additional performance optimizations
                                 backfaceVisibility: 'hidden',
                                 WebkitBackfaceVisibility: 'hidden',
-                            }}
-                        >
+                        }}
+                    >
                             {/* WebM format (better compression) - add if available */}
-                            {/* Cloudflare R2 video URL */}
-                            <source 
-                                src={'https://pub-e409e5e1999e4558a5a5110fa35d2df9.r2.dev/portfolio/hero_bg_1.mp4'} 
-                                type="video/mp4" 
-                            />
-                            {/* Fallback MP4 if needed */}
-                            {/* <source src="/videos/hero_bg_1.mp4" type="video/mp4" /> */}
-                        </video>
+                            <source src="/videos/hero_bg_1_1080p.mp4" type="video/mp4" />
+                    </video>
                     ) : (
                         // Placeholder while video loads
                         <div className="absolute inset-0 bg-gradient-to-br from-background via-background-secondary to-background" />
