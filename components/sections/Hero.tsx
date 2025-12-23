@@ -155,7 +155,12 @@ export function Hero() {
                             }}
                         >
                             {/* WebM format (better compression) - add if available */}
-                            <source src="/videos/hero_bg_1.webm" type="video/webm" />
+                            {/* Cloudflare R2 video URL */}
+                            <source 
+                                src={process.env.NEXT_PUBLIC_VIDEO_URL} 
+                                type="video/mp4" 
+                            />
+                            {/* Fallback MP4 if needed */}
                             {/* <source src="/videos/hero_bg_1.mp4" type="video/mp4" /> */}
                         </video>
                     ) : (
