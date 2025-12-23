@@ -10,6 +10,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { useTheme } from 'next-themes';
 
 interface GrainOverlayProps {
   /** Opacity of the grain overlay (0-1). Default 0.3 for pronounced grain. */
@@ -26,6 +27,10 @@ export function GrainOverlay({
   grainSize = 1000,
 }: GrainOverlayProps) {
   const grainRef = useRef<HTMLDivElement>(null);
+  const { theme, resolvedTheme } = useTheme();
+  
+  // Determine if we're in light mode
+  const isLightMode = resolvedTheme === 'light' || theme === 'light';
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -78,16 +83,16 @@ export function GrainOverlay({
         left: '-50%',
         width: '200vw',
         height: '200vh',
-        backgroundImage: 'url(/noise.png)',
+        backgroundImage: isLightMode ? 'url(/noise_light.png)' : 'url(/noise.png)',
         backgroundRepeat: 'repeat',
         backgroundSize: `${grainSize}px ${grainSize}px`,
         opacity: opacity,
         zIndex: zIndex,
         pointerEvents: 'none',
-        // Using multiply for dark grain, or screen for light grain visible on dark
-        mixBlendMode: 'screen',
+        // Using multiply for light mode, screen for dark mode
+        mixBlendMode: isLightMode ? 'multiply' : 'screen',
         // Add contrast to make grain more pronounced
-        filter: 'contrast(110%) brightness(300%)',
+        filter: isLightMode ? 'contrast(600%) brightness(100%)' : 'contrast(110%) brightness(300%)',
         // filter: 'contrast(100%) brightness(300%)', // medium grain
       }}
     />

@@ -17,6 +17,7 @@ import { useEffect, useRef, useState, useMemo, forwardRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import * as THREE from 'three';
+import { useTheme } from 'next-themes';
 import { TimelineItem } from '@/lib/mdx';
 import { sortTimelineItems, groupItemsByTerm, formatDateRange } from '@/lib/timeline';
 
@@ -51,14 +52,14 @@ const CARD_Z_SPACING = 50; // Distance between consecutive cards
 const CAMERA_START_Z = 5; // Initial camera Z position
 
 // Scroll speed control (increase to slow down animation)
-const SCROLL_DISTANCE_PER_CARD = 500; // Viewport heights (vh) per card (higher = slower)
+const SCROLL_DISTANCE_PER_CARD = 700; // Viewport heights (vh) per card (higher = slower)
 // Each card now takes 500vh of scroll = 5 full viewport heights per card
-const SCROLL_SCRUB_SPEED = 1.5; // Scroll smoothing (higher = more lag, smoother)
+const SCROLL_SCRUB_SPEED = 2.5; // Scroll smoothing (higher = more lag, smoother)
 
 // Card starting properties (when far back, before coming into focus)
 const CARD_START_SCALE = 0.15; // How small cards start (0.15 = 15% size)
 const CARD_START_BLUR = 12; // Blur amount when card is far back (in pixels)
-const CARD_START_OPACITY = 0.3; // Opacity when card is far back (0-1)
+const CARD_START_OPACITY = 0.8; // Opacity when card is far back (0-1)
 
 // Focus zone properties (when card is in focus)
 const FOCUS_DISTANCE = 8; // Distance range where card is in focus (Z units)
@@ -111,6 +112,11 @@ export function Timeline3D({ items }: Timeline3DProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  
+  // Get theme for star color
+  const { theme, resolvedTheme } = useTheme();
+  const isLightMode = resolvedTheme === 'light' || theme === 'light';
+  const starColor = isLightMode ? 0x000000 : 0xffffff; // Black for light mode, white for dark mode
   
   // Refs for Three.js objects
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -234,6 +240,11 @@ export function Timeline3D({ items }: Timeline3DProps) {
     starGeometry.setAttribute('depth', new THREE.BufferAttribute(starDepths, 1));
     
     // Custom shader material for stars with twinkling
+    // Convert star color from hex to RGB (0-1 range) for initial uniform
+    const starColorR = ((starColor >> 16) & 0xff) / 255;
+    const starColorG = ((starColor >> 8) & 0xff) / 255;
+    const starColorB = (starColor & 0xff) / 255;
+    
     const starMaterial = new THREE.ShaderMaterial({
       uniforms: {
         time: { value: 0 },
@@ -241,6 +252,7 @@ export function Timeline3D({ items }: Timeline3DProps) {
         scrollProgress: { value: 0 },
         starfieldDepth: { value: starfieldDepth }, // Pass dynamic depth to shader
         twinkleSpeed: { value: STARFIELD_CONFIG.twinkleSpeed }, // Pass twinkle speed to shader
+        starColor: { value: new THREE.Vector3(starColorR, starColorG, starColorB) }, // Initialize star color
       },
       vertexShader: `
         attribute float size;
@@ -284,6 +296,8 @@ export function Timeline3D({ items }: Timeline3DProps) {
         varying float vOpacity;
         varying float vDepth;
         
+        uniform vec3 starColor;
+        
         void main() {
           // Create circular star shape
           vec2 center = gl_PointCoord - vec2(0.5);
@@ -293,11 +307,15 @@ export function Timeline3D({ items }: Timeline3DProps) {
           float alpha = 1.0 - smoothstep(0.0, 0.5, dist);
           alpha *= vOpacity;
           
-          // Slight color variation based on depth
-          vec3 color = vec3(1.0, 1.0, 1.0);
-          if (vDepth > -50.0) {
-            // Closer stars slightly brighter
-            color = vec3(1.0, 1.0, 0.95);
+          // Use star color from uniform (black for light mode, white for dark mode)
+          vec3 color = starColor;
+          
+          // Slight color variation based on depth (only in dark mode)
+          if (starColor.r > 0.5) { // Only if white (dark mode)
+            if (vDepth > -50.0) {
+              // Closer stars slightly brighter
+              color = vec3(1.0, 1.0, 0.95);
+            }
           }
           
           gl_FragColor = vec4(color, alpha);
@@ -357,7 +375,23 @@ export function Timeline3D({ items }: Timeline3DProps) {
       renderer.dispose();
       scene.clear();
     };
-  }, [isMounted, cardPositions]);
+  }, [isMounted, cardPositions]); // Don't include starColor - update it separately
+
+  // Update star color when theme changes (without recreating the entire scene)
+  useEffect(() => {
+    if (!starfieldRef.current) return;
+    
+    const starMaterial = starfieldRef.current.material as THREE.ShaderMaterial;
+    if (!starMaterial || !starMaterial.uniforms?.starColor) return;
+    
+    // Convert star color from hex to RGB (0-1 range)
+    const starColorR = ((starColor >> 16) & 0xff) / 255;
+    const starColorG = ((starColor >> 8) & 0xff) / 255;
+    const starColorB = (starColor & 0xff) / 255;
+    
+    // Update the uniform
+    starMaterial.uniforms.starColor.value.set(starColorR, starColorG, starColorB);
+  }, [starColor]); // Only update when starColor changes
 
   // Setup GSAP ScrollTrigger for camera movement AND HTML overlay syncing
   useEffect(() => {
@@ -402,6 +436,16 @@ export function Timeline3D({ items }: Timeline3DProps) {
                 const starMaterial = starfieldRef.current.material as THREE.ShaderMaterial;
                 starMaterial.uniforms.scrollProgress.value = progress;
                 starMaterial.uniforms.cameraZ.value = targetZ;
+                
+                // Update star color based on theme (only if uniform exists)
+                if (starMaterial.uniforms.starColor?.value) {
+                  const currentIsLightMode = resolvedTheme === 'light' || theme === 'light';
+                  const currentStarColor = currentIsLightMode ? 0x000000 : 0xffffff;
+                  const starColorR = ((currentStarColor >> 16) & 0xff) / 255;
+                  const starColorG = ((currentStarColor >> 8) & 0xff) / 255;
+                  const starColorB = (currentStarColor & 0xff) / 255;
+                  starMaterial.uniforms.starColor.value.set(starColorR, starColorG, starColorB);
+                }
                 
                 // Recycle stars that pass the camera (infinite starfield)
                 const starGeometry = starfieldRef.current.geometry;

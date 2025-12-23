@@ -155,8 +155,8 @@ export function Hero() {
                             }}
                         >
                             {/* WebM format (better compression) - add if available */}
-                            {/* <source src="/videos/hero_bg_1.webm" type="video/webm" /> */}
-                            <source src="/videos/hero_bg_1.mp4" type="video/mp4" />
+                            <source src="/videos/hero_bg_1.webm" type="video/webm" />
+                            {/* <source src="/videos/hero_bg_1.mp4" type="video/mp4" /> */}
                         </video>
                     ) : (
                         // Placeholder while video loads
