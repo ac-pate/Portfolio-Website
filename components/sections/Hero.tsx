@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowDown, FileText, FolderOpen } from 'lucide-react';
 import Link from 'next/link';
@@ -20,6 +20,53 @@ export function Hero() {
     const contentRef = useRef<HTMLDivElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const overlayRef = useRef<HTMLDivElement>(null);
+    const [videoLoaded, setVideoLoaded] = useState(false);
+    const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
+
+    // Lazy load video - only start loading when component is mounted
+    useEffect(() => {
+        // Small delay to let page render first
+        const timer = setTimeout(() => {
+            setShouldLoadVideo(true);
+        }, 100);
+        return () => clearTimeout(timer);
+    }, []);
+
+    // Optimize video playback
+    useEffect(() => {
+        if (!videoRef.current || !shouldLoadVideo) return;
+
+        const video = videoRef.current;
+        
+        // Set video quality/performance hints
+        video.setAttribute('playsinline', 'true');
+        video.setAttribute('webkit-playsinline', 'true');
+        
+        // Handle video loading
+        const handleCanPlay = () => {
+            setVideoLoaded(true);
+            // Request video frame for smoother playback
+            if (video.requestVideoFrameCallback) {
+                video.requestVideoFrameCallback(() => {
+                    // Video is ready
+                });
+            }
+        };
+
+        video.addEventListener('canplay', handleCanPlay);
+        
+        // Try to play video
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(() => {
+                // Autoplay was prevented, will play on user interaction
+            });
+        }
+
+        return () => {
+            video.removeEventListener('canplay', handleCanPlay);
+        };
+    }, [shouldLoadVideo]);
 
     useEffect(() => {
         if (!heroRef.current || !stickyRef.current || !contentRef.current) return;
@@ -86,28 +133,41 @@ export function Hero() {
             <div ref={stickyRef} className="h-screen w-full overflow-hidden">
                 {/* Video Background */}
                 <div className="absolute inset-0 z-0">
-                    <video
-                        ref={videoRef}
-                        className="absolute inset-0 h-full w-full object-cover opacity-50"
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        preload="auto"
-                        style={{
-                            willChange: 'transform',
-                            transform: 'translateZ(0)' // HW acceleration
-                        }}
-                    >
-                        <source src="/videos/hero_bg_1.mp4" type="video/mp4" />
-                    </video>
+                    {shouldLoadVideo ? (
+                        <video
+                            ref={videoRef}
+                            className={`absolute inset-0 h-full w-full object-cover opacity-50 transition-opacity duration-500 ${
+                                videoLoaded ? 'opacity-50' : 'opacity-0'
+                            }`}
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                            preload="metadata" // Only loads metadata, not full video
+                            poster="/images/hero/video-poster.jpg" // Show poster while loading (create this)
+                            style={{
+                                willChange: 'transform',
+                                transform: 'translateZ(0)', // HW acceleration
+                                objectFit: 'cover',
+                                // Additional performance optimizations
+                                backfaceVisibility: 'hidden',
+                                WebkitBackfaceVisibility: 'hidden',
+                            }}
+                        >
+                            {/* WebM format (better compression) - add if available */}
+                            {/* <source src="/videos/hero_bg_1.webm" type="video/webm" /> */}
+                            <source src="/videos/hero_bg_1.mp4" type="video/mp4" />
+                        </video>
+                    ) : (
+                        // Placeholder while video loads
+                        <div className="absolute inset-0 bg-gradient-to-br from-background via-background-secondary to-background" />
+                    )}
                 </div>
 
                 {/* Dark Overlay for contrast (separate layer to animate out) */}
                 <div 
                     ref={overlayRef}
-                    className="absolute inset-0 z-5 bg-gradient-to-b from-black/80 via-black/20 to-black pointer-events-none" 
-                />
+                    className="absolute inset-0 z-5 bg-gradient-to-b from-black/80 via-black/20 to-black pointer-events-none" />
 
                 {/* 
                     HERO TEXT CONTENT:

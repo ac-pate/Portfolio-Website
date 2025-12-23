@@ -78,7 +78,7 @@ export function GrainOverlay({
         left: '-50%',
         width: '200vw',
         height: '200vh',
-        backgroundImage: 'url(/002.png)',
+        backgroundImage: 'url(/noise.png)',
         backgroundRepeat: 'repeat',
         backgroundSize: `${grainSize}px ${grainSize}px`,
         opacity: opacity,
