@@ -1,10 +1,8 @@
 ---
 title: 6-Axis Robotic Arm
-description: A, 3D-printed, 6-DOF robotic arm with custom cycloidal actuator and
-  build on ROS2 framework to use tool such as Gazebo and Moveit2 along with our
-  custom hardware, URDFs, Controllers interfaces for our custom robot.
-date: 2024-06-01
-endDate: 2025-04-30
+description: A, 3D-printed, 6-DOF robotic arm with custom cycloidal actuator and build on ROS2 framework to use tool such as Gazebo and Moveit2 along with our custom hardware, URDFs, Controllers interfaces for our custom robot.
+startDate: 2024-07-25
+endDate: 2025-04-01
 tags:
   - ROS2
   - Python
@@ -12,12 +10,16 @@ tags:
   - Computer Vision
   - Jetson Nano
   - 3D Printing
-image: /images/uploads/img_9902.jpg
+projectType:
+  - IEEE Concordia
+image: /images/uploads/imrasage.png
+coverImage: /images/uploads/new.png
 github: https://github.com/ieeeconcordia/The-ROS-Robotic-Arm-Project
+demo: ''
 featured: false
 status: completed
+date: 2024-06-01
 ---
-
 ## Overview
 
 Leading a multidisciplinary team of 6 (MECH, ELEC, and SOEN students) in developing a modular, 3D-printed, 6-DOF robotic arm with a custom cycloidal actuator.
@@ -25,23 +27,27 @@ Leading a multidisciplinary team of 6 (MECH, ELEC, and SOEN students) in develop
 ## Technical Details
 
 ### Mechanical Design
+
 - Custom cycloidal actuator design for high torque density
 - Fully 3D-printed modular construction
 - 6 degrees of freedom for full workspace coverage
 - Optimized for repeatability and precision
-### Electronics 
-- CAN bus for robust single serial control of each joint 
+
+### Electronics
+
+- CAN bus for robust single serial control of each joint
 - ESP32 as the main hardware controller
 - Jetson Nano as the solver and Dev Machine
 
-
 ### Software Stack
+
 - ROS2 framework for control and coordination
 - Precise closed-loop controller for each joint
 - Inverse kinematic solver for 3D space retracing
 - End-effector alignment system for precise manipulation
 
 ### Computer Vision Integration
+
 - ML-based object detection using MediaPipe
 - Computer vision running on Jetson Nano
 - Real-time inference optimization for responsive control
@@ -52,4 +58,3 @@ Leading a multidisciplinary team of 6 (MECH, ELEC, and SOEN students) in develop
 - ROS2 setup and architecture decisions
 - Integration of vision and control systems
 - Mentoring team members in robotics software development
-
