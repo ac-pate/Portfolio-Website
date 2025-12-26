@@ -25,6 +25,10 @@ interface Timeline3DProps {
   items: TimelineItem[];
 }
 
+// How long to keep the timeline pinned *after* the camera animation completes,
+// before allowing the next section to wipe over.
+const EXIT_HOLD_VH = 100;
+
 // Lane configuration
 const LANES = {
   project: { x: -2.5, parallaxSpeed: 1.0 },
@@ -58,7 +62,7 @@ const SCROLL_SCRUB_SPEED = 2.5; // Scroll smoothing (higher = more lag, smoother
 
 // Card starting properties (when far back, before coming into focus)
 const CARD_START_SCALE = 0.15; // How small cards start (0.15 = 15% size)
-const CARD_START_BLUR = 12; // Blur amount when card is far back (in pixels)
+const CARD_START_BLUR = 5; // Blur amount when card is far back (in pixels)
 const CARD_START_OPACITY = 0.8; // Opacity when card is far back (0-1)
 
 // Focus zone properties (when card is in focus)
@@ -104,6 +108,7 @@ const STARFIELD_CONFIG = {
 };
 
 export function Timeline3D({ items }: Timeline3DProps) {
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -127,7 +132,7 @@ export function Timeline3D({ items }: Timeline3DProps) {
   const starfieldTimeRef = useRef<number>(0); // For twinkling animation
   const starfieldDepthRef = useRef<number>(300); // Store dynamic starfield depth
   
-  // Sort items by start date (newest first - descending order)
+  // Sort items by term (newest first - descending order: Summer 2025, Winter 2025, Fall 2025, etc.)
   const sortedItems = useMemo(() => sortTimelineItems(items, false), [items]);
   
   // Card positions calculated based on item order
@@ -395,7 +400,7 @@ export function Timeline3D({ items }: Timeline3DProps) {
 
   // Setup GSAP ScrollTrigger for camera movement AND HTML overlay syncing
   useEffect(() => {
-    if (!isMounted || !containerRef.current || !cameraRef.current || cardPositions.length === 0) return;
+    if (!isMounted || !wrapperRef.current || !containerRef.current || !cameraRef.current || cardPositions.length === 0) return;
 
     let ctx: any;
 
@@ -407,34 +412,46 @@ export function Timeline3D({ items }: Timeline3DProps) {
         gsap.registerPlugin(ScrollTrigger);
 
         ctx = gsap.context(() => {
+          const wrapper = wrapperRef.current;
           const container = containerRef.current;
           const camera = cameraRef.current;
-          if (!container || !camera) return;
+          if (!wrapper || !container || !camera) return;
 
           const totalDepth = cardPositions.length * CARD_Z_SPACING;
-          const scrollDistance = cardPositions.length * SCROLL_DISTANCE_PER_CARD; // vh per card
+          const scrollDistanceVh = cardPositions.length * SCROLL_DISTANCE_PER_CARD; // vh per card
+          const totalScrollVh = scrollDistanceVh + EXIT_HOLD_VH;
+          const fadeStart = scrollDistanceVh / totalScrollVh;
 
           ScrollTrigger.create({
-            trigger: container,
+            trigger: wrapper,
             start: 'top top',
-            end: `+=${scrollDistance}vh`,
-            pin: true,
-            pinSpacing: true,
+            end: `+=${totalScrollVh}vh`,
+            pin: container,
+            pinSpacing: false,
             scrub: SCROLL_SCRUB_SPEED,
             onEnter: () => setIsActive(true),
             onLeave: () => setIsActive(false),
             onEnterBack: () => setIsActive(true),
             onLeaveBack: () => setIsActive(false),
             onUpdate: (self: any) => {
-              // Move camera along Z-axis based on scroll progress
+              // While in the EXIT_HOLD_VH window, freeze the camera on the final frame.
               const progress = self.progress;
-              const targetZ = CAMERA_START_Z - (progress * totalDepth);
+              const cameraProgress = Math.min(progress / fadeStart, 1);
+              const targetZ = CAMERA_START_Z - (cameraProgress * totalDepth);
               camera.position.z = targetZ;
+
+              // Fade out during the exit hold so the next section can wipe over.
+              if (progress >= fadeStart) {
+                const fadeT = Math.min(Math.max((progress - fadeStart) / (1 - fadeStart), 0), 1);
+                container.style.opacity = String(1 - fadeT);
+              } else if (container.style.opacity !== '1') {
+                container.style.opacity = '1';
+              }
               
               // Update starfield scroll progress for parallax effect
               if (starfieldRef.current) {
                 const starMaterial = starfieldRef.current.material as THREE.ShaderMaterial;
-                starMaterial.uniforms.scrollProgress.value = progress;
+                starMaterial.uniforms.scrollProgress.value = cameraProgress;
                 starMaterial.uniforms.cameraZ.value = targetZ;
                 
                 // Update star color based on theme (only if uniform exists)
@@ -615,21 +632,27 @@ export function Timeline3D({ items }: Timeline3DProps) {
   const termGroups = useMemo(() => groupItemsByTerm(sortedItems, false), [sortedItems]);
   const termKeys = useMemo(() => {
     const keys = Array.from(termGroups.keys());
-    // Sort in descending order (newest first) using proper date/season logic
+    // Sort in descending order (newest first) - top should be most recent
     return keys.sort((a, b) => {
-      const [aYear, aSeason] = a.split(' ');
-      const [bYear, bSeason] = b.split(' ');
+      // Parse term string (e.g., "Summer 2025" -> [2025, 3])
+      const parseTerm = (termStr: string): [number, number] => {
+        const parts = termStr.trim().split(' ');
+        const season = parts[0]; // "Fall", "Winter", or "Summer"
+        const year = parseInt(parts[1] || '0', 10);
+        const seasonOrder: Record<string, number> = { Fall: 1, Winter: 2, Summer: 3 };
+        return [year, seasonOrder[season] || 0];
+      };
+
+      const [aYear, aSeason] = parseTerm(a);
+      const [bYear, bSeason] = parseTerm(b);
 
       // Compare years first (descending - newer years first)
-      const yearA = parseInt(aYear);
-      const yearB = parseInt(bYear);
-      if (yearA !== yearB) {
-        return yearB - yearA; // Descending order
+      if (aYear !== bYear) {
+        return bYear - aYear; // Descending: 2025 comes before 2024
       }
 
-      // Then compare seasons (descending: Summer > Winter > Fall)
-      const seasonOrder: Record<string, number> = { Fall: 1, Winter: 2, Summer: 3 };
-      return seasonOrder[bSeason] - seasonOrder[aSeason]; // Descending order
+      // Then compare seasons (descending: Summer(3) > Winter(2) > Fall(1))
+      return bSeason - aSeason; // Descending: Summer comes before Winter comes before Fall
     });
   }, [termGroups]);
 
@@ -637,11 +660,14 @@ export function Timeline3D({ items }: Timeline3DProps) {
     return <div className="min-h-screen" />;
   }
 
+  const scrollDistanceVh = sortedItems.length * SCROLL_DISTANCE_PER_CARD;
+  const totalScrollVh = scrollDistanceVh + EXIT_HOLD_VH;
+
   return (
     // SAFETY WRAPPER: Essential for GSAP ScrollTrigger + React
     // This div is never touched by GSAP, giving React a stable handle to unmount.
     // The inner div (containerRef) gets wrapped/pinned by GSAP.
-    <div className="relative w-full"> 
+    <div ref={wrapperRef} className="relative w-full" style={{ height: `${totalScrollVh}vh` }}> 
       <div
         ref={containerRef}
         className="relative w-full h-screen overflow-hidden bg-background"
@@ -678,7 +704,7 @@ export function Timeline3D({ items }: Timeline3DProps) {
       </div>
 
       {/* Lane Labels */}
-      <div className="absolute top-28 left-0 right-0 flex justify-center gap-16 md:gap-24 lg:gap-32 px-8 z-20 pointer-events-none">
+      <div className="absolute top-40 md:top-44 lg:top-48 left-0 right-0 flex justify-center gap-16 md:gap-24 lg:gap-32 px-8 z-20 pointer-events-none">
         <span className="text-xs font-medium text-muted uppercase tracking-[0.2em]">Projects</span>
         <span className="text-xs font-medium text-muted uppercase tracking-[0.2em]">Experience</span>
         <span className="text-xs font-medium text-muted uppercase tracking-[0.2em]">Activities</span>
@@ -729,7 +755,7 @@ interface TimelineCard3DProps {
 
 // ForwardRef is crucial for the performance optimization!
 const TimelineCard3D = forwardRef<HTMLAnchorElement, TimelineCard3DProps>(({ item, style, isFocused }, ref) => {
-  const dateRange = formatDateRange(item.date, item.endDate);
+  const dateRange = item.date ? formatDateRange(item.date, item.endDate) : '';
   const link = item.link || '#';
 
   const typeColors: Record<string, string> = {
@@ -840,17 +866,12 @@ interface TimelineIndicatorProps {
 }
 
 function TimelineIndicator({ termKeys, currentIndex, items, isActive }: TimelineIndicatorProps) {
-  // Get current item's term
+  // Get current item's term (using term property directly, not calculated from date)
+  // NOTE: Date-based term calculation is not being used anymore
   const getCurrentTerm = () => {
     const item = items[currentIndex];
     if (!item) return '';
-    const date = new Date(item.date);
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    
-    if (month >= 9 && month <= 12) return `Fall ${year}`;
-    if (month >= 1 && month <= 4) return `Winter ${year}`;
-    return `Summer ${year}`;
+    return item.term || ''; // Use term property directly
   };
 
   const currentTerm = getCurrentTerm();

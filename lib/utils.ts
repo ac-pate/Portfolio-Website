@@ -57,6 +57,11 @@ export interface AcademicTerm {
   endDate: Date;
 }
 
+/**
+ * NOTE: This function is NOT being used anymore.
+ * Terms are now provided directly via the 'term' property in frontmatter (e.g., "Fall 2025").
+ * Keeping this function for backward compatibility, but it's not used for term calculation.
+ */
 export function getAcademicTerm(dateString: string): AcademicTerm {
   const date = new Date(dateString);
   const year = date.getFullYear();
@@ -70,18 +75,18 @@ export function getAcademicTerm(dateString: string): AcademicTerm {
   if (month >= 9 && month <= 12) {
     // Fall: September - December
     term = 'Fall';
-    startDate = new Date(year, 8, 1); // September 1
-    endDate = new Date(year, 11, 31); // December 31
+    startDate = new Date(Date.UTC(year, 8, 1)); // September 1 (UTC)
+    endDate = new Date(Date.UTC(year, 11, 31)); // December 31 (UTC)
   } else if (month >= 1 && month <= 4) {
     // Winter: January - April
     term = 'Winter';
-    startDate = new Date(year, 0, 1); // January 1
-    endDate = new Date(year, 3, 30); // April 30
+    startDate = new Date(Date.UTC(year, 0, 1)); // January 1 (UTC)
+    endDate = new Date(Date.UTC(year, 3, 30)); // April 30 (UTC)
   } else {
     // Summer: May - August
     term = 'Summer';
-    startDate = new Date(year, 4, 1); // May 1
-    endDate = new Date(year, 7, 31); // August 31
+    startDate = new Date(Date.UTC(year, 4, 1)); // May 1 (UTC)
+    endDate = new Date(Date.UTC(year, 7, 31)); // August 31 (UTC)
   }
 
   return {
@@ -94,44 +99,106 @@ export function getAcademicTerm(dateString: string): AcademicTerm {
 }
 
 /**
- * Formats an academic term date range
+ * Formats an academic term date range from a term label (e.g., "Winter 2025")
+ * This calculates the correct date range based on the term, not from a date
  */
-export function formatAcademicTermDateRange(termInfo: AcademicTerm): string {
-  const startFormatted = formatDate(termInfo.startDate.toISOString().split('T')[0]);
-  const endFormatted = formatDate(termInfo.endDate.toISOString().split('T')[0]);
+export function formatAcademicTermDateRangeFromLabel(termLabel: string): string {
+  const [season, yearStr] = termLabel.trim().split(' ');
+  const year = parseInt(yearStr || '0', 10);
+  
+  let startMonth: number, endMonth: number;
+  
+  if (season === 'Fall') {
+    // Fall: September - December
+    startMonth = 8; // September (0-indexed)
+    endMonth = 11; // December (0-indexed)
+  } else if (season === 'Winter') {
+    // Winter: January - April
+    startMonth = 0; // January (0-indexed)
+    endMonth = 3; // April (0-indexed)
+  } else {
+    // Summer: May - August
+    startMonth = 4; // May (0-indexed)
+    endMonth = 7; // August (0-indexed)
+  }
+  
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+  const startFormatted = `${monthNames[startMonth]} ${year}`;
+  const endFormatted = `${monthNames[endMonth]} ${year}`;
+  
   return `${startFormatted} — ${endFormatted}`;
 }
 
 /**
- * Groups items by academic term
+ * Formats an academic term date range (legacy function, kept for backward compatibility)
  */
-export function groupByAcademicTerm<T>(
+export function formatAcademicTermDateRange(termInfo: AcademicTerm): string {
+  // Format dates directly from the Date objects to avoid timezone issues
+  const startMonth = termInfo.startDate.getUTCMonth(); // 0-11
+  const startYear = termInfo.startDate.getUTCFullYear();
+  const endMonth = termInfo.endDate.getUTCMonth(); // 0-11
+  const endYear = termInfo.endDate.getUTCFullYear();
+  
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+  const startFormatted = `${monthNames[startMonth]} ${startYear}`;
+  const endFormatted = `${monthNames[endMonth]} ${endYear}`;
+  
+  return `${startFormatted} — ${endFormatted}`;
+}
+
+/**
+ * Parses term string (e.g., "Fall 2025") into [year, season]
+ */
+function parseTermString(term: string): [number, string] {
+  const parts = term.trim().split(' ');
+  const season = parts[0]; // "Fall", "Winter", or "Summer"
+  const year = parseInt(parts[1] || '0', 10);
+  return [year, season];
+}
+
+/**
+ * Groups items by academic term
+ * Now uses the 'term' property from items instead of calculating from dates
+ * NOTE: Date-based term calculation (getAcademicTerm) is not being used anymore
+ */
+export function groupByAcademicTerm<T extends { frontmatter: { term: string } }>(
   items: T[],
-  getDate: (item: T) => string
+  getDate?: (item: T) => string // Optional - kept for backward compatibility but not used
 ): Map<string, T[]> {
   const grouped = new Map<string, T[]>();
 
   items.forEach((item) => {
-    const date = getDate(item);
-    const term = getAcademicTerm(date);
-    const key = `${term.term} ${term.year}`;
+    const termKey = item.frontmatter.term; // Use term directly from frontmatter
 
-    if (!grouped.has(key)) {
-      grouped.set(key, []);
+    if (!termKey) {
+      console.warn('Item missing term property:', item);
+      return;
     }
-    grouped.get(key)!.push(item);
+
+    if (!grouped.has(termKey)) {
+      grouped.set(termKey, []);
+    }
+
+    grouped.get(termKey)!.push(item);
   });
 
-  // Sort terms: most recent first
+  // Sort terms: most recent first (latest to oldest)
+  // Order: Fall (ends latest in year) > Summer > Winter (ends earliest in year)
   const sortedMap = new Map(
     Array.from(grouped.entries()).sort((a, b) => {
-      const termA = getAcademicTerm(getDate(a[1][0]));
-      const termB = getAcademicTerm(getDate(b[1][0]));
-      if (termA.year !== termB.year) {
-        return termB.year - termA.year;
+      const [aYear, aSeason] = parseTermString(a[0]);
+      const [bYear, bSeason] = parseTermString(b[0]);
+
+      if (aYear !== bYear) {
+        return bYear - aYear; // Newer year first
       }
-      const order = { Fall: 3, Winter: 2, Summer: 1 };
-      return order[termB.term] - order[termA.term];
+
+      // For same year: Fall (3) > Summer (2) > Winter (1) - because Fall ends latest
+      // We want Fall first, then Summer, then Winter (latest to oldest)
+      const order = { Fall: 3, Summer: 2, Winter: 1 };
+      // In sort: negative means a comes before b
+      // We want Fall (3) before Winter (1), so: order[Winter] - order[Fall] = 1 - 3 = -2 (negative) ✓
+      return order[bSeason as keyof typeof order] - order[aSeason as keyof typeof order];
     })
   );
 

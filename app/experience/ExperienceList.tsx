@@ -3,18 +3,15 @@
 import { motion } from 'framer-motion';
 import { ExperienceCard } from '@/components/ui/ExperienceCard';
 import type { ContentItem, JobFrontmatter } from '@/lib/mdx';
-import { groupByAcademicTerm, getAcademicTerm, formatAcademicTermDateRange } from '@/lib/utils';
+import { groupByAcademicTerm, formatAcademicTermDateRangeFromLabel } from '@/lib/utils';
 
 interface ExperienceListProps {
   jobs: ContentItem<JobFrontmatter>[];
 }
 
 export function ExperienceList({ jobs }: ExperienceListProps) {
-  // Group jobs by academic term
-  const groupedJobs = groupByAcademicTerm(
-    jobs,
-    (j) => j.frontmatter.startDate
-  );
+  // Group jobs by academic term (uses term property from frontmatter, not dates)
+  const groupedJobs = groupByAcademicTerm(jobs);
 
   return (
     <div className="pt-24 pb-16">
@@ -25,7 +22,7 @@ export function ExperienceList({ jobs }: ExperienceListProps) {
           transition={{ duration: 0.5 }}
           className="mb-12"
         >
-          <h1 className="text-display-md md:text-display-lg font-display font-bold text-foreground mb-4">
+          <h1 className="text-display-md md:text-display-lg font-display font-bold text-foreground mb-4 uppercase">
             Experience<span className="text-accent">.</span>
           </h1>
           <p className="text-lg text-foreground-secondary max-w-2xl">
@@ -35,16 +32,14 @@ export function ExperienceList({ jobs }: ExperienceListProps) {
 
         {groupedJobs.size > 0 ? (
           Array.from(groupedJobs.entries()).map(([termLabel, termJobs]) => {
-            // Get term date range for display
-            const firstJob = termJobs[0];
-            const termInfo = getAcademicTerm(firstJob.frontmatter.startDate);
-            const termDateRange = formatAcademicTermDateRange(termInfo);
+            // Get term date range for display based on the term label itself
+            const termDateRange = formatAcademicTermDateRangeFromLabel(termLabel);
             
             return (
               <section key={termLabel} className="mb-16">
                 <div className="mb-6">
-                  <h2 className="text-xl font-display font-semibold text-foreground mb-1">
-                    {termLabel} ({termDateRange})
+                  <h2 className="text-4xl font-display font-bold text-foreground mb-1">
+                    {termLabel}{termDateRange ? ` (${termDateRange})` : ''}
                   </h2>
                   <p className="text-sm text-foreground-secondary">
                     {termJobs.length} {termJobs.length === 1 ? 'Position' : 'Positions'}

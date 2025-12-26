@@ -13,6 +13,7 @@ import Image from 'next/image';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import GlowWrapper from '@/components/ui/GlowWrapper';
+import { useSound } from '@/components/providers/SoundProvider';
 
 // Helper to check if image is a GIF
 const isGif = (src?: string) => src?.toLowerCase().endsWith('.gif') ?? false;
@@ -55,9 +56,14 @@ export function ContentCard({
   className,
 }: ContentCardProps) {
   const imageIsGif = image?.src ? isGif(image.src) : false;
+  const { playHoverSound, stopHoverSound } = useSound();
 
   return (
-    <div className={cn('group relative h-full', className)}>
+    <div 
+      className={cn('group relative h-full', className)} 
+      onMouseEnter={playHoverSound}
+      onMouseLeave={stopHoverSound}
+    >
       {linkWrapper(
         <GlowWrapper className="rounded-2xl h-full" preset="card">
           <div className="relative h-full rounded-2xl border border-transparent bg-background-secondary/50 transition-all duration-300 glass overflow-hidden flex">

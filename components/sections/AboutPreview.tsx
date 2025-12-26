@@ -32,7 +32,7 @@ export function AboutPreview() {
       scrollTrigger: {
         trigger: sectionRef.current,
         start: 'top top',
-        end: '+=100%',
+        end: '+=300%',
         pin: stickyRef.current,
         pinSpacing: false, 
         scrub: true,

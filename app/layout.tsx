@@ -10,31 +10,14 @@
  * - Global Components: Navbar, Footer, GrainOverlay
  */
 import type { Metadata } from 'next';
-import { Space_Grotesk, Inter, JetBrains_Mono } from 'next/font/google';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
+import { SoundProvider } from '@/components/providers/SoundProvider';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { GrainOverlay } from '@/components/ui/GrainOverlay';
 import { siteConfig } from '@/lib/config';
+import { inter, jetbrainsMono, spaceGrotesk } from '@/lib/fonts';
 import './globals.css';
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-geist-sans',
-  display: 'swap',
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-geist-mono',
-  display: 'swap',
-});
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
-  variable: '--font-space-grotesk',
-  display: 'swap',
-});
 
 export const metadata: Metadata = {
   title: {
@@ -93,11 +76,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="relative min-h-screen flex flex-col">
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
+          <SoundProvider>
+            <div className="relative min-h-screen flex flex-col">
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+          </SoundProvider>
         </ThemeProvider>
         {/* Film grain overlay - MUST be last element and outside ThemeProvider for highest z-index */}
         <GrainOverlay opacity={0.12} zIndex={99999} />

@@ -1,147 +1,147 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { Timeline3D } from '@/components/ui/Timeline3D';
 import { TimelineStatic } from '@/components/ui/TimelineStatic';
 import type { TimelineItem } from '@/lib/mdx';
 
+// Ensure ScrollTrigger is registered
+if (typeof window !== 'undefined') {
+	gsap.registerPlugin(ScrollTrigger);
+}
+
+const EXIT_HOLD_VH = 100;
+
 interface TimelineSectionProps {
-  items: TimelineItem[];
+	items: TimelineItem[];
 }
 
-/**
- * TimelineSection Component
- * 
- * Portfolio timeline with two modes:
- * 
- * DYNAMIC (default): 3D camera-movement experience using Three.js
- *   - Camera moves through space toward stationary cards
- *   - Three lanes: Projects, Experience, Activities
- *   - Parallax scrolling effect
- * 
- * STATIC: Traditional three-column list grouped by academic term
- *   - Projects | Experience | Activities columns
- *   - Grouped by: Fall 2024, Winter 2025, Summer 2025, etc.
- */
 export function TimelineSection({ items }: TimelineSectionProps) {
-  const [isDynamic, setIsDynamic] = useState(true);
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
+	const [variant, setVariant] = useState<'3d' | 'static'>('3d');
 
-  useEffect(() => {
-    const setupScrollObserver = async () => {
-      const { default: gsap } = await import('gsap');
-      const { default: ScrollTrigger } = await import('gsap/ScrollTrigger');
-      gsap.registerPlugin(ScrollTrigger);
+	// Static view fallback for reduced motion / small screens.
+	useEffect(() => {
+		if (typeof window === 'undefined') return;
 
-      if (sectionRef.current) {
-        // Observer for the toggle button visibility
-        ScrollTrigger.create({
-          trigger: sectionRef.current,
-          start: 'top 60%', 
-          end: 'bottom 20%',
-          onEnter: () => setIsVisible(true),
-          onLeave: () => setIsVisible(false),
-          onEnterBack: () => setIsVisible(true),
-          onLeaveBack: () => setIsVisible(false),
-        });
-      }
-    };
+		const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+		const smallScreen = window.matchMedia?.('(max-width: 768px)');
 
-    setupScrollObserver();
-  }, []);
+		const compute = () => {
+			const shouldStatic = Boolean(reduceMotion?.matches || smallScreen?.matches);
+			setVariant(shouldStatic ? 'static' : '3d');
+		};
 
-  if (items.length === 0) {
-    return (
-      <section id="timeline" className="py-24 md:py-32 bg-background">
-        <div className="section-container">
-          <SectionHeading
-            title="Journey"
-            subtitle="My path through education, work, and projects."
-          />
-          <div className="text-center py-16">
-            <p className="text-foreground-secondary">
-              Timeline items coming soon. Check back later!
-            </p>
-          </div>
-        </div>
-      </section>
-    );
-  }
+		compute();
+		reduceMotion?.addEventListener?.('change', compute);
+		smallScreen?.addEventListener?.('change', compute);
+		return () => {
+			reduceMotion?.removeEventListener?.('change', compute);
+			smallScreen?.removeEventListener?.('change', compute);
+		};
+	}, []);
 
-  return (
-    <section 
-      ref={sectionRef} 
-      id="timeline" 
-      className="relative min-h-screen bg-background z-40"
-    >
-      <div className="w-full h-full">
-        {/* View Toggle Button - Minimal text button with glow */}
-        <ViewToggle 
-          isDynamic={isDynamic} 
-          isVisible={isVisible} 
-          onToggle={() => setIsDynamic(!isDynamic)} 
-        />
+	// GSAP pin/wipe for the STATIC variant.
+	const sectionRef = useRef<HTMLElement>(null);
+	const stickyRef = useRef<HTMLDivElement>(null);
+	const scrollContentRef = useRef<HTMLDivElement>(null);
 
-        {/* Dynamic 3D View or Static View */}
-        {isDynamic ? (
-          <Timeline3D items={items} />
-        ) : (
-          <TimelineStatic items={items} />
-        )}
-      </div>
-    </section>
-  );
+	useEffect(() => {
+		if (variant !== 'static') return;
+		if (!sectionRef.current || !stickyRef.current || !scrollContentRef.current) return;
+
+		const sectionEl = sectionRef.current;
+		const stickyEl = stickyRef.current;
+		const contentEl = scrollContentRef.current;
+
+		const setup = () => {
+			const viewportH = window.innerHeight;
+			const holdPx = (EXIT_HOLD_VH / 100) * viewportH;
+			const contentH = contentEl.scrollHeight;
+			const scrollable = Math.max(0, contentH - viewportH);
+			const totalPx = scrollable + holdPx;
+			const fadeStart = totalPx === 0 ? 0 : scrollable / totalPx;
+			const fadeDur = totalPx === 0 ? 1 : holdPx / totalPx;
+
+			const tl = gsap.timeline({
+				scrollTrigger: {
+					trigger: sectionEl,
+					start: 'top top',
+					end: `+=${totalPx}`,
+					pin: stickyEl,
+					pinSpacing: false,
+					scrub: true,
+					invalidateOnRefresh: true,
+				},
+			});
+
+			if (scrollable > 0) {
+				tl.to(contentEl, {
+					y: -scrollable,
+					ease: 'none',
+					duration: fadeStart,
+				});
+			}
+
+			tl.to(
+				stickyEl,
+				{
+					opacity: 0,
+					ease: 'power1.in',
+					duration: fadeDur,
+				},
+				fadeStart
+			);
+
+			return tl;
+		};
+
+		const tl = setup();
+		const onRefresh = () => {
+			tl.scrollTrigger?.kill();
+			tl.kill();
+			setup();
+		};
+
+		ScrollTrigger.addEventListener('refreshInit', onRefresh);
+		ScrollTrigger.refresh();
+
+		return () => {
+			ScrollTrigger.removeEventListener('refreshInit', onRefresh);
+			if (tl.scrollTrigger) tl.scrollTrigger.kill();
+			tl.kill();
+		};
+	}, [variant, items]);
+
+	return (
+		<section
+			ref={sectionRef}
+			id="timeline"
+			className="relative bg-background z-40"
+		>
+			{variant === '3d' ? (
+				<div className="relative">
+					<div className="pointer-events-none absolute top-0 left-0 right-0 z-30 px-4 sm:px-6 lg:px-8">
+						<div className="max-w-7xl mx-auto pt-16">
+							<SectionHeading
+								title="Journey"
+								subtitle="My path through education, work, and projects."
+							/>
+						</div>
+					</div>
+					<Timeline3D items={items} />
+				</div>
+			) : (
+				<div ref={stickyRef} className="h-screen w-full overflow-hidden">
+					<div ref={scrollContentRef} className="w-full">
+						<TimelineStatic items={items} />
+					</div>
+				</div>
+			)}
+		</section>
+	);
 }
 
-/**
- * ViewToggle - Minimal reactive text button
- * Positioned on the right side above the scroll indicator
- */
-interface ViewToggleProps {
-  isDynamic: boolean;
-  isVisible: boolean;
-  onToggle: () => void;
-}
-
-function ViewToggle({ isDynamic, isVisible, onToggle }: ViewToggleProps) {
-  return (
-    <div 
-      className={`
-        fixed right-8 top-[40%] z-[100] transition-all duration-500 transform
-        ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0 pointer-events-none'}
-      `}
-    >
-      <button
-        onClick={onToggle}
-        className="
-          flex items-center gap-2 px-4 py-2
-          text-[10px] font-bold uppercase tracking-widest
-          bg-background/80 backdrop-blur-md
-          border border-border/50 rounded-lg
-          transition-all duration-300
-          hover:border-accent hover:text-accent
-          hover:shadow-[0_0_20px_rgba(var(--accent-rgb),0.5)]
-          group
-        "
-        aria-label={`Switch to ${isDynamic ? 'list' : '3D'} view`}
-      >
-        <span>{isDynamic ? 'List View' : '3D View'}</span>
-        
-        {/* Simple icon that changes */}
-        <span className="text-accent group-hover:scale-110 transition-transform">
-          {isDynamic ? (
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
-          ) : (
-            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
-            </svg>
-          )}
-        </span>
-      </button>
-    </div>
-  );
-}

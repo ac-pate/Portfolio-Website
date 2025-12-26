@@ -8,6 +8,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { siteConfig } from '@/lib/config';
 import GlowWrapper from '@/components/ui/GlowWrapper';
+import { useSound } from '@/components/providers/SoundProvider';
 
 // Ensure ScrollTrigger is registered
 if (typeof window !== 'undefined') {
@@ -22,6 +23,7 @@ export function Hero() {
     const overlayRef = useRef<HTMLDivElement>(null);
     const [videoLoaded, setVideoLoaded] = useState(false);
     const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
+    const { fadeBackgroundAudio } = useSound();
 
     // Lazy load video - only start loading when component is mounted
     useEffect(() => {
@@ -55,6 +57,9 @@ export function Hero() {
 
         video.addEventListener('canplay', handleCanPlay);
         
+        // Set initial video volume to 0 (will be controlled by GSAP)
+        video.volume = 0;
+        
         // Try to play video
         const playPromise = video.play();
         if (playPromise !== undefined) {
@@ -69,13 +74,28 @@ export function Hero() {
     }, [shouldLoadVideo]);
 
     useEffect(() => {
-        if (!heroRef.current || !stickyRef.current || !contentRef.current) return;
+        if (!heroRef.current || !stickyRef.current || !contentRef.current || !videoRef.current || !overlayRef.current) return;
 
-        // Total scroll distance is 300vh (height of heroRef)
+        // Find navbar element
+        const navbarElement = document.querySelector('[data-navbar="main"]') as HTMLElement;
+        if (!navbarElement) {
+            // If navbar not found, continue without navbar animation
+            console.warn('Navbar element not found for animation');
+        }
+
+        // Set initial states via GSAP (not className) to ensure GSAP has full control
+        gsap.set(videoRef.current, { opacity: 0.5 }); // Start at 50% opacity
+        gsap.set(overlayRef.current, { opacity: 1 }); // Start overlay visible
+        gsap.set(contentRef.current, { opacity: 1 }); // Start content visible
+        if (navbarElement) {
+            gsap.set(navbarElement, { opacity: 1 }); // Start navbar visible
+        }
+
+        // Total scroll distance is 400vh (height of heroRef)
         // This provides 3 phases:
-        // 1. 0-100vh: Hero Text Wipes Out
-        // 2. 100-200vh: Video Hold (Nothing else visible)
-        // 3. 200-300vh: About Me Wipes In (covers the video)
+        // 1. 0-100vh: Hero Text Wipes Out + Overlay fades
+        // 2. 100-300vh: Video Hold (Video stays at full opacity for 200vh, Navbar fades out)
+        // 3. 300-400vh: About Me Wipes In (covers the video, Navbar fades back in)
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: heroRef.current,
@@ -88,42 +108,123 @@ export function Hero() {
             },
         });
 
-        // Phase 1: Text Disappears (0 to 1/3 of the 300vh scroll)
-        tl.to([contentRef.current, overlayRef.current], {
+        // Phase 1: Text Disappears + Overlay fades (0 to 100vh = 1/4 of the 400vh scroll)
+        tl.to(contentRef.current, {
             opacity: 0,
-            y: (index) => index === 0 ? -100 : 0, // Only translate text, not full-screen overlay
+            y: -100,
             duration: 1, 
             ease: 'none',
-        });
+        }, 0);
+        
+        // Fade out overlay in parallel with text
+        tl.to(overlayRef.current, {
+            opacity: 0,
+            duration: 1,
+            ease: 'none',
+        }, 0);
 
-        // Phase 2: Video Hold (1/3 to 2/3 of the scroll)
-        // Video stays visually frozen while user scrolls through empty space
-        // Return video to full opacity during this phase
+        // Phase 2: Video goes to full opacity and stays, Navbar fades out (100vh to 300vh = 200vh = 1/2 of the scroll)
+        // Start slightly before Phase 1 ends for smoothness
         tl.to(videoRef.current, {
             opacity: 1,
-            duration: 1,
+            duration: 2, // 200vh duration (half of 400vh total)
             ease: 'power2.inOut'
-        }, "-=0.5"); // Start slightly before Phase 1 ends for smoothness
+        }, "-=0.5");
+        
+        // Fade out navbar during Phase 2 (starts at beginning of Phase 2)
+        if (navbarElement) {
+            tl.to(navbarElement, {
+                opacity: 0,
+                duration: 0.5, // Quick fade out at start of Phase 2
+                ease: 'power2.inOut'
+            }, "1"); // Start at position 1 (beginning of Phase 2)
+        }
+        
+        // Audio transitions at Phase 2 start (position 1)
+        // Fade out background audio and fade in video audio
+        tl.add(() => {
+            if (videoRef.current) {
+                // Fade out background audio
+                fadeBackgroundAudio(0, 500);
+                
+                // Unmute and fade in video audio
+                videoRef.current.muted = false;
+                const videoVolume = { value: 0 };
+                gsap.to(videoVolume, {
+                    value: 1,
+                    duration: 1,
+                    ease: 'power2.inOut',
+                    onUpdate: () => {
+                        if (videoRef.current) {
+                            videoRef.current.volume = videoVolume.value;
+                        }
+                    }
+                });
+            }
+        }, "1");
 
-        // Phase 3: Transition (2/3 to 3/3)
-        // This phase is where the next section (starting at 300vh) moves from 100vh to 0vh
+        // Phase 3: Transition, Navbar fades back in (300vh to 400vh = 100vh = 1/4 of the scroll)
+        // This phase is where the next section (starting at 400vh) moves from 100vh to 0vh
         tl.to({}, { duration: 1 });
+        
+        // Fade in navbar at start of Phase 3
+        if (navbarElement) {
+            tl.to(navbarElement, {
+                opacity: 1,
+                duration: 0.5, // Quick fade in at start of Phase 3
+                ease: 'power2.inOut'
+            }, "<"); // Start at the same time as Phase 3 (when next section starts wiping up)
+        }
+        
+        // Audio transitions at Phase 3 start (position 3)
+        // Fade out video audio and fade in background audio
+        tl.add(() => {
+            if (videoRef.current) {
+                // Fade out video audio
+                const videoVolume = { value: videoRef.current.volume };
+                gsap.to(videoVolume, {
+                    value: 0,
+                    duration: 0.5,
+                    ease: 'power2.inOut',
+                    onUpdate: () => {
+                        if (videoRef.current) {
+                            videoRef.current.volume = videoVolume.value;
+                        }
+                    },
+                    onComplete: () => {
+                        // Mute video after fade out
+                        if (videoRef.current) {
+                            videoRef.current.muted = true;
+                        }
+                    }
+                });
+                
+                // Fade in background audio
+                fadeBackgroundAudio(0.1, 500);
+            }
+        }, "<");
 
         return () => {
             if (tl.scrollTrigger) tl.scrollTrigger.kill();
             tl.kill();
         };
-    }, []);
+    }, [videoLoaded, fadeBackgroundAudio]); // Re-run when video loads to ensure refs are ready
 
     return (
         /* 
           HERO TRACK:
           Provides the scroll length for pinning. 
-          Height is 300vh to accommodate text exit, hold, and wipe entry.
+          Height is 400vh to accommodate text exit, video hold (200vh), and wipe entry.
+          
+          SCROLL DISTANCE CONTROL:
+          - h-[400vh] on line 143 controls the total scroll distance
+          - This creates a 400vh (4 viewport heights) scroll track
+          - GSAP ScrollTrigger uses this height to determine animation phases
+          - Phase 1: 100vh (text/overlay fade), Phase 2: 200vh (video at full opacity), Phase 3: 100vh (transition)
         */
         <section 
             ref={heroRef} 
-            className="relative h-[300vh] w-full bg-black z-0"
+            className="relative h-[400vh] w-full bg-black z-0"
             id="hero"
         >
             {/* 
@@ -136,27 +237,27 @@ export function Hero() {
                     {shouldLoadVideo ? (
                     <video
                         ref={videoRef}
-                            className={`absolute inset-0 h-full w-full object-cover opacity-50 transition-opacity duration-500 ${
-                                videoLoaded ? 'opacity-50' : 'opacity-0'
-                            }`}
+                        className={`absolute inset-0 h-full w-full object-cover ${
+                            videoLoaded ? '' : 'opacity-0'
+                        }`}
                         autoPlay
                         muted
                         loop
                         playsInline
-                            preload="metadata" // Only loads metadata, not full video
-                            crossOrigin="anonymous" // Required for external video sources
-                            poster="/images/hero/video-poster.jpg" // Show poster while loading (create this)
+                        preload="metadata" // Only loads metadata, not full video
+                        crossOrigin="anonymous" // Required for external video sources
+                        poster="/images/hero/video-poster.jpg" // Show poster while loading (create this)
                         style={{
-                            willChange: 'transform',
-                                transform: 'translateZ(0)', // HW acceleration
-                                objectFit: 'cover',
-                                // Additional performance optimizations
-                                backfaceVisibility: 'hidden',
-                                WebkitBackfaceVisibility: 'hidden',
+                            willChange: 'opacity, transform',
+                            transform: 'translateZ(0)', // HW acceleration
+                            objectFit: 'cover',
+                            // Additional performance optimizations
+                            backfaceVisibility: 'hidden',
+                            WebkitBackfaceVisibility: 'hidden',
                         }}
                     >
-                            {/* WebM format (better compression) - add if available */}
-                            <source src="/videos/hero_bg_1_1080p.mp4" type="video/mp4" />
+                        {/* WebM format (better compression) - add if available */}
+                        <source src="/videos/hero_bg_1_1080p.mp4" type="video/mp4" />
                     </video>
                     ) : (
                         // Placeholder while video loads
@@ -167,7 +268,7 @@ export function Hero() {
                 {/* Dark Overlay for contrast (separate layer to animate out) */}
                 <div 
                     ref={overlayRef}
-                    className="absolute inset-0 z-5 bg-gradient-to-b from-black/80 via-black/20 to-black pointer-events-none" />
+                    className="absolute inset-0 z-[5] bg-gradient-to-b from-black/80 via-black/20 to-black pointer-events-none" />
 
                 {/* 
                     HERO TEXT CONTENT:

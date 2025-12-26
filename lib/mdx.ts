@@ -22,9 +22,10 @@ const contentDirectory = path.join(process.cwd(), 'content');
 
 export interface ProjectFrontmatter {
   title: string;
-  description: string;
-  startDate: string;
-  endDate?: string;
+  term: string; // Academic term (e.g., "Fall 2025", "Winter 2024")
+  description?: string; // Optional body/description
+  startDate?: string; // Optional - not used for term calculation
+  endDate?: string; // Optional - not used for term calculation
   tags: string[];
   image?: string;
   coverImage?: string;
@@ -39,10 +40,11 @@ export interface ProjectFrontmatter {
 export interface JobFrontmatter {
   title: string;
   company: string;
+  term: string; // Academic term (e.g., "Fall 2025", "Winter 2024")
   location: string;
-  startDate: string;
-  endDate?: string;
-  description: string;
+  startDate?: string; // Optional - not used for term calculation
+  endDate?: string; // Optional - not used for term calculation
+  description?: string; // Optional body/description
   technologies?: string[];
   type?: 'full-time' | 'part-time' | 'internship' | 'contract';
   image?: string;
@@ -54,9 +56,10 @@ export interface JobFrontmatter {
 export interface EducationFrontmatter {
   institution: string;
   degree: string;
+  term: string; // Academic term (e.g., "Fall 2025", "Winter 2024")
   field: string;
-  startDate: string;
-  endDate?: string;
+  startDate?: string; // Optional - not used for term calculation
+  endDate?: string; // Optional - not used for term calculation
   location?: string;
   gpa?: string;
   honors?: string[];
@@ -70,9 +73,10 @@ export interface EducationFrontmatter {
 export interface VolunteerFrontmatter {
   title: string;
   organization: string;
-  startDate: string;
-  endDate?: string;
-  description: string;
+  term: string; // Academic term (e.g., "Fall 2025", "Winter 2024")
+  startDate?: string; // Optional - not used for term calculation
+  endDate?: string; // Optional - not used for term calculation
+  description?: string; // Optional body/description
   image?: string;
   coverImage?: string;
   featured?: boolean;
@@ -81,9 +85,10 @@ export interface VolunteerFrontmatter {
 
 export interface ExtracurricularFrontmatter {
   title: string;
-  description: string;
-  startDate: string;
-  endDate?: string;
+  term: string; // Academic term (e.g., "Fall 2025", "Winter 2024")
+  description?: string; // Optional body/description
+  startDate?: string; // Optional - not used for term calculation
+  endDate?: string; // Optional - not used for term calculation
   type: 'competition' | 'workshop' | 'photography' | 'event' | 'other';
   location?: string;
   tags?: string[];
@@ -103,11 +108,12 @@ export interface ContentItem<T> {
 
 export interface TimelineItem {
   type: 'project' | 'job' | 'education' | 'extracurricular';
-  date: string;
-  endDate?: string;
+  term: string; // Academic term (e.g., "Fall 2025", "Winter 2024") - used for sorting
+  date?: string; // Optional - kept for backward compatibility but not used for sorting
+  endDate?: string; // Optional - kept for backward compatibility but not used for sorting
   title: string;
   subtitle: string;
-  description: string;
+  description?: string; // Optional
   tags?: string[];
   slug?: string;
   link?: string;
@@ -140,7 +146,7 @@ function getContentFromDirectory<T>(directory: string): ContentItem<T>[] {
 
 export function getProjects(): ContentItem<ProjectFrontmatter>[] {
   const projects = getContentFromDirectory<any>('projects');
-  // Map 'date' field to 'startDate' for backward compatibility
+  // Map 'date' field to 'startDate' for backward compatibility (not used for sorting)
   const normalizedProjects = projects.map((project) => ({
     ...project,
     frontmatter: {
@@ -148,9 +154,19 @@ export function getProjects(): ContentItem<ProjectFrontmatter>[] {
       startDate: project.frontmatter.startDate || project.frontmatter.date,
     } as ProjectFrontmatter,
   }));
-  return normalizedProjects.sort((a, b) =>
-    new Date(b.frontmatter.startDate).getTime() - new Date(a.frontmatter.startDate).getTime()
-  );
+  
+  // Sort by term instead of date
+  // NOTE: Date-based term calculation (getAcademicTerm) is not being used anymore
+  // We now rely on the 'term' property in frontmatter
+  return normalizedProjects.sort((a, b) => {
+    const [aYear, aSeason] = parseTermForSorting(a.frontmatter.term);
+    const [bYear, bSeason] = parseTermForSorting(b.frontmatter.term);
+    
+    if (aYear !== bYear) {
+      return bYear - aYear; // Newer first
+    }
+    return bSeason - aSeason; // Summer > Winter > Fall (reverse for newest first)
+  });
 }
 
 export function getFeaturedProjects(): ContentItem<ProjectFrontmatter>[] {
@@ -164,9 +180,17 @@ export function getProjectBySlug(slug: string): ContentItem<ProjectFrontmatter> 
 
 export function getJobs(): ContentItem<JobFrontmatter>[] {
   const jobs = getContentFromDirectory<JobFrontmatter>('jobs');
-  return jobs.sort((a, b) =>
-    new Date(b.frontmatter.startDate).getTime() - new Date(a.frontmatter.startDate).getTime()
-  );
+  // Sort by term instead of date
+  // NOTE: Date-based term calculation (getAcademicTerm) is not being used anymore
+  return jobs.sort((a, b) => {
+    const [aYear, aSeason] = parseTermForSorting(a.frontmatter.term);
+    const [bYear, bSeason] = parseTermForSorting(b.frontmatter.term);
+    
+    if (aYear !== bYear) {
+      return bYear - aYear; // Newer first
+    }
+    return bSeason - aSeason; // Summer > Winter > Fall (reverse for newest first)
+  });
 }
 
 export function getJobBySlug(slug: string): ContentItem<JobFrontmatter> | undefined {
@@ -188,9 +212,17 @@ export function getAllJobSlugs(): string[] {
 
 export function getEducation(): ContentItem<EducationFrontmatter>[] {
   const education = getContentFromDirectory<EducationFrontmatter>('education');
-  return education.sort((a, b) =>
-    new Date(b.frontmatter.startDate).getTime() - new Date(a.frontmatter.startDate).getTime()
-  );
+  // Sort by term instead of date
+  // NOTE: Date-based term calculation (getAcademicTerm) is not being used anymore
+  return education.sort((a, b) => {
+    const [aYear, aSeason] = parseTermForSorting(a.frontmatter.term);
+    const [bYear, bSeason] = parseTermForSorting(b.frontmatter.term);
+    
+    if (aYear !== bYear) {
+      return bYear - aYear; // Newer first
+    }
+    return bSeason - aSeason; // Summer > Winter > Fall (reverse for newest first)
+  });
 }
 
 export function getEducationBySlug(slug: string): ContentItem<EducationFrontmatter> | undefined {
@@ -212,9 +244,17 @@ export function getAllEducationSlugs(): string[] {
 
 export function getVolunteer(): ContentItem<VolunteerFrontmatter>[] {
   const volunteer = getContentFromDirectory<VolunteerFrontmatter>('volunteer');
-  return volunteer.sort((a, b) =>
-    new Date(b.frontmatter.startDate).getTime() - new Date(a.frontmatter.startDate).getTime()
-  );
+  // Sort by term instead of date
+  // NOTE: Date-based term calculation (getAcademicTerm) is not being used anymore
+  return volunteer.sort((a, b) => {
+    const [aYear, aSeason] = parseTermForSorting(a.frontmatter.term);
+    const [bYear, bSeason] = parseTermForSorting(b.frontmatter.term);
+    
+    if (aYear !== bYear) {
+      return bYear - aYear; // Newer first
+    }
+    return bSeason - aSeason; // Summer > Winter > Fall (reverse for newest first)
+  });
 }
 
 export function getVolunteerBySlug(slug: string): ContentItem<VolunteerFrontmatter> | undefined {
@@ -234,6 +274,24 @@ export function getAllVolunteerSlugs(): string[] {
     .map((file) => file.replace('.mdx', ''));
 }
 
+/**
+ * Parses term string (e.g., "Fall 2025") into sortable components
+ * Returns [year, seasonOrder] for sorting: [2025, 1] where 1=Fall, 2=Winter, 3=Summer
+ */
+function parseTermForSorting(term: string): [number, number] {
+  const parts = term.trim().split(' ');
+  const season = parts[0]; // "Fall", "Winter", or "Summer"
+  const year = parseInt(parts[1] || '0', 10);
+  
+  const seasonOrder: Record<string, number> = {
+    'Fall': 1,
+    'Winter': 2,
+    'Summer': 3,
+  };
+  
+  return [year, seasonOrder[season] || 0];
+}
+
 export function getTimeline(): TimelineItem[] {
   const projects = getProjects();
   const jobs = getJobs();
@@ -243,8 +301,9 @@ export function getTimeline(): TimelineItem[] {
   const timelineItems: TimelineItem[] = [
     ...projects.map((p) => ({
       type: 'project' as const,
-      date: p.frontmatter.startDate,
-      endDate: p.frontmatter.endDate,
+      term: p.frontmatter.term,
+      date: p.frontmatter.startDate, // Optional - kept for backward compatibility
+      endDate: p.frontmatter.endDate, // Optional - kept for backward compatibility
       title: p.frontmatter.title,
       subtitle: p.frontmatter.tags.slice(0, 3).join(' • '),
       description: p.frontmatter.description,
@@ -257,8 +316,9 @@ export function getTimeline(): TimelineItem[] {
     })),
     ...jobs.map((j) => ({
       type: 'job' as const,
-      date: j.frontmatter.startDate,
-      endDate: j.frontmatter.endDate,
+      term: j.frontmatter.term,
+      date: j.frontmatter.startDate, // Optional - kept for backward compatibility
+      endDate: j.frontmatter.endDate, // Optional - kept for backward compatibility
       title: j.frontmatter.title,
       subtitle: j.frontmatter.company,
       description: j.frontmatter.description,
@@ -268,8 +328,9 @@ export function getTimeline(): TimelineItem[] {
     })),
     ...education.map((e) => ({
       type: 'education' as const,
-      date: e.frontmatter.startDate,
-      endDate: e.frontmatter.endDate,
+      term: e.frontmatter.term,
+      date: e.frontmatter.startDate, // Optional - kept for backward compatibility
+      endDate: e.frontmatter.endDate, // Optional - kept for backward compatibility
       title: e.frontmatter.degree,
       subtitle: e.frontmatter.institution,
       description: `${e.frontmatter.field}${e.frontmatter.gpa ? ` • GPA: ${e.frontmatter.gpa}` : ''}`,
@@ -279,10 +340,11 @@ export function getTimeline(): TimelineItem[] {
     })),
     ...extracurricular.map((ec) => ({
       type: 'extracurricular' as const,
-      date: ec.frontmatter.startDate,
-      endDate: ec.frontmatter.endDate,
+      term: ec.frontmatter.term,
+      date: ec.frontmatter.startDate, // Optional - kept for backward compatibility
+      endDate: ec.frontmatter.endDate, // Optional - kept for backward compatibility
       title: ec.frontmatter.title,
-      subtitle: ec.frontmatter.description,
+      subtitle: ec.frontmatter.description || '',
       description: ec.frontmatter.description,
       tags: ec.frontmatter.tags,
       slug: ec.slug,
@@ -291,24 +353,20 @@ export function getTimeline(): TimelineItem[] {
     })),
   ];
 
-  // Sort timeline items:
-  // 1. Primary: by startDate (earlier start = appears earlier)
-  // 2. Secondary: if same startDate, by endDate (earlier end = appears earlier)
-  //    - Items without endDate (ongoing) are treated as having endDate = Infinity (appear later)
+  // Sort timeline items by term (NOT by date):
+  // 1. Primary: by year (earlier year = appears earlier)
+  // 2. Secondary: if same year, by season (Fall < Winter < Summer)
   return timelineItems.sort((a, b) => {
-    const aStart = new Date(a.date).getTime();
-    const bStart = new Date(b.date).getTime();
+    const [aYear, aSeason] = parseTermForSorting(a.term);
+    const [bYear, bSeason] = parseTermForSorting(b.term);
     
-    // Primary sort: startDate
-    if (aStart !== bStart) {
-      return aStart - bStart; // Earlier start = earlier in timeline
+    // Primary sort: year
+    if (aYear !== bYear) {
+      return aYear - bYear; // Earlier year = earlier in timeline
     }
     
-    // Secondary sort: endDate (if start dates are the same)
-    const aEnd = a.endDate ? new Date(a.endDate).getTime() : Infinity;
-    const bEnd = b.endDate ? new Date(b.endDate).getTime() : Infinity;
-    
-    return aEnd - bEnd; // Earlier end = earlier in timeline
+    // Secondary sort: season (if same year)
+    return aSeason - bSeason; // Fall (1) < Winter (2) < Summer (3)
   });
 }
 
@@ -326,9 +384,17 @@ export function getAllProjectSlugs(): string[] {
 
 export function getExtracurricular(): ContentItem<ExtracurricularFrontmatter>[] {
   const extracurricular = getContentFromDirectory<ExtracurricularFrontmatter>('extracurricular');
-  return extracurricular.sort((a, b) =>
-    new Date(b.frontmatter.startDate).getTime() - new Date(a.frontmatter.startDate).getTime()
-  );
+  // Sort by term instead of date
+  // NOTE: Date-based term calculation (getAcademicTerm) is not being used anymore
+  return extracurricular.sort((a, b) => {
+    const [aYear, aSeason] = parseTermForSorting(a.frontmatter.term);
+    const [bYear, bSeason] = parseTermForSorting(b.frontmatter.term);
+    
+    if (aYear !== bYear) {
+      return bYear - aYear; // Newer first
+    }
+    return bSeason - aSeason; // Summer > Winter > Fall (reverse for newest first)
+  });
 }
 
 export function getExtracurricularBySlug(slug: string): ContentItem<ExtracurricularFrontmatter> | undefined {

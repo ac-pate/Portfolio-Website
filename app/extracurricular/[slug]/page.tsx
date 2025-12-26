@@ -41,3 +41,5 @@ export default async function ExtracurricularDetailPage({ params }: Extracurricu
   return <ExtracurricularDetail extracurricular={extracurricular} />;
 }
 
+
+

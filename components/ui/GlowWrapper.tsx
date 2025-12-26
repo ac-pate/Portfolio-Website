@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
 import gsap from "gsap";
+import { useTheme } from "next-themes";
 
 /**
  * GLOW WRAPPER COMPONENT - DISPERSE STOCHASTIC BOUNDARY
@@ -11,12 +12,44 @@ import gsap from "gsap";
  * You can change these constants to update the feel across the entire site.
  */
 const GLOBAL_CONFIG = {
-  // Speed of the static buzzing
+  // ========== COLORS ==========
+  // The default glow color (can be overridden per component)
+  // defaultGlowColor: "#a3002a",
+  defaultGlowColor: "#a30036",
+  // Light mode alternative color (automatically used when light mode is active)
+  lightModeGlowColor: "#d6006d",
+  // Border color on hover
+  hoverBorderColor: "rgba(163, 0, 42, 0.6)", // accent-light/60
+  // Subtle inner shadow color when not hovering
+  insetShadowColor: "rgba(163, 0, 42, 0.05)",
+  
+  // ========== ANIMATION ==========
+  // Speed of the static particle buzzing/grain animation
   animationSpeed: 0.04,
-  // Ease and duration for GSAP transitions
+  // Duration for fade in/out transitions (seconds)
   transitionDuration: 0.4,
-  // The color hex used if not overridden
-  defaultColor: "#a3002a",
+  // Extra duration added to fade out (makes it slightly slower)
+  fadeOutDelay: 0.2,
+  
+  // ========== INTENSITY & FEEL ==========
+  // Mouse tracking smoothness (0.01 = very smooth, 0.3 = snappy)
+  mouseTrackingSpeed: 0.30,
+  // Mouse influence radius in pixels
+  mouseInfluenceRadius: 250,
+  // Bloom intensity (soft glow at high density areas)
+  bloomIntensity: 0.5,
+  // Bloom falloff power (higher = tighter bloom)
+  bloomPower: 4.0,
+  // Hover particle size (controls the rendered particle/grain scale)
+  // 0 = very fine particles, 0.5 = medium, 1 = large particles
+  particleSize: 1,
+  
+  // ========== RENDERING ==========
+  // Maximum pixel ratio (prevents too high res on retina displays)
+  maxPixelRatio: 2,
+  // Padding around component for glow overflow (auto-calculated by default)
+  paddingMultiplier: 1.2, // multiply by spread to get padding
+  minPadding: 40,
 };
 
 /**
@@ -30,6 +63,7 @@ interface PresetSettings {
   baseIntensity: number;
   mouseIntensity: number;
   falloffPower: number;
+  borderRadius: number; // in pixels
 }
 
 const PRESETS: Record<GlowPreset, PresetSettings> = {
@@ -39,6 +73,7 @@ const PRESETS: Record<GlowPreset, PresetSettings> = {
     baseIntensity: 0.3,
     mouseIntensity: 0.8,
     falloffPower: 1.8,
+    borderRadius: 12,
   },
   button: {
     spread: 30,
@@ -46,6 +81,7 @@ const PRESETS: Record<GlowPreset, PresetSettings> = {
     baseIntensity: 0.4,
     mouseIntensity: 0.3,
     falloffPower: 2.2,
+    borderRadius: 8,
   },
   badge: {
     spread: 15,
@@ -53,6 +89,7 @@ const PRESETS: Record<GlowPreset, PresetSettings> = {
     baseIntensity: 0.5,
     mouseIntensity: 0.2,
     falloffPower: 2.5,
+    borderRadius: 6,
   },
   none: {
     spread: 0,
@@ -60,6 +97,7 @@ const PRESETS: Record<GlowPreset, PresetSettings> = {
     baseIntensity: 0,
     mouseIntensity: 0,
     falloffPower: 1,
+    borderRadius: 0,
   }
 };
 
@@ -77,7 +115,7 @@ const fragmentShader = `
   uniform float uTime;
   uniform float uOpacity;
   uniform vec2 uResolution;
-  uniform vec4 uPadding; 
+  uniform vec2 uCardSize; // Actual card dimensions without padding
   uniform vec3 uColor;
 
   uniform float uSpread;
@@ -85,6 +123,11 @@ const fragmentShader = `
   uniform float uBaseIntensity;
   uniform float uMouseIntensity;
   uniform float uFalloffPower;
+  uniform float uBorderRadius;
+  uniform float uMouseInfluenceRadius;
+  uniform float uBloomIntensity;
+  uniform float uBloomPower;
+  uniform float uParticleSize;
 
   varying vec2 vUv;
 
@@ -94,14 +137,19 @@ const fragmentShader = `
     return fract(p.x * p.y);
   }
 
+  // Signed distance function for rounded rectangle
+  float sdRoundedBox(vec2 p, vec2 size, float radius) {
+    vec2 d = abs(p) - size + radius;
+    return length(max(d, 0.0)) + min(max(d.x, d.y), 0.0) - radius;
+  }
+
   void main() {
     vec2 fragCoord = vUv * uResolution;
-    vec2 cardSize = uResolution - vec2(uPadding.y + uPadding.w, uPadding.x + uPadding.z);
     vec2 cardCenter = uResolution * 0.5;
     
-    vec2 p = fragCoord;
-    vec2 d = abs(p - cardCenter) - cardSize * 0.5;
-    float distToEdge = length(max(d, 0.0)) + min(max(d.x, d.y), 0.0);
+    vec2 p = fragCoord - cardCenter;
+    // Use the actual card size passed as uniform
+    float distToEdge = sdRoundedBox(p, uCardSize * 0.5, uBorderRadius);
     
     float outwardGlow = clamp(1.0 - (distToEdge / uSpread), 0.0, 1.0);
     float inwardBleed = clamp(1.0 + (distToEdge / uInnerBleed), 0.0, 1.0);
@@ -110,14 +158,16 @@ const fragmentShader = `
 
     vec2 mousePx = uMouse * uResolution;
     float mouseDist = distance(fragCoord, mousePx);
-    float mouseInfluence = smoothstep(180.0, 0.0, mouseDist);
+    float mouseInfluence = smoothstep(uMouseInfluenceRadius, 0.0, mouseDist);
     
     float probability = density * (uBaseIntensity + mouseInfluence * uMouseIntensity);
 
-    float n = hash(fragCoord + mod(uTime, 10.0));
+    // Apply particle size scaling (1.0 + particleSize maps 0-1 range to 0.5-1.5 scale)
+    float grainScale = 10.0 * uParticleSize;
+    float n = hash((fragCoord / grainScale) + mod(uTime, 10.0));
     float grain = step(1.0 - (probability * uIntensity), n);
     
-    float bloom = pow(density, 8.0) * 0.3;
+    float bloom = pow(density, uBloomPower) * uBloomIntensity;
     
     float alpha = (grain + bloom) * uOpacity;
     gl_FragColor = vec4(uColor, alpha);
@@ -136,17 +186,20 @@ interface GlowWrapperProps {
   baseIntensity?: number;
   mouseIntensity?: number;
   falloffPower?: number;
+  borderRadius?: number;
 }
 
 export default function GlowWrapper({
   children,
   className = "",
   preset = "card",
-  color = GLOBAL_CONFIG.defaultColor,
+  color = GLOBAL_CONFIG.defaultGlowColor,
   ...overrides
 }: GlowWrapperProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [borderRadiusCss, setBorderRadiusCss] = useState<string | undefined>(undefined);
   
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.OrthographicCamera | null>(null);
@@ -157,20 +210,67 @@ export default function GlowWrapper({
   const mouseRef = useRef({ x: 0.5, y: 0.5 });
   const currentMouseRef = useRef({ x: 0.5, y: 0.5 });
 
+  const { theme, systemTheme } = useTheme();
+  
+  // Determine the actual theme (considering system theme)
+  const actualTheme = theme === 'system' ? systemTheme : theme;
+  const isLightMode = actualTheme === 'light';
+  
+  // Use light mode color if in light mode and using default color
+  const effectiveColor = color === GLOBAL_CONFIG.defaultGlowColor && isLightMode 
+    ? GLOBAL_CONFIG.lightModeGlowColor 
+    : color;
+
   // Merge preset with overrides
   const settings = {
     ...PRESETS[preset],
     ...Object.fromEntries(Object.entries(overrides).filter(([_, v]) => v !== undefined))
   };
 
-  // Padding should be enough to contain the spread, plus a small buffer
-  const PADDING = Math.max(40, (settings.spread || 0) + 20);
+  // Padding should be enough to contain the spread, with configurable buffer
+  const PADDING = Math.max(
+    GLOBAL_CONFIG.minPadding, 
+    (settings.spread || 0) * GLOBAL_CONFIG.paddingMultiplier
+  );
+
+  const getTargetElement = (): HTMLElement | null => {
+    // Prefer the first child of the content wrapper (this is the element that
+    // actually has the "glass" styles / border / rounded corners in most uses).
+    const firstChild = contentRef.current?.firstElementChild as HTMLElement | null;
+    return firstChild ?? wrapperRef.current;
+  };
+
+  const readBorderRadius = (): { css: string | undefined; px: number } => {
+    const target = getTargetElement();
+    if (!target) {
+      return { css: undefined, px: settings.borderRadius };
+    }
+
+    const computedStyle = window.getComputedStyle(target);
+    const css = computedStyle.borderRadius || undefined;
+    const px = parseFloat(css || "");
+
+    if (!isNaN(px) && px > 0) {
+      return { css, px };
+    }
+
+    return { css, px: settings.borderRadius };
+  };
 
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const width = containerRef.current.clientWidth;
-    const height = containerRef.current.clientHeight;
+    const target = getTargetElement();
+    if (!target) return;
+
+    // Read actual border radius from the visual card element (not the wrapper)
+    const { css: resolvedBorderRadiusCss, px: actualBorderRadiusPx } = readBorderRadius();
+    setBorderRadiusCss(resolvedBorderRadiusCss);
+
+    const targetRect = target.getBoundingClientRect();
+    // Round up to avoid subpixel drift between DOM and shader math
+    const width = Math.ceil(targetRect.width);
+    const height = Math.ceil(targetRect.height);
 
     const scene = new THREE.Scene();
     sceneRef.current = scene;
@@ -188,7 +288,7 @@ export default function GlowWrapper({
     const canvasHeight = height + PADDING * 2;
     
     renderer.setSize(canvasWidth, canvasHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, GLOBAL_CONFIG.maxPixelRatio));
     renderer.setClearColor(0x000000, 0); 
     
     renderer.domElement.style.position = "absolute";
@@ -203,7 +303,7 @@ export default function GlowWrapper({
     rendererRef.current = renderer;
 
     const geometry = new THREE.PlaneGeometry(2, 2);
-    const threeColor = new THREE.Color(color);
+    const threeColor = new THREE.Color(effectiveColor);
     
     const uniforms = {
       uMouse: { value: new THREE.Vector2(0.5, 0.5) },
@@ -211,13 +311,18 @@ export default function GlowWrapper({
       uTime: { value: 0.0 },
       uOpacity: { value: 0.0 },
       uResolution: { value: new THREE.Vector2(canvasWidth, canvasHeight) },
-      uPadding: { value: new THREE.Vector4(PADDING, PADDING, PADDING, PADDING) },
+      uCardSize: { value: new THREE.Vector2(width, height) }, // Actual card size without padding
       uColor: { value: new THREE.Vector3(threeColor.r, threeColor.g, threeColor.b) },
       uSpread: { value: settings.spread },
       uInnerBleed: { value: settings.innerBleed },
       uBaseIntensity: { value: settings.baseIntensity },
       uMouseIntensity: { value: settings.mouseIntensity },
       uFalloffPower: { value: settings.falloffPower },
+      uBorderRadius: { value: actualBorderRadiusPx },
+      uMouseInfluenceRadius: { value: GLOBAL_CONFIG.mouseInfluenceRadius },
+      uBloomIntensity: { value: GLOBAL_CONFIG.bloomIntensity },
+      uBloomPower: { value: GLOBAL_CONFIG.bloomPower },
+      uParticleSize: { value: GLOBAL_CONFIG.particleSize },
     };
 
     const material = new THREE.ShaderMaterial({
@@ -234,8 +339,8 @@ export default function GlowWrapper({
     scene.add(plane);
 
     const animate = () => {
-      currentMouseRef.current.x += (mouseRef.current.x - currentMouseRef.current.x) * 0.12;
-      currentMouseRef.current.y += (mouseRef.current.y - currentMouseRef.current.y) * 0.12;
+      currentMouseRef.current.x += (mouseRef.current.x - currentMouseRef.current.x) * GLOBAL_CONFIG.mouseTrackingSpeed;
+      currentMouseRef.current.y += (mouseRef.current.y - currentMouseRef.current.y) * GLOBAL_CONFIG.mouseTrackingSpeed;
       
       uniforms.uMouse.value.set(currentMouseRef.current.x, currentMouseRef.current.y);
       uniforms.uTime.value += GLOBAL_CONFIG.animationSpeed;
@@ -247,15 +352,36 @@ export default function GlowWrapper({
 
     const handleResize = () => {
       if (!containerRef.current || !rendererRef.current || !materialRef.current) return;
-      const w = containerRef.current.clientWidth;
-      const h = containerRef.current.clientHeight;
+
+      const resizeTarget = getTargetElement();
+      if (!resizeTarget) return;
+
+      // Re-read border radius on resize (in case it changed)
+      const { css: updatedBorderRadiusCss, px: updatedBorderRadiusPx } = readBorderRadius();
+      setBorderRadiusCss(updatedBorderRadiusCss);
+
+      const r = resizeTarget.getBoundingClientRect();
+      const w = Math.ceil(r.width);
+      const h = Math.ceil(r.height);
       const cw = w + PADDING * 2;
       const ch = h + PADDING * 2;
+      
       rendererRef.current.setSize(cw, ch);
+      
+      // Update resolution uniform (canvas size with padding)
       materialRef.current.uniforms.uResolution.value.set(cw, ch);
+      
+      // Update card size uniform (actual card dimensions without padding)
+      materialRef.current.uniforms.uCardSize.value.set(w, h);
+      
+      // Update border radius uniform
+      materialRef.current.uniforms.uBorderRadius.value = updatedBorderRadiusPx;
     };
     const resizeObserver = new ResizeObserver(handleResize);
-    resizeObserver.observe(containerRef.current);
+    resizeObserver.observe(target);
+    
+    // Trigger initial resize to ensure everything is properly sized
+    handleResize();
 
     return () => {
       if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
@@ -267,7 +393,7 @@ export default function GlowWrapper({
       geometry.dispose();
       material.dispose();
     };
-  }, [color, settings.spread, settings.innerBleed, settings.baseIntensity, settings.mouseIntensity, settings.falloffPower, PADDING]);
+  }, [effectiveColor, settings.spread, settings.innerBleed, settings.baseIntensity, settings.mouseIntensity, settings.falloffPower, settings.borderRadius, PADDING]);
 
   const handleMouseEnter = () => {
     if (!materialRef.current) return;
@@ -277,13 +403,14 @@ export default function GlowWrapper({
 
   const handleMouseLeave = () => {
     if (!materialRef.current) return;
-    gsap.to(materialRef.current.uniforms.uOpacity, { value: 0.0, duration: GLOBAL_CONFIG.transitionDuration + 0.2 });
-    gsap.to(materialRef.current.uniforms.uIntensity, { value: 0.0, duration: GLOBAL_CONFIG.transitionDuration + 0.2 });
+    gsap.to(materialRef.current.uniforms.uOpacity, { value: 0.0, duration: GLOBAL_CONFIG.transitionDuration + GLOBAL_CONFIG.fadeOutDelay });
+    gsap.to(materialRef.current.uniforms.uIntensity, { value: 0.0, duration: GLOBAL_CONFIG.transitionDuration + GLOBAL_CONFIG.fadeOutDelay });
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!wrapperRef.current) return;
-    const rect = wrapperRef.current.getBoundingClientRect();
+    const target = getTargetElement();
+    if (!target) return;
+    const rect = target.getBoundingClientRect();
     const x = (e.clientX - (rect.left - PADDING)) / (rect.width + PADDING * 2);
     const y = 1.0 - (e.clientY - (rect.top - PADDING)) / (rect.height + PADDING * 2);
     mouseRef.current = { x, y };
@@ -292,7 +419,7 @@ export default function GlowWrapper({
   return (
     <div 
       ref={wrapperRef}
-      className={`relative group transition-all duration-300 ${className}`}
+      className={`relative group transition-all duration-300 overflow-visible ${className}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onMouseMove={handleMouseMove}
@@ -300,23 +427,24 @@ export default function GlowWrapper({
       {/* GLOW LAYER */}
       <div 
         ref={containerRef} 
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none overflow-visible"
+        style={{ zIndex: 0 }}
         aria-hidden="true"
       />
       
-      {/* SHARP BORDER HIGHLIGHT */}
-      <div 
-        className="absolute inset-0 rounded-[inherit] border border-transparent transition-colors duration-500 z-20 pointer-events-none shadow-[inset_0_0_0_1px_rgba(163,0,42,0.05)]"
-        style={{ 
-          borderColor: 'transparent',
-        }}
-        // Using a data attribute or class to handle hover via group-hover
-      />
-      <div className="absolute inset-0 rounded-[inherit] border border-transparent group-hover:border-accent-light/60 transition-colors duration-500 z-20 pointer-events-none" />
-
       {/* CONTENT */}
-      <div className="relative z-10">
+      <div ref={contentRef} className="relative z-10">
         {children}
+
+        {/* SHARP BORDER HIGHLIGHT (attached to the actual content box) */}
+        <div
+          className="absolute inset-0 border border-transparent group-hover:border-[var(--hover-border-color)] transition-colors duration-500 pointer-events-none"
+          style={{
+            '--hover-border-color': GLOBAL_CONFIG.hoverBorderColor,
+            borderRadius: borderRadiusCss,
+            boxShadow: `inset 0 0 0 2px ${GLOBAL_CONFIG.insetShadowColor}`,
+          } as React.CSSProperties}
+        />
       </div>
     </div>
   );

@@ -3,18 +3,15 @@
 import { motion } from 'framer-motion';
 import { ExtracurricularCard } from '@/components/ui/ExtracurricularCard';
 import type { ContentItem, ExtracurricularFrontmatter } from '@/lib/mdx';
-import { groupByAcademicTerm, getAcademicTerm, formatAcademicTermDateRange } from '@/lib/utils';
+import { groupByAcademicTerm, formatAcademicTermDateRangeFromLabel } from '@/lib/utils';
 
 interface ExtracurricularListProps {
   extracurricular: ContentItem<ExtracurricularFrontmatter>[];
 }
 
 export function ExtracurricularList({ extracurricular }: ExtracurricularListProps) {
-  // Group extracurricular activities by academic term
-  const groupedActivities = groupByAcademicTerm(
-    extracurricular,
-    (ec) => ec.frontmatter.startDate
-  );
+  // Group extracurricular activities by academic term (uses term property from frontmatter, not dates)
+  const groupedActivities = groupByAcademicTerm(extracurricular);
 
   return (
     <div className="pt-24 pb-16">
@@ -25,7 +22,7 @@ export function ExtracurricularList({ extracurricular }: ExtracurricularListProp
           transition={{ duration: 0.5 }}
           className="mb-12"
         >
-          <h1 className="text-display-md md:text-display-lg font-display font-bold text-foreground mb-4">
+          <h1 className="text-display-md md:text-display-lg font-display font-bold text-foreground mb-4 uppercase">
             Extracurricular<span className="text-accent">.</span>
           </h1>
           <p className="text-lg text-foreground-secondary max-w-2xl">
@@ -35,16 +32,14 @@ export function ExtracurricularList({ extracurricular }: ExtracurricularListProp
 
         {groupedActivities.size > 0 ? (
           Array.from(groupedActivities.entries()).map(([termLabel, termActivities]) => {
-            // Get term date range for display
-            const firstActivity = termActivities[0];
-            const termInfo = getAcademicTerm(firstActivity.frontmatter.startDate);
-            const termDateRange = formatAcademicTermDateRange(termInfo);
+            // Get term date range for display based on the term label itself
+            const termDateRange = formatAcademicTermDateRangeFromLabel(termLabel);
             
             return (
               <section key={termLabel} className="mb-16">
                 <div className="mb-6">
-                  <h2 className="text-xl font-display font-semibold text-foreground mb-1">
-                    {termLabel} ({termDateRange})
+                  <h2 className="text-4xl font-display font-bold text-foreground mb-1">
+                    {termLabel}{termDateRange ? ` (${termDateRange})` : ''}
                   </h2>
                   <p className="text-sm text-foreground-secondary">
                     {termActivities.length} {termActivities.length === 1 ? 'Activity' : 'Activities'}

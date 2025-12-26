@@ -4,10 +4,12 @@ import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useSound } from '@/components/providers/SoundProvider';
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const { playHoverSound, playClickSound } = useSound();
 
   useEffect(() => {
     setMounted(true);
@@ -23,7 +25,11 @@ export function ThemeToggle() {
     <motion.button
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      onHoverStart={playHoverSound}
+      onClick={() => {
+        playClickSound();
+        setTheme(theme === 'dark' ? 'light' : 'dark');
+      }}
       className="relative w-9 h-9 rounded-lg bg-background-secondary border border-border flex items-center justify-center transition-colors hover:border-accent/50 focus-ring"
       aria-label="Toggle theme"
     >

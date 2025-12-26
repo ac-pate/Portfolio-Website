@@ -165,7 +165,7 @@ export function getTermStartDate(term: AcademicTerm): Date {
   };
 
   const month = monthMap[term.term];
-  return new Date(term.year, month - 1, 1);
+  return new Date(Date.UTC(term.year, month - 1, 1));
 }
 
 /**
@@ -189,7 +189,8 @@ export function getTermEndDate(term: AcademicTerm): Date {
   const month = monthMap[term.term];
   const year = term.term === 'Winter' && month === 4 ? term.year : term.year;
 
-  return new Date(year, month, 0, 23, 59, 59);
+  // Last day of the month at 23:59:59 UTC
+  return new Date(Date.UTC(year, month, 0, 23, 59, 59));
 }
 
 /**
@@ -210,14 +211,31 @@ export function getTermEndDate(term: AcademicTerm): Date {
  * const grouped = groupItemsByTerm(items);
  * // grouped has keys: "Fall 2022", "Winter 2023"
  */
+/**
+ * Parses term string (e.g., "Fall 2025") into [year, seasonOrder]
+ */
+function parseTermForSorting(term: string): [number, number] {
+  const parts = term.trim().split(' ');
+  const season = parts[0]; // "Fall", "Winter", or "Summer"
+  const year = parseInt(parts[1] || '0', 10);
+  
+  const seasonOrder: Record<string, number> = {
+    'Fall': 1,
+    'Winter': 2,
+    'Summer': 3,
+  };
+  
+  return [year, seasonOrder[season] || 0];
+}
+
 export function groupItemsByTerm(items: any[], includeAllTerms: boolean = false): Map<string, any[]> {
   const grouped = new Map<string, any[]>();
   // Track items by unique identifier to prevent duplicates
   const itemIds = new Set<string>();
 
   items.forEach((item) => {
-    // Create unique identifier for item (use slug, link, or title+date as fallback)
-    const itemId = item.slug || item.link || `${item.title}-${item.date}`;
+    // Create unique identifier for item (use slug, link, or title+term as fallback)
+    const itemId = item.slug || item.link || `${item.title}-${item.term}`;
     
     // Skip if we've already processed this item
     if (itemIds.has(itemId)) {
@@ -225,56 +243,34 @@ export function groupItemsByTerm(items: any[], includeAllTerms: boolean = false)
     }
     itemIds.add(itemId);
 
-    // Get the starting term
-    const { term, year } = getAcademicTerm(item.date);
-    const termKey = getTermLabel({ term, year });
+    // Use term directly from item (NOT calculated from date)
+    // NOTE: Date-based term calculation (getAcademicTerm) is not being used anymore
+    const termKey = item.term;
+
+    if (!termKey) {
+      console.warn('Item missing term property:', item);
+      return;
+    }
 
     if (!grouped.has(termKey)) {
       grouped.set(termKey, []);
     }
 
-    // Only add to starting term unless includeAllTerms is true
-    if (!includeAllTerms) {
-      grouped.get(termKey)!.push(item);
-    } else {
-      // Original behavior: add to all terms item spans
-      const termsToAdd: AcademicTerm[] = [{ term, year }];
-
-      if (item.endDate) {
-        const endTerm = getAcademicTerm(item.endDate);
-        let currentTerm: AcademicTerm = { term, year };
-
-        while (
-          currentTerm.year < endTerm.year ||
-          (currentTerm.year === endTerm.year && getTermOrder(currentTerm.term) < getTermOrder(endTerm.term))
-        ) {
-          const nextTerm = getNextTerm(currentTerm);
-          termsToAdd.push(nextTerm);
-          currentTerm = nextTerm;
-        }
-      }
-
-      termsToAdd.forEach((t) => {
-        const tk = getTermLabel(t);
-        if (!grouped.has(tk)) {
-          grouped.set(tk, []);
-        }
-        grouped.get(tk)!.push(item);
-      });
-    }
+    // Only add to the term specified (items don't span multiple terms anymore)
+    // NOTE: includeAllTerms logic removed since we now use explicit term property
+    grouped.get(termKey)!.push(item);
   });
 
   // Sort terms chronologically (oldest first) - will be reversed by components for display
   const sortedTerms = Array.from(grouped.keys()).sort((a, b) => {
-    const [aYear, aSeason] = a.split(' ');
-    const [bYear, bSeason] = b.split(' ');
+    const [aYear, aSeason] = parseTermForSorting(a);
+    const [bYear, bSeason] = parseTermForSorting(b);
 
     if (aYear !== bYear) {
-      return parseInt(aYear) - parseInt(bYear);
+      return aYear - bYear;
     }
 
-    const seasonOrder: Record<string, number> = { Fall: 1, Winter: 2, Summer: 3 };
-    return seasonOrder[aSeason] - seasonOrder[bSeason];
+    return aSeason - bSeason; // Fall (1) < Winter (2) < Summer (3)
   });
 
   // Create sorted map
@@ -367,46 +363,35 @@ export function formatDateRange(startDate: string, endDate?: string): string {
  * @param ascending - If true, sorts oldest first; if false (default), newest first
  * @returns Sorted items
  */
+/**
+ * Sorts timeline items by term (NOT by date)
+ * NOTE: Date-based sorting is not being used anymore - we sort by term property
+ */
 export function sortTimelineItems(items: any[], ascending = false): any[] {
   const sorted = [...items].sort((a, b) => {
-    const aStartDate = new Date(a.date);
-    const bStartDate = new Date(b.date);
+    // Sort by term primarily (NOT by date)
+    // NOTE: Date-based term calculation (getAcademicTerm) is not being used anymore
     
-    // Get start month (0-11, where 0 = January)
-    const aStartMonth = aStartDate.getMonth();
-    const bStartMonth = bStartDate.getMonth();
-    
-    // If start months are different, sort by start date
-    if (aStartMonth !== bStartMonth) {
-      const aTime = aStartDate.getTime();
-      const bTime = bStartDate.getTime();
-      return ascending ? aTime - bTime : bTime - aTime;
+    if (!a.term || !b.term) {
+      // Items without term go to the end
+      if (!a.term) return 1;
+      if (!b.term) return -1;
     }
     
-    // If start months are the same, sort by end date (whichever finishes first comes first)
-    // Items without endDate are treated as ongoing (come later if descending, earlier if ascending)
-    const aEndDate = a.endDate ? new Date(a.endDate).getTime() : null;
-    const bEndDate = b.endDate ? new Date(b.endDate).getTime() : null;
+    // Parse terms for sorting (format: "Summer 2025" -> [2025, 3])
+    const [aYear, aSeason] = parseTermForSorting(a.term || '');
+    const [bYear, bSeason] = parseTermForSorting(b.term || '');
     
-    if (aEndDate === null && bEndDate === null) {
-      // Both ongoing - sort by start date
-      const aTime = aStartDate.getTime();
-      const bTime = bStartDate.getTime();
-      return ascending ? aTime - bTime : bTime - aTime;
+    // Primary sort: by year
+    // When ascending=false (descending): newer years first (2025 before 2024)
+    if (aYear !== bYear) {
+      return ascending ? aYear - bYear : bYear - aYear;
     }
     
-    if (aEndDate === null) {
-      // a is ongoing, b has end date - ongoing comes later if descending
-      return ascending ? -1 : 1;
-    }
-    
-    if (bEndDate === null) {
-      // b is ongoing, a has end date - ongoing comes later if descending
-      return ascending ? 1 : -1;
-    }
-    
-    // Both have end dates - sort by end date
-    return ascending ? aEndDate - bEndDate : bEndDate - aEndDate;
+    // Secondary sort: by season (if same year)
+    // Fall=1, Winter=2, Summer=3
+    // When ascending=false (descending): later seasons first (Summer before Winter before Fall)
+    return ascending ? aSeason - bSeason : bSeason - aSeason;
   });
 
   return sorted;

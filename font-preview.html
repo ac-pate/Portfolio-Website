@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Font Preview - Portfolio</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Barlow+Condensed:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700;800;900&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0a0a0a;
+            color: #fafafa;
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #800020;
+            border-bottom: 2px solid #800020;
+            padding-bottom: 0.5rem;
+        }
+        
+        .font-section {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .font-name {
+            font-size: 1.5rem;
+            color: #800020;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .hero-preview {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .eyebrow {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(128, 0, 32, 0.1);
+            border: 1px solid rgba(128, 0, 32, 0.2);
+            border-radius: 999px;
+            font-size: 0.875rem;
+            color: #800020;
+            margin-bottom: 2rem;
+        }
+        
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+        
+        .hero-title .accent {
+            color: #800020;
+        }
+        
+        .hero-subtitle {
+            font-size: 2rem;
+            color: #fafafa;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+        
+        .hero-tagline {
+            font-size: 1.25rem;
+            color: #a3a3a3;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .nav-preview {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .nav-item {
+            font-size: 0.9rem;
+            color: #a3a3a3;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .nav-item:hover {
+            color: #800020;
+        }
+        
+        .nav-item.active {
+            color: #800020;
+        }
+        
+        .comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .comparison-item {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #2a2a2a;
+        }
+        
+        .comparison-label {
+            font-size: 0.875rem;
+            color: #737373;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .comparison-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        /* Font Option 1: Default (Inter + Space Grotesk) */
+        .font-default .hero-title,
+        .font-default .font-name {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        
+        .font-default .hero-subtitle,
+        .font-default .hero-tagline,
+        .font-default .nav-item,
+        .font-default .comparison-text {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Font Option 2: Barlow Condensed */
+        .font-barlow .hero-title,
+        .font-barlow .font-name {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+        
+        .font-barlow .hero-subtitle,
+        .font-barlow .hero-tagline,
+        .font-barlow .nav-item,
+        .font-barlow .comparison-text {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 500;
+        }
+        
+        /* Font Option 3: Plus Jakarta Sans */
+        .font-jakarta .hero-title,
+        .font-jakarta .font-name {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 800;
+        }
+        
+        .font-jakarta .hero-subtitle,
+        .font-jakarta .hero-tagline,
+        .font-jakarta .nav-item,
+        .font-jakarta .comparison-text {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 500;
+        }
+        
+        /* Font Option 4: DM Sans */
+        .font-dm .hero-title,
+        .font-dm .font-name {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+        }
+        
+        .font-dm .hero-subtitle,
+        .font-dm .hero-tagline,
+        .font-dm .nav-item,
+        .font-dm .comparison-text {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 400;
+        }
+        
+        /* Font Option 5: Oswald */
+        .font-oswald .hero-title,
+        .font-oswald .font-name {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+        
+        .font-oswald .hero-subtitle,
+        .font-oswald .hero-tagline,
+        .font-oswald .nav-item,
+        .font-oswald .comparison-text {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 500;
+        }
+        
+        .hollow-demo {
+            -webkit-text-stroke: 2px currentColor;
+            -webkit-text-fill-color: transparent;
+            color: #800020;
+        }
+        
+        .bordered-demo {
+            -webkit-text-stroke: 2px #800020;
+            -webkit-text-fill-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align: center; margin-bottom: 3rem; color: #800020;">Font Preview - Portfolio Homepage</h1>
+        
+        <!-- Font Option 1: Default (Inter + Space Grotesk) -->
+        <div class="font-section font-default">
+            <div class="font-name">Option 1: Default - Inter + Space Grotesk</div>
+            <div class="hero-preview">
+                <div class="eyebrow">Open to opportunities</div>
+                <h1 class="hero-title">Hi, I'm <span class="accent">Achal</span></h1>
+                <p class="hero-subtitle">Computer Engineering Student | Robotics & Embedded Systems</p>
+                <p class="hero-tagline">Building intelligent machines, one system at a time.</p>
+                <div class="nav-preview">
+                    <a href="#" class="nav-item active">About</a>
+                    <a href="#" class="nav-item">Projects</a>
+                    <a href="#" class="nav-item">Experience</a>
+                    <a href="#" class="nav-item">Resume</a>
+                </div>
+            </div>
+            <div class="comparison">
+                <div class="comparison-item">
+                    <div class="comparison-label">Display Text</div>
+                    <div class="comparison-text">PORTFOLIO</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="comparison-label">Body Text</div>
+                    <div class="comparison-text">Clean and readable</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Font Option 2: Barlow Condensed -->
+        <div class="font-section font-barlow">
+            <div class="font-name">Option 2: Barlow Condensed (Bold, Condensed, Italic)</div>
+            <div class="hero-preview">
+                <div class="eyebrow">Open to opportunities</div>
+                <h1 class="hero-title">Hi, I'm <span class="accent">Achal</span></h1>
+                <p class="hero-subtitle">Computer Engineering Student | Robotics & Embedded Systems</p>
+                <p class="hero-tagline">Building intelligent machines, one system at a time.</p>
+                <div class="nav-preview">
+                    <a href="#" class="nav-item active">About</a>
+                    <a href="#" class="nav-item">Projects</a>
+                    <a href="#" class="nav-item">Experience</a>
+                    <a href="#" class="nav-item">Resume</a>
+                </div>
+            </div>
+            <div class="comparison">
+                <div class="comparison-item">
+                    <div class="comparison-label">Display Text</div>
+                    <div class="comparison-text">PORTFOLIO</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="comparison-label">Body Text</div>
+                    <div class="comparison-text">Condensed and bold</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Font Option 3: Plus Jakarta Sans -->
+        <div class="font-section font-jakarta">
+            <div class="font-name">Option 3: Plus Jakarta Sans (Wide Grotesk)</div>
+            <div class="hero-preview">
+                <div class="eyebrow">Open to opportunities</div>
+                <h1 class="hero-title">Hi, I'm <span class="accent">Achal</span></h1>
+                <p class="hero-subtitle">Computer Engineering Student | Robotics & Embedded Systems</p>
+                <p class="hero-tagline">Building intelligent machines, one system at a time.</p>
+                <div class="nav-preview">
+                    <a href="#" class="nav-item active">About</a>
+                    <a href="#" class="nav-item">Projects</a>
+                    <a href="#" class="nav-item">Experience</a>
+                    <a href="#" class="nav-item">Resume</a>
+                </div>
+            </div>
+            <div class="comparison">
+                <div class="comparison-item">
+                    <div class="comparison-label">Display Text</div>
+                    <div class="comparison-text">PORTFOLIO</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="comparison-label">Body Text</div>
+                    <div class="comparison-text">Wide and spacious</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Font Option 4: DM Sans -->
+        <div class="font-section font-dm">
+            <div class="font-name">Option 4: DM Sans (Clean, Modern, Versatile)</div>
+            <div class="hero-preview">
+                <div class="eyebrow">Open to opportunities</div>
+                <h1 class="hero-title">Hi, I'm <span class="accent">Achal</span></h1>
+                <p class="hero-subtitle">Computer Engineering Student | Robotics & Embedded Systems</p>
+                <p class="hero-tagline">Building intelligent machines, one system at a time.</p>
+                <div class="nav-preview">
+                    <a href="#" class="nav-item active">About</a>
+                    <a href="#" class="nav-item">Projects</a>
+                    <a href="#" class="nav-item">Experience</a>
+                    <a href="#" class="nav-item">Resume</a>
+                </div>
+            </div>
+            <div class="comparison">
+                <div class="comparison-item">
+                    <div class="comparison-label">Display Text</div>
+                    <div class="comparison-text">PORTFOLIO</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="comparison-label">Body Text</div>
+                    <div class="comparison-text">Clean and modern</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Font Option 5: Oswald (with hollow/bordered demo) -->
+        <div class="font-section font-oswald">
+            <div class="font-name">Option 5: Oswald (Bold, Condensed - Perfect for Hollow/Bordered)</div>
+            <div class="hero-preview">
+                <div class="eyebrow">Open to opportunities</div>
+                <h1 class="hero-title">Hi, I'm <span class="accent">Achal</span></h1>
+                <p class="hero-subtitle">Computer Engineering Student | Robotics & Embedded Systems</p>
+                <p class="hero-tagline">Building intelligent machines, one system at a time.</p>
+                <div class="nav-preview">
+                    <a href="#" class="nav-item active">About</a>
+                    <a href="#" class="nav-item">Projects</a>
+                    <a href="#" class="nav-item">Experience</a>
+                    <a href="#" class="nav-item">Resume</a>
+                </div>
+            </div>
+            <div class="comparison">
+                <div class="comparison-item">
+                    <div class="comparison-label">Display Text</div>
+                    <div class="comparison-text">PORTFOLIO</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="comparison-label">Hollow Effect</div>
+                    <div class="comparison-text hollow-demo">HOLLOW</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="comparison-label">Bordered Effect</div>
+                    <div class="comparison-text bordered-demo">BORDERED</div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 60px; padding: 40px; background: #1a1a1a; border-radius: 12px;">
+            <h2 style="margin-bottom: 1rem;">Quick Comparison</h2>
+            <p style="color: #a3a3a3; max-width: 800px; margin: 0 auto;">
+                Scroll through each option to see how your homepage will look. 
+                The Oswald option includes examples of hollow and bordered text effects 
+                (uncomment CSS classes in globals.css to use them).
+            </p>
+        </div>
+    </div>
+</body>
+</html>
+

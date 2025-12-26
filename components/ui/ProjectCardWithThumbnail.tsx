@@ -20,6 +20,7 @@ import { ArrowUpRight } from 'lucide-react';
 import type { ProjectFrontmatter } from '@/lib/mdx';
 import { cn } from '@/lib/utils';
 import GlowWrapper from '@/components/ui/GlowWrapper';
+import { useSound } from '@/components/providers/SoundProvider';
 
 interface ProjectCardWithThumbnailProps {
   slug: string;
@@ -35,6 +36,7 @@ export function ProjectCardWithThumbnail({
   compact = false 
 }: ProjectCardWithThumbnailProps) {
   const { title, description, tags, image, status } = frontmatter;
+  const { playHoverSound, stopHoverSound } = useSound();
 
   return (
     <motion.article
@@ -44,7 +46,12 @@ export function ProjectCardWithThumbnail({
       transition={{ duration: 0.5, delay: index * 0.1 }}
       className="group"
     >
-      <Link href={`/projects/${slug}`} className="block">
+      <Link 
+        href={`/projects/${slug}`} 
+        className="block"
+        onMouseEnter={playHoverSound}
+        onMouseLeave={stopHoverSound}
+      >
         <GlowWrapper className="rounded-xl" preset="card">
           <div className={cn(
             "relative flex gap-4 p-4 rounded-xl border border-transparent",

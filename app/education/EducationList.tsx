@@ -20,7 +20,7 @@ export function EducationList({ education }: EducationListProps) {
           transition={{ duration: 0.5 }}
           className="mb-12"
         >
-          <h1 className="text-display-md md:text-display-lg font-display font-bold text-foreground mb-4">
+          <h1 className="text-display-md md:text-display-lg font-display font-bold text-foreground mb-4 uppercase">
             Education<span className="text-accent">.</span>
           </h1>
           <p className="text-lg text-foreground-secondary max-w-2xl">

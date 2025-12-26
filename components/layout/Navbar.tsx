@@ -19,6 +19,8 @@ import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import { SoundToggle } from '@/components/ui/SoundToggle';
+import { useSound } from '@/components/providers/SoundProvider';
 import { siteConfig } from '@/lib/config';
 import { cn } from '@/lib/utils';
 
@@ -26,6 +28,7 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { playHoverSound, playClickSound } = useSound();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,6 +48,7 @@ export function Navbar() {
   return (
     <>
       <motion.header
+        data-navbar="main"
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -57,7 +61,12 @@ export function Navbar() {
       >
         <nav className="section-container flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="relative group">
+          <Link 
+            href="/" 
+            className="relative group"
+            onMouseEnter={playHoverSound}
+            onClick={playClickSound}
+          >
             <motion.span
               className="text-xl font-display font-bold tracking-tight"
               whileHover={{ scale: 1.02 }}
@@ -73,6 +82,8 @@ export function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
+                onMouseEnter={playHoverSound}
+                onClick={playClickSound}
                 className={cn(
                   'relative px-4 py-2 text-sm font-medium transition-colors',
                   isActive(item.href)
@@ -90,17 +101,23 @@ export function Navbar() {
                 )}
               </Link>
             ))}
-            <div className="ml-4 pl-4 border-l border-border">
+            <div className="ml-4 pl-4 border-l border-border flex items-center gap-2">
+              <SoundToggle />
               <ThemeToggle />
             </div>
           </div>
 
           {/* Mobile Menu Button */}
           <div className="flex md:hidden items-center gap-3">
+            <SoundToggle />
             <ThemeToggle />
             <motion.button
               whileTap={{ scale: 0.95 }}
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onHoverStart={playHoverSound}
+              onClick={() => {
+                playClickSound();
+                setIsMobileMenuOpen(!isMobileMenuOpen);
+              }}
               className="p-2 rounded-lg hover:bg-background-secondary transition-colors"
               aria-label="Toggle menu"
             >
@@ -136,7 +153,11 @@ export function Navbar() {
                     >
                       <Link
                         href={item.href}
-                        onClick={() => setIsMobileMenuOpen(false)}
+                        onMouseEnter={playHoverSound}
+                        onClick={() => {
+                          playClickSound();
+                          setIsMobileMenuOpen(false);
+                        }}
                         className={cn(
                           'block px-4 py-3 rounded-lg transition-colors',
                           isActive(item.href)

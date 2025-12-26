@@ -36,10 +36,11 @@ export function TimelineStatic({ items }: TimelineStaticProps) {
   // Group by term (only in starting term - no duplicates)
   const termGroups = useMemo(() => groupItemsByTerm(sortedItems, false), [sortedItems]);
   
-  // Get terms in descending order (newest first) using proper date/season logic
+  // Get terms in descending order (newest first) using term property
+  // NOTE: Date-based term calculation is not being used anymore
   const termKeys = useMemo(() => {
     const keys = Array.from(termGroups.keys());
-    // Sort in descending order (newest first) using proper date/season logic
+    // Sort in descending order (newest first) using term property
     return keys.sort((a, b) => {
       const [aYear, aSeason] = a.split(' ');
       const [bYear, bSeason] = b.split(' ');
@@ -91,7 +92,7 @@ export function TimelineStatic({ items }: TimelineStaticProps) {
           // Deduplicate items within each term using unique identifier
           const seenItems = new Set<string>();
           const uniqueTermItems = termItems.filter((item) => {
-            const itemId = item.slug || item.link || `${item.title}-${item.date}`;
+            const itemId = item.slug || item.link || `${item.title}-${item.term}`;
             if (seenItems.has(itemId)) {
               return false;
             }

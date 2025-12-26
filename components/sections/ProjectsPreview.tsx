@@ -37,7 +37,7 @@ export function ProjectsPreview({ projects }: ProjectsPreviewProps) {
       scrollTrigger: {
         trigger: sectionRef.current,
         start: 'top top',
-        end: '+=100%',
+        end: '+=300%',
         pin: stickyRef.current,
         pinSpacing: false, 
         scrub: true,
@@ -83,7 +83,7 @@ export function ProjectsPreview({ projects }: ProjectsPreviewProps) {
             </div>
           ) : (
             <>
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid md:grid-cols-2 gap-4 pb-[300px]">
                 {featuredProjects.map((project, index) => (
                   <ProjectCardWithThumbnail
                     key={project.slug}

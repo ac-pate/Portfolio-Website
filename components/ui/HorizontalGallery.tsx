@@ -203,7 +203,7 @@ export function HorizontalGallery({ images, altPrefix = 'Gallery image', heading
       {/* Heading - stays visible at top center during horizontal scroll */}
       {heading && (
         <div className="absolute top-24 left-0 right-0 z-10 flex justify-center pointer-events-none">
-          <h2 className="text-4xl font-display font-bold text-foreground">{heading}</h2>
+          <h2 className="text-4xl font-display font-bold text-foreground uppercase">{heading}</h2>
         </div>
       )}
       <div

@@ -3,18 +3,15 @@
 import { motion } from 'framer-motion';
 import { ProjectCard } from '@/components/ui/ProjectCard';
 import type { ContentItem, ProjectFrontmatter } from '@/lib/mdx';
-import { groupByAcademicTerm, getAcademicTerm, formatAcademicTermDateRange } from '@/lib/utils';
+import { groupByAcademicTerm, formatAcademicTermDateRangeFromLabel } from '@/lib/utils';
 
 interface ProjectsListPageProps {
   projects: ContentItem<ProjectFrontmatter>[];
 }
 
 export function ProjectsListPage({ projects }: ProjectsListPageProps) {
-  // Group projects by academic term
-  const groupedProjects = groupByAcademicTerm(
-    projects,
-    (p) => p.frontmatter.startDate
-  );
+  // Group projects by academic term (uses term property from frontmatter, not dates)
+  const groupedProjects = groupByAcademicTerm(projects);
 
   return (
     <div className="pt-24 pb-16">
@@ -25,7 +22,7 @@ export function ProjectsListPage({ projects }: ProjectsListPageProps) {
           transition={{ duration: 0.5 }}
           className="mb-12"
         >
-          <h1 className="text-display-md md:text-display-lg font-display font-bold text-foreground mb-4">
+          <h1 className="text-display-md md:text-display-lg font-display font-bold text-foreground mb-4 uppercase">
             Projects<span className="text-accent">.</span>
           </h1>
           <p className="text-lg text-foreground-secondary max-w-2xl">
@@ -36,16 +33,14 @@ export function ProjectsListPage({ projects }: ProjectsListPageProps) {
         {/* Projects grouped by academic term */}
         {groupedProjects.size > 0 ? (
           Array.from(groupedProjects.entries()).map(([termLabel, termProjects]) => {
-            // Get term date range for display
-            const firstProject = termProjects[0];
-            const termInfo = getAcademicTerm(firstProject.frontmatter.startDate);
-            const termDateRange = formatAcademicTermDateRange(termInfo);
+            // Get term date range for display based on the term label itself
+            const termDateRange = formatAcademicTermDateRangeFromLabel(termLabel);
             
             return (
               <section key={termLabel} className="mb-16">
                 <div className="mb-6">
-                  <h2 className="text-xl font-display font-semibold text-foreground mb-1">
-                    {termLabel} ({termDateRange})
+                  <h2 className="text-4xl font-display font-bold text-foreground mb-1">
+                    {termLabel}{termDateRange ? ` (${termDateRange})` : ''}
                   </h2>
                   <p className="text-sm text-foreground-secondary">
                     {termProjects.length} {termProjects.length === 1 ? 'Project' : 'Projects'}

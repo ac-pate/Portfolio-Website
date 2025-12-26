@@ -100,7 +100,8 @@ interface TimelineRowProps {
 
 function TimelineRow({ item }: TimelineRowProps) {
   const link = item.link || '#';
-  const dateRange = formatDateRange(item.date, item.endDate);
+  const dateRange = item.date ? formatDateRange(item.date, item.endDate) : '';
+
 
   const typeColors: Record<string, string> = {
     project: 'bg-blue-500',
