@@ -212,20 +212,25 @@ export function getTermEndDate(term: AcademicTerm): Date {
  * // grouped has keys: "Fall 2022", "Winter 2023"
  */
 /**
- * Parses term string (e.g., "Fall 2025") into [year, seasonOrder]
+ * Parses term string (e.g., "Fall 2025") into [year, seasonMonth]
+ * Uses representative calendar months for proper chronological sorting:
+ * - Winter (Jan-Apr) = 2 (February)
+ * - Summer (May-Aug) = 7 (July) 
+ * - Fall (Sept-Dec) = 11 (November)
  */
 function parseTermForSorting(term: string): [number, number] {
   const parts = term.trim().split(' ');
   const season = parts[0]; // "Fall", "Winter", or "Summer"
   const year = parseInt(parts[1] || '0', 10);
   
-  const seasonOrder: Record<string, number> = {
-    'Fall': 1,
-    'Winter': 2,
-    'Summer': 3,
+  // Map seasons to representative calendar months for chronological sorting
+  const seasonToMonth: Record<string, number> = {
+    'Winter': 2,  // Jan-Apr → February (month 2)
+    'Summer': 7,  // May-Aug → July (month 7)
+    'Fall': 11,   // Sept-Dec → November (month 11)
   };
   
-  return [year, seasonOrder[season] || 0];
+  return [year, seasonToMonth[season] || 0];
 }
 
 export function groupItemsByTerm(items: any[], includeAllTerms: boolean = false): Map<string, any[]> {
@@ -263,14 +268,14 @@ export function groupItemsByTerm(items: any[], includeAllTerms: boolean = false)
 
   // Sort terms chronologically (oldest first) - will be reversed by components for display
   const sortedTerms = Array.from(grouped.keys()).sort((a, b) => {
-    const [aYear, aSeason] = parseTermForSorting(a);
-    const [bYear, bSeason] = parseTermForSorting(b);
+    const [aYear, aMonth] = parseTermForSorting(a);
+    const [bYear, bMonth] = parseTermForSorting(b);
 
     if (aYear !== bYear) {
       return aYear - bYear;
     }
 
-    return aSeason - bSeason; // Fall (1) < Winter (2) < Summer (3)
+    return aMonth - bMonth; // Winter (2) < Summer (7) < Fall (11)
   });
 
   // Create sorted map
@@ -378,9 +383,9 @@ export function sortTimelineItems(items: any[], ascending = false): any[] {
       if (!b.term) return -1;
     }
     
-    // Parse terms for sorting (format: "Summer 2025" -> [2025, 3])
-    const [aYear, aSeason] = parseTermForSorting(a.term || '');
-    const [bYear, bSeason] = parseTermForSorting(b.term || '');
+    // Parse terms for sorting (format: "Fall 2025" -> [2025, 11])
+    const [aYear, aMonth] = parseTermForSorting(a.term || '');
+    const [bYear, bMonth] = parseTermForSorting(b.term || '');
     
     // Primary sort: by year
     // When ascending=false (descending): newer years first (2025 before 2024)
@@ -388,10 +393,31 @@ export function sortTimelineItems(items: any[], ascending = false): any[] {
       return ascending ? aYear - bYear : bYear - aYear;
     }
     
-    // Secondary sort: by season (if same year)
-    // Fall=1, Winter=2, Summer=3
-    // When ascending=false (descending): later seasons first (Summer before Winter before Fall)
-    return ascending ? aSeason - bSeason : bSeason - aSeason;
+    // Secondary sort: by season/month (if same year)
+    // Winter=2, Summer=7, Fall=11
+    // When ascending=false (descending): later months first (Fall before Summer before Winter)
+    if (aMonth !== bMonth) {
+      return ascending ? aMonth - bMonth : bMonth - aMonth;
+    }
+    
+    // Tertiary sort: by endDate within same term
+    // Ongoing projects (no endDate) come first, then most recently completed
+    const aHasEndDate = a.endDate !== undefined && a.endDate !== null && a.endDate !== '';
+    const bHasEndDate = b.endDate !== undefined && b.endDate !== null && b.endDate !== '';
+    
+    // Ongoing projects (no endDate) should appear first
+    if (!aHasEndDate && bHasEndDate) return -1; // a is ongoing, comes first
+    if (aHasEndDate && !bHasEndDate) return 1;  // b is ongoing, comes first
+    
+    // Both have endDates: sort by endDate (most recent first when descending)
+    if (aHasEndDate && bHasEndDate) {
+      const aEndTime = new Date(a.endDate).getTime();
+      const bEndTime = new Date(b.endDate).getTime();
+      return ascending ? aEndTime - bEndTime : bEndTime - aEndTime;
+    }
+    
+    // Both ongoing or no endDate info: maintain original order
+    return 0;
   });
 
   return sorted;

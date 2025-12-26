@@ -13,10 +13,10 @@ interface TermIndicatorProps {
 }
 
 export function TermIndicator({ termKeys }: TermIndicatorProps) {
-  // Sort termKeys in descending order (newest first) using proper date/season logic
+  // Sort termKeys in descending order (newest first) using calendar chronology
   const sortedTermKeys = [...termKeys].sort((a, b) => {
-    const [aYear, aSeason] = a.split(' ');
-    const [bYear, bSeason] = b.split(' ');
+    const [aSeason, aYear] = a.split(' ');
+    const [bSeason, bYear] = b.split(' ');
 
     // Compare years first (descending - newer years first)
     const yearA = parseInt(aYear);
@@ -25,9 +25,9 @@ export function TermIndicator({ termKeys }: TermIndicatorProps) {
       return yearB - yearA; // Descending order
     }
 
-    // Then compare seasons (descending: Summer > Winter > Fall)
-    const seasonOrder: Record<string, number> = { Fall: 1, Winter: 2, Summer: 3 };
-    return seasonOrder[bSeason] - seasonOrder[aSeason]; // Descending order
+    // Then compare seasons by calendar month (descending: Fall=11 > Summer=7 > Winter=2)
+    const seasonToMonth: Record<string, number> = { Winter: 2, Summer: 7, Fall: 11 };
+    return seasonToMonth[bSeason] - seasonToMonth[aSeason]; // Descending order
   });
   
   const [activeTerm, setActiveTerm] = useState<string>(sortedTermKeys[0] || '');

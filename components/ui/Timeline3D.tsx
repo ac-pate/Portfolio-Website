@@ -634,25 +634,26 @@ export function Timeline3D({ items }: Timeline3DProps) {
     const keys = Array.from(termGroups.keys());
     // Sort in descending order (newest first) - top should be most recent
     return keys.sort((a, b) => {
-      // Parse term string (e.g., "Summer 2025" -> [2025, 3])
+      // Parse term string using calendar chronology (e.g., "Fall 2025" -> [2025, 11])
       const parseTerm = (termStr: string): [number, number] => {
         const parts = termStr.trim().split(' ');
         const season = parts[0]; // "Fall", "Winter", or "Summer"
         const year = parseInt(parts[1] || '0', 10);
-        const seasonOrder: Record<string, number> = { Fall: 1, Winter: 2, Summer: 3 };
-        return [year, seasonOrder[season] || 0];
+        // Map to representative calendar months: Winter=2, Summer=7, Fall=11
+        const seasonToMonth: Record<string, number> = { Winter: 2, Summer: 7, Fall: 11 };
+        return [year, seasonToMonth[season] || 0];
       };
 
-      const [aYear, aSeason] = parseTerm(a);
-      const [bYear, bSeason] = parseTerm(b);
+      const [aYear, aMonth] = parseTerm(a);
+      const [bYear, bMonth] = parseTerm(b);
 
       // Compare years first (descending - newer years first)
       if (aYear !== bYear) {
         return bYear - aYear; // Descending: 2025 comes before 2024
       }
 
-      // Then compare seasons (descending: Summer(3) > Winter(2) > Fall(1))
-      return bSeason - aSeason; // Descending: Summer comes before Winter comes before Fall
+      // Then compare months (descending: Fall(11) > Summer(7) > Winter(2))
+      return bMonth - aMonth; // Descending: Fall comes before Summer comes before Winter
     });
   }, [termGroups]);
 
