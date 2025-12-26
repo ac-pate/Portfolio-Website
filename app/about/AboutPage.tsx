@@ -114,9 +114,11 @@ export function AboutPage({ jobs, education, volunteer }: AboutPageProps) {
                                 {job.frontmatter.title}
                               </h3>
                               <p className="text-accent text-sm">{job.frontmatter.company}</p>
-                              <p className="text-xs text-muted mt-1">
-                                {formatDateRange(job.frontmatter.startDate, job.frontmatter.endDate)}
-                              </p>
+                              {job.frontmatter.startDate && (
+                                <p className="text-xs text-muted mt-1">
+                                  {formatDateRange(job.frontmatter.startDate, job.frontmatter.endDate)}
+                                </p>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -158,10 +160,12 @@ export function AboutPage({ jobs, education, volunteer }: AboutPageProps) {
                                 {edu.frontmatter.degree}
                               </h3>
                               <p className="text-accent text-sm">{edu.frontmatter.institution}</p>
-                              <p className="text-xs text-muted mt-1">
-                                {formatDateRange(edu.frontmatter.startDate, edu.frontmatter.endDate)}
-                                {edu.frontmatter.gpa && ` • GPA: ${edu.frontmatter.gpa}`}
-                              </p>
+                              {edu.frontmatter.startDate && (
+                                <p className="text-xs text-muted mt-1">
+                                  {formatDateRange(edu.frontmatter.startDate, edu.frontmatter.endDate)}
+                                  {edu.frontmatter.gpa && ` • GPA: ${edu.frontmatter.gpa}`}
+                                </p>
+                              )}
                             </div>
                           </div>
                         </div>

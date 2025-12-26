@@ -176,7 +176,7 @@ interface StaticCardProps {
 
 function StaticCard({ item }: StaticCardProps) {
   const link = item.link || '#';
-  const dateRange = formatDateRange(item.date, item.endDate);
+  const dateRange = item.date ? formatDateRange(item.date, item.endDate) : '';
 
   const typeColors: Record<string, string> = {
     project: 'border-l-blue-500',

@@ -77,10 +77,12 @@ export function ExtracurricularDetail({ extracurricular }: ExtracurricularDetail
 
           {/* Meta info */}
           <div className="flex flex-wrap items-center gap-6 text-sm text-foreground-secondary mb-6">
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              <span>{formatDateRange(frontmatter.startDate, frontmatter.endDate)}</span>
-            </div>
+            {frontmatter.startDate && (
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4" />
+                <span>{formatDateRange(frontmatter.startDate, frontmatter.endDate)}</span>
+              </div>
+            )}
             {frontmatter.location && (
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4" />

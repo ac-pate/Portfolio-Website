@@ -79,10 +79,12 @@ export function EducationDetail({ education }: EducationDetailProps) {
               </h1>
               <p className="text-xl text-accent mb-2">{frontmatter.institution}</p>
               <div className="flex flex-wrap items-center gap-4 text-sm text-foreground-secondary">
-                <span className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
-                  {formatDateRange(frontmatter.startDate, frontmatter.endDate)}
-                </span>
+                {frontmatter.startDate && (
+                  <span className="flex items-center gap-1">
+                    <Calendar className="w-4 h-4" />
+                    {formatDateRange(frontmatter.startDate, frontmatter.endDate)}
+                  </span>
+                )}
                 {frontmatter.location && (
                   <span className="flex items-center gap-1">
                     <MapPin className="w-4 h-4" />

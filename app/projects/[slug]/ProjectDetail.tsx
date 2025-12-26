@@ -84,10 +84,12 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
 
           {/* Meta info */}
           <div className="flex flex-wrap items-center gap-6 text-sm text-foreground-secondary mb-6">
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              <span>{formatDateRange(frontmatter.startDate, frontmatter.endDate)}</span>
-            </div>
+            {frontmatter.startDate && (
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4" />
+                <span>{formatDateRange(frontmatter.startDate, frontmatter.endDate)}</span>
+              </div>
+            )}
             {frontmatter.projectType && frontmatter.projectType.length > 0 && (
               <span className="text-foreground-secondary">
                 {frontmatter.projectType.join(' • ')}

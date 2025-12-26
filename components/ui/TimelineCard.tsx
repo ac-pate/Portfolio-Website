@@ -34,7 +34,7 @@ interface TimelineCardProps {
 }
 
 export function TimelineCard({ item }: TimelineCardProps) {
-  const dateRange = formatDateRange(item.date, item.endDate);
+  const dateRange = item.date ? formatDateRange(item.date, item.endDate) : '';
   const displayTags = item.tags?.slice(0, 3) || [];
   const cardLink = item.link || '#';
 

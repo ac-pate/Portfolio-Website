@@ -81,9 +81,11 @@ export function ExtracurricularCard({ slug, frontmatter, index = 0 }: Extracurri
             )}
           </div>
 
-          <p className="text-xs text-muted mb-3">
-            {formatDateRange(startDate, endDate)}
-          </p>
+          {startDate && (
+            <p className="text-xs text-muted mb-3">
+              {formatDateRange(startDate, endDate)}
+            </p>
+          )}
 
           {description && (
             <p className="text-sm text-foreground-secondary leading-relaxed mb-4 line-clamp-3">

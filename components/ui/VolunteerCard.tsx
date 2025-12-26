@@ -60,9 +60,11 @@ export function VolunteerCard({ slug, frontmatter, index = 0 }: VolunteerCardPro
             <ArrowUpRight className="w-5 h-5 text-muted transition-all duration-300 group-hover:text-accent group-hover:translate-x-0.5 group-hover:-translate-y-0.5 flex-shrink-0" />
           </div>
 
-          <p className="text-xs text-muted mb-3">
-            {formatDateRange(startDate, endDate)}
-          </p>
+          {startDate && (
+            <p className="text-xs text-muted mb-3">
+              {formatDateRange(startDate, endDate)}
+            </p>
+          )}
 
           {description && (
             <p className="text-sm text-foreground-secondary leading-relaxed mb-4 line-clamp-3">

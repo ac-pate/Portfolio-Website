@@ -98,10 +98,12 @@ export function ExperienceCard({
                   </div>
                 </div>
                 
-                <p className="text-xs text-muted mb-2">
-                  {formatDateRange(startDate, endDate)} • {location}
-                  {type && ` • ${type}`}
-                </p>
+                {startDate && (
+                  <p className="text-xs text-muted mb-2">
+                    {formatDateRange(startDate, endDate)} • {location}
+                    {type && ` • ${type}`}
+                  </p>
+                )}
 
                 {/* Technologies */}
                 {technologies && technologies.length > 0 && (
@@ -166,10 +168,12 @@ export function ExperienceCard({
             <ArrowUpRight className="w-5 h-5 text-muted transition-all duration-300 group-hover:text-accent group-hover:translate-x-0.5 group-hover:-translate-y-0.5 flex-shrink-0" />
           </div>
 
-          <p className="text-xs text-muted mb-3">
-            {formatDateRange(startDate, endDate)} • {location}
-            {type && ` • ${type}`}
-          </p>
+          {startDate && (
+            <p className="text-xs text-muted mb-3">
+              {formatDateRange(startDate, endDate)} • {location}
+              {type && ` • ${type}`}
+            </p>
+          )}
 
           {description && (
             <p className="text-sm text-foreground-secondary leading-relaxed mb-4 line-clamp-3">

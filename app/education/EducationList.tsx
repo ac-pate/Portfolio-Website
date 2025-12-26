@@ -61,10 +61,12 @@ export function EducationList({ education }: EducationListProps) {
                       </div>
                       
                       <div className="flex flex-wrap items-center gap-4 text-sm text-muted mt-2 mb-3">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-4 h-4" />
-                          {formatDateRange(edu.frontmatter.startDate, edu.frontmatter.endDate)}
-                        </span>
+                        {edu.frontmatter.startDate && (
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-4 h-4" />
+                            {formatDateRange(edu.frontmatter.startDate, edu.frontmatter.endDate)}
+                          </span>
+                        )}
                         {edu.frontmatter.location && (
                           <span className="flex items-center gap-1">
                             <MapPin className="w-4 h-4" />
