@@ -79,6 +79,23 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
     }
   }, []); // Only run once on mount
 
+  // Ensure background music respects the soundsEnabled state
+  useEffect(() => {
+    if (!bgAudioRef.current) return;
+    
+    // If sounds are disabled and audio is playing, pause it
+    if (!soundsEnabled && !bgAudioRef.current.paused) {
+      bgAudioRef.current.pause();
+      bgAudioRef.current.volume = 0;
+      
+      // Clear any active fade intervals
+      if (fadeIntervalRef.current) {
+        clearInterval(fadeIntervalRef.current);
+        fadeIntervalRef.current = null;
+      }
+    }
+  }, [soundsEnabled]);
+
   // Note: Removed auto-start effect since sounds are now OFF by default
   // Background music will only start when user clicks the toggle button
 
@@ -126,21 +143,30 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
           // Silently handle errors
         }
       } else {
-        // Fade out and pause background music
+        // Immediately stop background music when toggling off
         if (bgAudioRef.current) {
+          const audio = bgAudioRef.current;
+          
+          // Quick fade out for smoother audio stop
+          const startVolume = audio.volume;
+          let step = 0;
+          const totalSteps = 10;
+          
           fadeIntervalRef.current = setInterval(() => {
-            if (bgAudioRef.current && bgAudioRef.current.volume > 0) {
-              bgAudioRef.current.volume = Math.max(bgAudioRef.current.volume - 0.1, 0);
-            } else {
-              if (bgAudioRef.current) {
-                bgAudioRef.current.pause();
-              }
-              if (fadeIntervalRef.current) {
-                clearInterval(fadeIntervalRef.current);
-                fadeIntervalRef.current = null;
+            step++;
+            if (audio) {
+              audio.volume = Math.max(startVolume * (1 - step / totalSteps), 0);
+              
+              if (step >= totalSteps || audio.volume === 0) {
+                audio.pause();
+                audio.volume = 0; // Ensure volume is at 0
+                if (fadeIntervalRef.current) {
+                  clearInterval(fadeIntervalRef.current);
+                  fadeIntervalRef.current = null;
+                }
               }
             }
-          }, 50);
+          }, 30); // Faster fade out (300ms total)
         }
       }
       
@@ -162,15 +188,25 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
       
       // Create a new Audio instance and play
       const hoverAudio = new Audio('/sounds/hover-sound.mp3');
-      hoverAudio.volume = 1.0; // Maximum volume for better intensity
+      hoverAudio.volume = 0.8; // Lower volume to prevent overpowering
+      hoverAudio.loop = false; // Ensure it doesn't loop
       currentHoverAudioRef.current = hoverAudio;
+      
+      // Auto-cleanup when sound ends
+      hoverAudio.addEventListener('ended', () => {
+        if (currentHoverAudioRef.current === hoverAudio) {
+          currentHoverAudioRef.current = null;
+        }
+      });
       
       // Try to play immediately
       hoverAudio.play().catch((error) => {
         // Silently handle errors (autoplay blocked, file missing, etc.)
+        currentHoverAudioRef.current = null;
       });
     } catch (e) {
       // Ignore audio errors
+      currentHoverAudioRef.current = null;
     }
   }, [soundsEnabled]);
 

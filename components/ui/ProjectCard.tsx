@@ -17,7 +17,6 @@ import { ArrowUpRight, Github, ExternalLink } from 'lucide-react';
 import type { ProjectFrontmatter } from '@/lib/mdx';
 import { cn } from '@/lib/utils';
 import { ContentCard } from '@/components/ui/ContentCard';
-import { useSound } from '@/components/providers/SoundProvider';
 
 interface ProjectCardProps {
   slug: string;
@@ -27,7 +26,6 @@ interface ProjectCardProps {
 
 export function ProjectCard({ slug, frontmatter, index = 0 }: ProjectCardProps) {
   const { title, description, tags, image, github, demo, status, projectType } = frontmatter;
-  const { playHoverSound, stopHoverSound } = useSound();
 
   // Status badge overlay
   const statusOverlay =
@@ -103,12 +101,7 @@ export function ProjectCard({ slug, frontmatter, index = 0 }: ProjectCardProps) 
         }
         actionButtons={actionButtons}
         linkWrapper={(children) => (
-          <Link 
-            href={`/projects/${slug}`} 
-            className="block h-full" 
-            onMouseEnter={playHoverSound}
-            onMouseLeave={stopHoverSound}
-          >
+          <Link href={`/projects/${slug}`} className="block h-full">
             {children}
           </Link>
         )}

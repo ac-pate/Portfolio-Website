@@ -61,9 +61,9 @@ const SCROLL_DISTANCE_PER_CARD = 700; // Viewport heights (vh) per card (higher 
 const SCROLL_SCRUB_SPEED = 2.5; // Scroll smoothing (higher = more lag, smoother)
 
 // Card starting properties (when far back, before coming into focus)
-const CARD_START_SCALE = 0.15; // How small cards start (0.15 = 15% size)
+const CARD_START_SCALE = 0.01; // How small cards start (0.01 = 1% size - grow from a point)
 const CARD_START_BLUR = 5; // Blur amount when card is far back (in pixels)
-const CARD_START_OPACITY = 0.8; // Opacity when card is far back (0-1)
+const CARD_START_OPACITY = 1.0; // Opacity stays solid (1.0 = no transparency, stars don't show through)
 
 // Focus zone properties (when card is in focus)
 const FOCUS_DISTANCE = 8; // Distance range where card is in focus (Z units)
@@ -101,8 +101,8 @@ const STARFIELD_CONFIG = {
   count: 5000, // Number of stars
   depth: 300, // How far back stars extend (Z units)
   speed: 0.5, // Base speed multiplier for star movement
-  twinkleSpeed: 0.5, // Speed of twinkling animation (lower = slower, softer blink)
-  size: 0.5, // Base star size
+  twinkleSpeed: 100, // Speed of twinkling animation (lower = slower, softer blink)
+  size: 0.35, // Base star size (reduced for smaller stars)
   color: 0xffffff, // Star color (white)
   opacity: 0.8, // Base star opacity
 };
@@ -218,6 +218,8 @@ export function Timeline3D({ items }: Timeline3DProps) {
     const starSizes = new Float32Array(STARFIELD_CONFIG.count);
     const starOpacities = new Float32Array(STARFIELD_CONFIG.count);
     const starDepths = new Float32Array(STARFIELD_CONFIG.count); // Store Z depth for parallax
+    const starPhases = new Float32Array(STARFIELD_CONFIG.count); // Random phase offset for each star
+    const starFrequencies = new Float32Array(STARFIELD_CONFIG.count); // Random twinkle frequency
     
     // Initialize stars with random positions across the full animation range
     for (let i = 0; i < STARFIELD_CONFIG.count; i++) {
@@ -237,12 +239,20 @@ export function Timeline3D({ items }: Timeline3DProps) {
       
       // Random opacity for twinkling variation
       starOpacities[i] = STARFIELD_CONFIG.opacity * (0.6 + Math.random() * 0.4);
+      
+      // Random phase offset (0 to 2π) for unique twinkle timing
+      starPhases[i] = Math.random() * Math.PI * 2;
+      
+      // Random frequency multiplier (0.3 to 1.5) for varied twinkle speeds
+      starFrequencies[i] = 0.3 + Math.random() * 1.2;
     }
     
     starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
     starGeometry.setAttribute('size', new THREE.BufferAttribute(starSizes, 1));
     starGeometry.setAttribute('opacity', new THREE.BufferAttribute(starOpacities, 1));
     starGeometry.setAttribute('depth', new THREE.BufferAttribute(starDepths, 1));
+    starGeometry.setAttribute('phase', new THREE.BufferAttribute(starPhases, 1));
+    starGeometry.setAttribute('frequency', new THREE.BufferAttribute(starFrequencies, 1));
     
     // Custom shader material for stars with twinkling
     // Convert star color from hex to RGB (0-1 range) for initial uniform
@@ -263,6 +273,8 @@ export function Timeline3D({ items }: Timeline3DProps) {
         attribute float size;
         attribute float opacity;
         attribute float depth;
+        attribute float phase;
+        attribute float frequency;
         
         varying float vOpacity;
         varying float vDepth;
@@ -283,13 +295,12 @@ export function Timeline3D({ items }: Timeline3DProps) {
           float zOffset = scrollProgress * parallaxSpeed * 0.5;
           mvPosition.z += zOffset;
           
-          // Soft twinkling: gentle, slow opacity variation
-          // Each star has unique phase based on depth for natural variation
-          float starPhase = depth * 0.01;
-          // Slow, gentle sine wave with smooth curve
-          float twinkleWave = sin(time * twinkleSpeed * 0.01 + starPhase);
-          // Soft curve: use smoothstep for gentler transitions
-          float twinkle = twinkleWave * 0.15 + 0.85; // Range: 0.7 to 1.0 (gentle variation)
+          // Natural twinkling: each star has unique phase and frequency
+          // Full dim to bright cycle like real stars
+          float twinkleTime = time * 0.03 * frequency; // Slower speed for gentle twinkling
+          float twinkleWave = sin(twinkleTime + phase);
+          // Full range: 0.0 (completely dim) to 1.0 (full brightness)
+          float twinkle = twinkleWave * 0.5 + 0.5;
           vOpacity = opacity * twinkle;
           vDepth = depth;
           
@@ -353,9 +364,9 @@ export function Timeline3D({ items }: Timeline3DProps) {
     const animate = () => {
       animationFrameRef.current = requestAnimationFrame(animate);
       
-      // Update starfield twinkling
+      // Update starfield twinkling (slow increment for gentle, natural twinkling)
       if (starfieldRef.current) {
-        starfieldTimeRef.current += 0.01;
+        starfieldTimeRef.current += 1.0; // Increment steadily, shader uses 0.002 multiplier for slow effect
         (starfieldRef.current.material as THREE.ShaderMaterial).uniforms.time.value = starfieldTimeRef.current;
       }
       
@@ -464,29 +475,56 @@ export function Timeline3D({ items }: Timeline3DProps) {
                   starMaterial.uniforms.starColor.value.set(starColorR, starColorG, starColorB);
                 }
                 
-                // Recycle stars that pass the camera (infinite starfield)
+                // Recycle stars bidirectionally (infinite starfield for scrolling up/down)
                 const starGeometry = starfieldRef.current.geometry;
                 const positions = starGeometry.attributes.position.array as Float32Array;
                 const depths = starGeometry.attributes.depth.array as Float32Array;
+                const phases = starGeometry.attributes.phase.array as Float32Array;
+                const frequencies = starGeometry.attributes.frequency.array as Float32Array;
+                
+                // Define visible range around camera
+                const visibleRangeAhead = 100; // Stars visible this far ahead
+                const visibleRangeBehind = starfieldDepthRef.current + 50; // Stars visible this far behind
                 
                 for (let i = 0; i < STARFIELD_CONFIG.count; i++) {
                   const i3 = i * 3;
                   const currentZ = positions[i3 + 2];
+                  const distanceFromCamera = currentZ - targetZ; // Positive = ahead, negative = behind
                   
-                  // If star has passed the camera, reset it to the back
-                  if (currentZ > targetZ + 5) {
-                    // Reset to a position behind the camera, using dynamic starfield depth
-                    positions[i3 + 2] = targetZ - starfieldDepthRef.current * Math.random();
-                    depths[i] = positions[i3 + 2];
+                  let needsRecycle = false;
+                  let newZ = currentZ;
+                  
+                  // If star has passed the camera too much (scrolling down/zooming in)
+                  if (distanceFromCamera > visibleRangeAhead) {
+                    // Reset to a position behind the camera (distribute across full depth)
+                    newZ = targetZ - Math.random() * starfieldDepthRef.current;
+                    needsRecycle = true;
+                  }
+                  // If star is too far behind camera (scrolling up/zooming out)
+                  else if (distanceFromCamera < -visibleRangeBehind) {
+                    // Reset to a position ahead of the camera (distribute across visible range)
+                    newZ = targetZ + Math.random() * visibleRangeAhead;
+                    needsRecycle = true;
+                  }
+                  
+                  if (needsRecycle) {
+                    positions[i3 + 2] = newZ;
+                    depths[i] = newZ;
                     
-                    // Also randomize X, Y slightly for variation
+                    // Randomize X, Y for variation
                     positions[i3] = (Math.random() - 0.5) * 20;
                     positions[i3 + 1] = (Math.random() - 0.5) * 20;
+                    
+                    // Randomize phase and frequency for new stars
+                    phases[i] = Math.random() * Math.PI * 2;
+                    frequencies[i] = 0.3 + Math.random() * 1.2;
                   }
                 }
                 
                 starGeometry.attributes.position.needsUpdate = true;
                 starGeometry.attributes.depth.needsUpdate = true;
+                starGeometry.attributes.phase.needsUpdate = true;
+                starGeometry.attributes.frequency.needsUpdate = true;
               }
 
               // DIRECT DOM CONTROL: Update HTML cards directly for 60fps performance
@@ -582,8 +620,24 @@ export function Timeline3D({ items }: Timeline3DProps) {
                   opacity = Math.max(0, FOCUS_OPACITY - Math.pow(fadeOutProgress, FADE_OUT_EXPONENT));
                 }
                 
+                // ============================================
+                // PERSPECTIVE CONVERGENCE (vanishing point effect)
+                // Far cards appear at CENTER (vanishing point), travel in straight rays to lanes
+                // Like stars - perfectly LINEAR trajectory, no curves
+                // ============================================
+                // Calculate perspective factor based on distance
+                const maxPerspectiveDistance = APPROACH_START_DISTANCE + FOCUS_DISTANCE;
+                const perspectiveProgress = Math.max(0, Math.min(1, distanceZ / maxPerspectiveDistance));
+                
+                // LINEAR interpolation (no exponent) for straight trajectories
+                // When far (perspectiveProgress = 1): cards at CENTER (X = 0)
+                // When close (perspectiveProgress = 0): cards at lane position
+                const convergenceFactor = perspectiveProgress; // Linear, not exponential!
+                const targetX = pos.x * 10; // Lane offset from center (negative = left, positive = right)
+                const convergenceX = targetX * (1 - convergenceFactor); // Interpolate from center (0) to lane
+                const xPercent = 50 + convergenceX; // 50% = center
+                
                 const zIndex = 100 - i;
-                const xPercent = 50 + (pos.x * 10);
 
                 // Apply styles directly to DOM element
                 cardEl.style.visibility = 'visible';

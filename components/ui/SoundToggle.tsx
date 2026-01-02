@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { useSound } from '@/components/providers/SoundProvider';
 
 export function SoundToggle() {
-  const { soundsEnabled, toggleSounds, playClickSound, playHoverSound } = useSound();
+  const { soundsEnabled, toggleSounds, playClickSound } = useSound();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -28,7 +28,6 @@ export function SoundToggle() {
     <motion.button
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      onHoverStart={playHoverSound}
       onClick={handleClick}
       className="relative w-9 h-9 rounded-lg bg-background-secondary border border-border flex items-center justify-center transition-colors hover:border-accent/50 focus-ring"
       aria-label="Toggle sounds"

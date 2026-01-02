@@ -17,7 +17,7 @@ const GLOBAL_CONFIG = {
   // defaultGlowColor: "#a3002a",
   defaultGlowColor: "#a30036",
   // Light mode alternative color (automatically used when light mode is active)
-  lightModeGlowColor: "#d6006d",
+  lightModeGlowColor: "#e71b47",
   // Border color on hover
   hoverBorderColor: "rgba(163, 0, 42, 0.6)", // accent-light/60
   // Subtle inner shadow color when not hovering
