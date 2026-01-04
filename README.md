@@ -180,3 +180,13 @@ The site uses:
 
 MIT License - feel free to use this template for your own portfolio!
 
+## Debug Report: Timeline Scroll Fix (Jan 2026)
+
+**Issue**: The 3D Timeline section had an excessively long scroll distance (over 200,000 pixels) followed by a large empty space, and the footer was not appearing correctly. Additionally, the descending sort order ("Newest First") caused confusion as the most recent item appeared at the start of the animation, making it feel "done" immediately.
+
+**Fix**: 
+1. **Scroll Calculation**: Changed the scroll distance calculation from `vh` (viewport heights) to `px` (pixels). The value `1000` is now treated as 1000px per card instead of 1000vh (which was ~10x larger), reducing the total scrollable area to a manageable size (~22,000px).
+2. **Animation Loop**: Corrected the logic to calculate scroll distance for `(N-1)` transitions rather than `N` cards, eliminating the trailing empty space.
+3. **Sorting**: Reverted the timeline sort order to **Oldest → Newest** (Ascending). This ensures the user starts at the beginning of the journey and scrolls forward to the most recent milestone (Concordia), matching the intuitive flow of a timeline.
+
+

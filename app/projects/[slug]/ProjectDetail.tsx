@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, Github, ExternalLink, Calendar, Tag } from 'lucide-react';
+import { ArrowLeft, Github, ExternalLink, Calendar, Tag, FileText } from 'lucide-react';
 import type { ContentItem, ProjectFrontmatter } from '@/lib/mdx';
 import { formatDateRange } from '@/lib/utils';
 import ReactMarkdown from 'react-markdown';
@@ -136,6 +136,20 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                 >
                   <Github className="w-4 h-4" />
                   View Source
+                </a>
+              </GlowWrapper>
+            )}
+            {frontmatter.report && (
+              <GlowWrapper preset="button" className="rounded-lg">
+                <a
+                  href={frontmatter.report}
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-secondary rounded-lg"
+                >
+                  <FileText className="w-4 h-4" />
+                  View Report
                 </a>
               </GlowWrapper>
             )}

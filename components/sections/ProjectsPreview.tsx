@@ -30,82 +30,54 @@ export function ProjectsPreview({ projects }: ProjectsPreviewProps) {
     .slice(0, 4);
 
   useEffect(() => {
-    if (!sectionRef.current || !stickyRef.current || !contentRef.current) return;
-
-    // Pin for 100vh. While pinned, the next section (Experience) will wipe over.
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: 'top top',
-        end: '+=300%',
-        pin: stickyRef.current,
-        pinSpacing: false, 
-        scrub: true,
-        invalidateOnRefresh: true,
-      },
-    });
-
-    // Animate content exit synchronized with the incoming wipe
-    tl.to(contentRef.current, {
-      opacity: 0,
-      y: -50,
-      duration: 1,
-      ease: 'power1.in',
-    });
-
-    return () => {
-      if (tl.scrollTrigger) tl.scrollTrigger.kill();
-      tl.kill();
-    };
+    // Optional: Add simple fade-in or other non-pinning animations here if desired
   }, []);
 
   return (
     <section 
       ref={sectionRef} 
       id="projects" 
-      className="relative h-screen bg-background z-20"
+      className="sticky top-0 min-h-screen bg-background z-20 pb-20 mb-[40vh]"
     >
-      <div 
-        ref={stickyRef} 
-        className="h-screen w-full flex items-center justify-center overflow-hidden"
-      >
-        <div ref={contentRef} className="section-container w-full">
+      <div className="section-container w-full pt-24 md:pt-32">
+        {/* Sticky Header */}
+        <div className="sticky top-20 z-10 py-4 bg-background/80 backdrop-blur-md -mx-4 px-4 mb-8 border-b border-white/5">
           <SectionHeading
             title="Featured Projects"
             subtitle="Selected work in robotics, embedded systems, and software."
           />
-
-          {featuredProjects.length === 0 ? (
-            <div className="text-center py-16">
-              <p className="text-foreground-secondary">
-                Projects coming soon.
-              </p>
-            </div>
-          ) : (
-            <>
-              <div className="grid md:grid-cols-2 gap-4 pb-[300px]">
-                {featuredProjects.map((project, index) => (
-                  <ProjectCardWithThumbnail
-                    key={project.slug}
-                    slug={project.slug}
-                    frontmatter={project.frontmatter}
-                    index={index}
-                  />
-                ))}
-              </div>
-
-              <div className="mt-10 text-center">
-                <Link
-                  href="/projects"
-                  className="inline-flex items-center gap-2 text-accent font-medium hover:underline"
-                >
-                  View all projects
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-            </>
-          )}
         </div>
+
+        {featuredProjects.length === 0 ? (
+          <div className="text-center py-16">
+            <p className="text-foreground-secondary">
+              Projects coming soon.
+            </p>
+          </div>
+        ) : (
+          <div ref={contentRef}>
+            <div className="grid md:grid-cols-2 gap-4 md:gap-8">
+              {featuredProjects.map((project, index) => (
+                <ProjectCardWithThumbnail
+                  key={project.slug}
+                  slug={project.slug}
+                  frontmatter={project.frontmatter}
+                  index={index}
+                />
+              ))}
+            </div>
+
+            <div className="mt-16 text-center">
+              <Link
+                href="/projects"
+                className="inline-flex items-center gap-2 text-accent font-medium hover:underline"
+              >
+                View all projects
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

@@ -14,6 +14,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { TimelineItem } from '@/lib/mdx';
@@ -24,12 +25,14 @@ import {
   formatDateRange 
 } from '@/lib/timeline';
 import { SectionHeading } from '@/components/ui/SectionHeading';
+import GlowWrapper from '@/components/ui/GlowWrapper';
 
 interface TimelineStaticProps {
   items: TimelineItem[];
+  onToggleView: () => void;
 }
 
-export function TimelineStatic({ items }: TimelineStaticProps) {
+export function TimelineStatic({ items, onToggleView }: TimelineStaticProps) {
   // Sort items newest first
   const sortedItems = useMemo(() => sortTimelineItems(items, false), [items]);
   
@@ -37,52 +40,80 @@ export function TimelineStatic({ items }: TimelineStaticProps) {
   const termGroups = useMemo(() => groupItemsByTerm(sortedItems, false), [sortedItems]);
   
   // Get terms in descending order (newest first) using term property
-  // NOTE: Date-based term calculation is not being used anymore
+  // Example term format: "Fall 2024", "Winter 2025", "Summer 2024"
   const termKeys = useMemo(() => {
     const keys = Array.from(termGroups.keys());
-    // Sort in descending order (newest first) using term property
+    // Sort in descending order (newest first)
     return keys.sort((a, b) => {
-      const [aYear, aSeason] = a.split(' ');
-      const [bYear, bSeason] = b.split(' ');
+      // Parse term: "Fall 2024" -> season="Fall", year=2024
+      const partsA = a.split(' ');
+      const partsB = b.split(' ');
+      const seasonA = partsA[0]; // "Fall", "Winter", "Summer"
+      const seasonB = partsB[0];
+      const yearA = parseInt(partsA[1] || '0', 10);
+      const yearB = parseInt(partsB[1] || '0', 10);
 
       // Compare years first (descending - newer years first)
-      const yearA = parseInt(aYear);
-      const yearB = parseInt(bYear);
       if (yearA !== yearB) {
-        return yearB - yearA; // Descending order
+        return yearB - yearA; // Descending: 2025 before 2024
       }
 
-      // Then compare seasons (descending: Summer > Winter > Fall)
-      const seasonOrder: Record<string, number> = { Fall: 1, Winter: 2, Summer: 3 };
-      return seasonOrder[bSeason] - seasonOrder[aSeason]; // Descending order
+      // Within same year, compare seasons (descending: Fall > Summer > Winter)
+      // Academic year: Fall (start) -> Winter -> Summer (end)
+      // Chronologically for display: Fall is later in calendar year
+      const seasonOrder: Record<string, number> = { Winter: 1, Summer: 2, Fall: 3 };
+      return (seasonOrder[seasonB] || 0) - (seasonOrder[seasonA] || 0); // Descending
     });
   }, [termGroups]);
 
   return (
-    <div className="py-24 md:py-32">
+    <div className="pb-20">
       <div className="section-container">
-        {/* Header */}
-        <div className="mb-16">
-          <SectionHeading
-            title="Journey"
-            subtitle="My path through education, work, and projects."
-          />
-        </div>
+        {/* Sticky Header Group */}
+        <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-md -mx-4 px-4 pt-20 md:pt-24 pb-4 border-b border-white/5">
+          {/* Header Title & Button */}
+          <div className="mb-0 relative">
+            <SectionHeading
+              title="Journey"
+              subtitle="My path through education, work, and projects."
+              className="mb-0"
+            />
+            
+            {/* View Toggle Button */}
+            <div className="absolute top-0 right-0 hidden md:block overflow-visible">
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <GlowWrapper preset="button" className="rounded-full">
+                  <button
+                    onClick={onToggleView}
+                    className="flex items-center gap-2 px-4 py-2 text-xs font-medium uppercase tracking-wider text-muted hover:text-accent bg-background-secondary/50 border border-border rounded-full transition-all"
+                  >
+                    <span>3D View</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                      <polyline points="2 17 12 22 22 17"></polyline>
+                      <polyline points="2 12 12 17 22 12"></polyline>
+                    </svg>
+                  </button>
+                </GlowWrapper>
+              </motion.div>
+            </div>
+          </div>
 
-        {/* Column Headers */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8 px-8 md:px-12 lg:px-16">
-          <h3 className="text-xs font-medium text-accent uppercase tracking-[0.2em] flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-blue-500" />
-            Projects
-          </h3>
-          <h3 className="text-xs font-medium text-accent uppercase tracking-[0.2em] flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            Experience
-          </h3>
-          <h3 className="text-xs font-medium text-accent uppercase tracking-[0.2em] flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-amber-500" />
-            Activities
-          </h3>
+          {/* Column Headers */}
+          <div className="flex justify-center gap-24 md:gap-36 lg:gap-48 -mt-8">
+            <span className="relative text-sm font-medium text-muted uppercase tracking-[0.15em] pb-1">
+              Projects
+              <span className="absolute bottom-0 left-0 right-0 h-px bg-blue-500 shadow-[0_0_10px_2px_rgba(59,130,246,0.8)]" />
+            </span>
+            <span className="relative text-sm font-medium text-muted uppercase tracking-[0.15em] pb-1">
+              Experience
+              <span className="absolute bottom-0 left-0 right-0 h-px bg-emerald-500 shadow-[0_0_10px_2px_rgba(16,185,129,0.8)]" />
+            </span>
+            <span className="relative text-sm font-medium text-muted uppercase tracking-[0.15em] pb-1">
+              Activities
+              <span className="absolute bottom-0 left-0 right-0 h-px bg-amber-500 shadow-[0_0_10px_2px_rgba(245,158,11,0.8)]" />
+            </span>
+          </div>
         </div>
 
         {/* Term Sections */}
@@ -198,7 +229,7 @@ function StaticCard({ item }: StaticCardProps) {
     >
       {/* Thumbnail */}
       {item.image && (
-        <div className="relative w-full h-24 mb-3 rounded-md overflow-hidden bg-background">
+        <div className="relative w-full aspect-[5/3] mb-3 rounded-md overflow-hidden bg-background">
           <Image
             src={item.image}
             alt={item.title}

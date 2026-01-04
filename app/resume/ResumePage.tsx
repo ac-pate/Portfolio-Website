@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Download, ExternalLink, FileText, Github, Eye } from 'lucide-react';
+import GlowWrapper from '@/components/ui/GlowWrapper';
 
 export function ResumePage() {
   // GitHub repo for LaTeX resume - compiled via GitHub Actions
@@ -27,23 +28,32 @@ export function ResumePage() {
 
           {/* Action buttons */}
           <div className="flex flex-wrap gap-4 mb-8">
-            <a
-              href={githubPdfUrl}
-              download="Achal_Patel_Resume.pdf"
-              className="btn-primary"
-            >
-              <Download className="w-4 h-4" />
-              Download PDF
-            </a>
-            <a
-              href={resumeRepo}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-secondary"
-            >
-              <Github className="w-4 h-4" />
-              View LaTeX Source
-            </a>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <GlowWrapper preset="button" className="rounded-xl">
+                <a
+                  href={githubPdfUrl}
+                  download="Achal_Patel_Resume.pdf"
+                  className="flex items-center gap-2 px-6 py-3 bg-accent text-white rounded-xl font-semibold hover:bg-accent/90 transition-all shadow-glow-sm"
+                >
+                  <Download className="w-4 h-4" />
+                  Download PDF
+                </a>
+              </GlowWrapper>
+            </motion.div>
+
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <GlowWrapper preset="button" className="rounded-xl">
+                <a
+                  href={resumeRepo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-6 py-3 bg-white/5 text-white rounded-xl font-semibold border border-white/10 hover:bg-white/10 transition-all backdrop-blur-sm"
+                >
+                  <Github className="w-4 h-4" />
+                  View LaTeX Source
+                </a>
+              </GlowWrapper>
+            </motion.div>
           </div>
         </motion.div>
 

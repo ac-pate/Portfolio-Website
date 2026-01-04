@@ -25,50 +25,25 @@ export function AboutPreview() {
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!sectionRef.current || !stickyRef.current || !contentRef.current) return;
-
-    // Pin for 100vh. While pinned, the next section (Projects) will wipe over.
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: 'top top',
-        end: '+=300%',
-        pin: stickyRef.current,
-        pinSpacing: false, 
-        scrub: true,
-        invalidateOnRefresh: true,
-      },
-    });
-
-    // Animate content exit synchronized with the incoming wipe
-    tl.to(contentRef.current, {
-      opacity: 0,
-      y: -50,
-      duration: 1,
-      ease: 'power1.in', // Keep it visible a bit longer so wipe covers it
-    });
-
-    return () => {
-      if (tl.scrollTrigger) tl.scrollTrigger.kill();
-      tl.kill();
-    };
+    // Optional: Add simple fade-in or other non-pinning animations here if desired
   }, []);
 
   return (
     <section 
       ref={sectionRef} 
       id="about" 
-      className="relative h-screen bg-background z-10"
+      className="sticky top-0 min-h-screen bg-background z-10 pb-20 mb-[40vh]"
     >
-      <div 
-        ref={stickyRef} 
-        className="h-screen w-full flex items-center justify-center overflow-hidden"
-      >
-        <div ref={contentRef} className="section-container w-full">
+      <div className="section-container w-full pt-24 md:pt-32">
+        {/* Sticky Header */}
+        <div className="sticky top-20 z-10 py-4 bg-background/80 backdrop-blur-md -mx-4 px-4 mb-8 border-b border-white/5">
           <SectionHeading
             title="About Me"
             subtitle="Computer Engineering student at Concordia University"
           />
+        </div>
+
+        <div ref={contentRef}>
 
           <div className="max-w-3xl mx-auto">
             <div className="text-center space-y-6">

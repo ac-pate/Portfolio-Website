@@ -14,20 +14,23 @@
 'use client';
 
 import { useEffect, useRef, useState, useMemo, forwardRef } from 'react';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import * as THREE from 'three';
 import { useTheme } from 'next-themes';
 import { TimelineItem } from '@/lib/mdx';
 import { sortTimelineItems, groupItemsByTerm, formatDateRange } from '@/lib/timeline';
+import GlowWrapper from '@/components/ui/GlowWrapper';
 
 interface Timeline3DProps {
   items: TimelineItem[];
+  onToggleView: () => void;
 }
 
 // How long to keep the timeline pinned *after* the camera animation completes,
 // before allowing the next section to wipe over.
-const EXIT_HOLD_VH = 100;
+const EXIT_HOLD_VH = 150;
 
 // Lane configuration
 const LANES = {
@@ -56,18 +59,19 @@ const CARD_Z_SPACING = 50; // Distance between consecutive cards
 const CAMERA_START_Z = 5; // Initial camera Z position
 
 // Scroll speed control (increase to slow down animation)
-const SCROLL_DISTANCE_PER_CARD = 700; // Viewport heights (vh) per card (higher = slower)
-// Each card now takes 500vh of scroll = 5 full viewport heights per card
-const SCROLL_SCRUB_SPEED = 2.5; // Scroll smoothing (higher = more lag, smoother)
+// Scroll speed control (increase to slow down animation)
+const SCROLL_DISTANCE_PER_CARD = 1000; // Pixels per card (higher = slower)
+// Switch from vh to px to fix massive scroll height
+const SCROLL_SCRUB_SPEED = 5.5; // Scroll smoothing (higher = more lag, smoother)
 
 // Card starting properties (when far back, before coming into focus)
 const CARD_START_SCALE = 0.01; // How small cards start (0.01 = 1% size - grow from a point)
-const CARD_START_BLUR = 5; // Blur amount when card is far back (in pixels)
+const CARD_START_BLUR = 3; // Blur amount when card is far back (in pixels)
 const CARD_START_OPACITY = 1.0; // Opacity stays solid (1.0 = no transparency, stars don't show through)
 
 // Focus zone properties (when card is in focus)
 const FOCUS_DISTANCE = 8; // Distance range where card is in focus (Z units)
-const FOCUS_SCALE = 1.0; // Scale when card is in focus (1.0 = 100% size)
+const FOCUS_SCALE = 0.85; // Scale when card is in focus (1.0 = 100% size)
 const FOCUS_BLUR = 0; // Blur when card is in focus (0 = sharp)
 const FOCUS_OPACITY = 1.0; // Opacity when card is in focus (1.0 = fully visible)
 
@@ -94,20 +98,20 @@ const APPROACH_BLUR_DECAY = 12; // How quickly blur reduces as card approaches (
 
 // Visibility boundaries (cards beyond these distances are hidden)
 const MAX_DISTANCE_BEHIND = 20; // Hide cards that are too far behind camera
-const MAX_DISTANCE_AHEAD = 70; // Hide cards that are too far ahead
+const MAX_DISTANCE_AHEAD = 1000; // Hide cards that are too far ahead
 
 // Starfield configuration (inspired by studiolumio.com/labs)
 const STARFIELD_CONFIG = {
-  count: 5000, // Number of stars
+  count: 6000, // Number of stars
   depth: 300, // How far back stars extend (Z units)
-  speed: 0.5, // Base speed multiplier for star movement
+  speed: 0.7, // Base speed multiplier for star movement
   twinkleSpeed: 100, // Speed of twinkling animation (lower = slower, softer blink)
-  size: 0.35, // Base star size (reduced for smaller stars)
+  size: 0.45, // Base star size (reduced for smaller stars)
   color: 0xffffff, // Star color (white)
-  opacity: 0.8, // Base star opacity
+  opacity: 0.99, // Base star opacity
 };
 
-export function Timeline3D({ items }: Timeline3DProps) {
+export function Timeline3D({ items, onToggleView }: Timeline3DProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -117,6 +121,9 @@ export function Timeline3D({ items }: Timeline3DProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [show3D, setShow3D] = useState(true);
+  
+  // Get theme for star color
   
   // Get theme for star color
   const { theme, resolvedTheme } = useTheme();
@@ -205,7 +212,9 @@ export function Timeline3D({ items }: Timeline3DProps) {
     // Calculate starfield depth to cover entire animation
     // Camera starts at CAMERA_START_Z and moves to CAMERA_START_Z - totalDepth
     // We need stars to extend from camera start position all the way to the end
-    const totalDepth = cardPositions.length * CARD_Z_SPACING;
+    // CORRECTION: totalDepth is now calcualted to stop EXACTLY at the last card
+    const lastCardZ = -((cardPositions.length - 1) * CARD_Z_SPACING);
+    const totalDepth = Math.max(0, CAMERA_START_Z - lastCardZ);
     const cameraEndZ = CAMERA_START_Z - totalDepth;
     // Starfield should extend from slightly ahead of camera to well beyond the end
     // Add extra buffer to ensure stars are always available
@@ -297,7 +306,7 @@ export function Timeline3D({ items }: Timeline3DProps) {
           
           // Natural twinkling: each star has unique phase and frequency
           // Full dim to bright cycle like real stars
-          float twinkleTime = time * 0.03 * frequency; // Slower speed for gentle twinkling
+          float twinkleTime = time * 0.05 * frequency; // Slower speed for gentle twinkling
           float twinkleWave = sin(twinkleTime + phase);
           // Full range: 0.0 (completely dim) to 1.0 (full brightness)
           float twinkle = twinkleWave * 0.5 + 0.5;
@@ -428,15 +437,25 @@ export function Timeline3D({ items }: Timeline3DProps) {
           const camera = cameraRef.current;
           if (!wrapper || !container || !camera) return;
 
-          const totalDepth = cardPositions.length * CARD_Z_SPACING;
-          const scrollDistanceVh = cardPositions.length * SCROLL_DISTANCE_PER_CARD; // vh per card
-          const totalScrollVh = scrollDistanceVh + EXIT_HOLD_VH;
-          const fadeStart = scrollDistanceVh / totalScrollVh;
+          // CORRECTION: Calculate depth to stop EXACTLY at the last card
+          const lastCardZ = -((cardPositions.length - 1) * CARD_Z_SPACING);
+          const totalDepth = Math.max(0, CAMERA_START_Z - lastCardZ);
+          // FIX: Use (length - 1) because the first card is already visible at start
+          // We only need scroll for transitions BETWEEN cards, not for each card
+          // SWITCH to PX: Calculate in pixels, not vh
+          const scrollDistancePx = Math.max(1, cardPositions.length - 1) * SCROLL_DISTANCE_PER_CARD;
+          
+          // Convert EXIT_HOLD from vh to px
+          const viewportHeight = container.clientHeight;
+          const exitHoldPx = (EXIT_HOLD_VH / 100) * viewportHeight;
+          const totalScrollPx = scrollDistancePx + exitHoldPx;
+          
+          const fadeStart = scrollDistancePx / totalScrollPx;
 
           ScrollTrigger.create({
             trigger: wrapper,
             start: 'top top',
-            end: `+=${totalScrollVh}vh`,
+            end: `+=${totalScrollPx}px`,
             pin: container,
             pinSpacing: false,
             scrub: SCROLL_SCRUB_SPEED,
@@ -715,14 +734,21 @@ export function Timeline3D({ items }: Timeline3DProps) {
     return <div className="min-h-screen" />;
   }
 
-  const scrollDistanceVh = sortedItems.length * SCROLL_DISTANCE_PER_CARD;
-  const totalScrollVh = scrollDistanceVh + EXIT_HOLD_VH;
+  // FIX: Use (length - 1) because the first card is already visible at start
+  // SWITCH to PX unit for style height
+  const scrollDistancePx = Math.max(1, sortedItems.length - 1) * SCROLL_DISTANCE_PER_CARD; 
+  // We can't know absolute px height here easily for the style tag without window calc,
+  // but we can estimate or use a large vh equivalent if needed, 
+  // OR just calculate it assuming standard viewport or use a direct pixel value.
+  // Better approach: use calc() with vh for the hold part
+  // total = pixels + 100vh (exit hold)
+  const totalHeightStyle = `calc(${scrollDistancePx}px + ${EXIT_HOLD_VH}vh)`;
 
   return (
     // SAFETY WRAPPER: Essential for GSAP ScrollTrigger + React
     // This div is never touched by GSAP, giving React a stable handle to unmount.
     // The inner div (containerRef) gets wrapped/pinned by GSAP.
-    <div ref={wrapperRef} className="relative w-full" style={{ height: `${totalScrollVh}vh` }}> 
+    <div ref={wrapperRef} className="relative w-full" style={{ height: totalHeightStyle }}> 
       <div
         ref={containerRef}
         className="relative w-full h-screen overflow-hidden bg-background"
@@ -759,10 +785,19 @@ export function Timeline3D({ items }: Timeline3DProps) {
       </div>
 
       {/* Lane Labels */}
-      <div className="absolute top-40 md:top-44 lg:top-48 left-0 right-0 flex justify-center gap-16 md:gap-24 lg:gap-32 px-8 z-20 pointer-events-none">
-        <span className="text-xs font-medium text-muted uppercase tracking-[0.2em]">Projects</span>
-        <span className="text-xs font-medium text-muted uppercase tracking-[0.2em]">Experience</span>
-        <span className="text-xs font-medium text-muted uppercase tracking-[0.2em]">Activities</span>
+      <div className="absolute top-40 left-0 right-0 flex justify-center gap-24 md:gap-36 lg:gap-48 px-8 z-20 pointer-events-none">
+        <span className="relative text-sm font-medium text-muted uppercase tracking-[0.15em] pb-1">
+          Projects
+          <span className="absolute bottom-0 left-0 right-0 h-px bg-blue-500 shadow-[0_0_10px_1px_rgba(59,130,246,0.8)]" />
+        </span>
+        <span className="relative text-sm font-medium text-muted uppercase tracking-[0.15em] pb-1">
+          Experience
+          <span className="absolute bottom-0 left-0 right-0 h-px bg-emerald-500 shadow-[0_0_10px_1px_rgba(16,185,129,0.8)]" />
+        </span>
+        <span className="relative text-sm font-medium text-muted uppercase tracking-[0.15em] pb-1">
+          Activities
+          <span className="absolute bottom-0 left-0 right-0 h-px bg-amber-500 shadow-[0_0_10px_1px_rgba(245,158,11,0.8)]" />
+        </span>
       </div>
 
       {/* Timeline Scroll Indicator */}
@@ -784,9 +819,28 @@ export function Timeline3D({ items }: Timeline3DProps) {
             `}
           />
         ))}
-        {sortedItems.length > 10 && (
-          <span className="text-xs text-muted">+{sortedItems.length - 10}</span>
-        )}
+      </div>
+      
+      {/* View Toggle Button */}
+      <div className="absolute top-40 right-8 z-50 overflow-visible">
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <GlowWrapper preset="button" className="rounded-full">
+            <button
+              onClick={onToggleView}
+              className="flex items-center gap-2 px-4 py-2 text-xs font-medium uppercase tracking-wider text-muted hover:text-accent bg-background/50 backdrop-blur-sm border border-white/10 rounded-full transition-all"
+            >
+              <span>List View</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+              </svg>
+            </button>
+          </GlowWrapper>
+        </motion.div>
       </div>
 
       {/* Card Counter */}
@@ -948,13 +1002,13 @@ function TimelineIndicator({ termKeys, currentIndex, items, isActive }: Timeline
             key={termKey}
             className={`
               flex items-center gap-2 transition-all duration-300
-              ${isCurrentTerm ? 'opacity-100' : 'opacity-30'}
+              ${isCurrentTerm ? 'opacity-100' : 'opacity-99'}
             `}
           >
             <span
               className={`
-                text-[9px] font-medium uppercase tracking-[0.1em] transition-all duration-300
-                ${isCurrentTerm ? 'text-accent' : 'text-muted'}
+                text-[10px] font-medium uppercase tracking-[0.1em] transition-all duration-300
+                ${isCurrentTerm ? 'text-accent' : 'text-white/50'}
               `}
             >
               {termKey}

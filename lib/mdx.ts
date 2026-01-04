@@ -31,6 +31,7 @@ export interface ProjectFrontmatter {
   coverImage?: string;
   github?: string;
   demo?: string;
+  report?: string;
   featured?: boolean;
   status?: 'completed' | 'in-progress' | 'archived';
   projectType?: ('Personal' | 'Competition' | 'IEEE Concordia' | 'Academic' | 'Job')[];
@@ -154,14 +155,14 @@ export function getProjects(): ContentItem<ProjectFrontmatter>[] {
       startDate: project.frontmatter.startDate || project.frontmatter.date,
     } as ProjectFrontmatter,
   }));
-  
+
   // Sort by term instead of date
   // NOTE: Date-based term calculation (getAcademicTerm) is not being used anymore
   // We now rely on the 'term' property in frontmatter
   return normalizedProjects.sort((a, b) => {
     const [aYear, aSeason] = parseTermForSorting(a.frontmatter.term);
     const [bYear, bSeason] = parseTermForSorting(b.frontmatter.term);
-    
+
     if (aYear !== bYear) {
       return bYear - aYear; // Newer first
     }
@@ -185,7 +186,7 @@ export function getJobs(): ContentItem<JobFrontmatter>[] {
   return jobs.sort((a, b) => {
     const [aYear, aSeason] = parseTermForSorting(a.frontmatter.term);
     const [bYear, bSeason] = parseTermForSorting(b.frontmatter.term);
-    
+
     if (aYear !== bYear) {
       return bYear - aYear; // Newer first
     }
@@ -217,7 +218,7 @@ export function getEducation(): ContentItem<EducationFrontmatter>[] {
   return education.sort((a, b) => {
     const [aYear, aSeason] = parseTermForSorting(a.frontmatter.term);
     const [bYear, bSeason] = parseTermForSorting(b.frontmatter.term);
-    
+
     if (aYear !== bYear) {
       return bYear - aYear; // Newer first
     }
@@ -249,7 +250,7 @@ export function getVolunteer(): ContentItem<VolunteerFrontmatter>[] {
   return volunteer.sort((a, b) => {
     const [aYear, aSeason] = parseTermForSorting(a.frontmatter.term);
     const [bYear, bSeason] = parseTermForSorting(b.frontmatter.term);
-    
+
     if (aYear !== bYear) {
       return bYear - aYear; // Newer first
     }
@@ -282,13 +283,13 @@ function parseTermForSorting(term: string): [number, number] {
   const parts = term.trim().split(' ');
   const season = parts[0]; // "Fall", "Winter", or "Summer"
   const year = parseInt(parts[1] || '0', 10);
-  
+
   const seasonOrder: Record<string, number> = {
     'Fall': 1,
     'Winter': 2,
     'Summer': 3,
   };
-  
+
   return [year, seasonOrder[season] || 0];
 }
 
@@ -359,12 +360,12 @@ export function getTimeline(): TimelineItem[] {
   return timelineItems.sort((a, b) => {
     const [aYear, aSeason] = parseTermForSorting(a.term);
     const [bYear, bSeason] = parseTermForSorting(b.term);
-    
+
     // Primary sort: year
     if (aYear !== bYear) {
       return aYear - bYear; // Earlier year = earlier in timeline
     }
-    
+
     // Secondary sort: season (if same year)
     return aSeason - bSeason; // Fall (1) < Winter (2) < Summer (3)
   });
@@ -389,7 +390,7 @@ export function getExtracurricular(): ContentItem<ExtracurricularFrontmatter>[] 
   return extracurricular.sort((a, b) => {
     const [aYear, aSeason] = parseTermForSorting(a.frontmatter.term);
     const [bYear, bSeason] = parseTermForSorting(b.frontmatter.term);
-    
+
     if (aYear !== bYear) {
       return bYear - aYear; // Newer first
     }

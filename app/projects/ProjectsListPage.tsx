@@ -38,7 +38,7 @@ export function ProjectsListPage({ projects }: ProjectsListPageProps) {
             
             return (
               <section key={termLabel} className="mb-16">
-                <div className="mb-6">
+                <div className="mb-6 relative z-10">
                   <h2 className="text-4xl font-display font-bold text-foreground mb-1">
                     {termLabel}{termDateRange ? ` (${termDateRange})` : ''}
                   </h2>
