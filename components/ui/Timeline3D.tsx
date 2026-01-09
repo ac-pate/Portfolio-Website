@@ -837,17 +837,6 @@ export function Timeline3D({ items, onToggleView }: Timeline3DProps) {
           {/* Background Track */}
           <div className="absolute inset-0 bg-white/5 rounded-full" />
           
-          {/* Item Markers */}
-          {sortedItems.map((_, index) => (
-            <div
-              key={index}
-              className="absolute top-1/2 -translate-y-1/2 w-px h-3 bg-white/20"
-              style={{
-                left: `${(index / (sortedItems.length - 1)) * 100}%`
-              }}
-            />
-          ))}
-          
           {/* Progress Bar (Accent Color) */}
           <div 
             className="absolute left-0 top-0 bottom-0 bg-accent shadow-[0_0_12px_2px_rgba(var(--accent-rgb),0.5)] transition-all duration-300 rounded-full"

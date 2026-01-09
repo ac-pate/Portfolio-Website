@@ -34,43 +34,11 @@ export function Hero() {
         return () => clearTimeout(timer);
     }, []);
 
-    // Optimize video playback
+    // Initialize video volume
     useEffect(() => {
-        if (!videoRef.current || !shouldLoadVideo) return;
-
-        const video = videoRef.current;
-        
-        // Set video quality/performance hints
-        video.setAttribute('playsinline', 'true');
-        video.setAttribute('webkit-playsinline', 'true');
-        
-        // Handle video loading
-        const handleCanPlay = () => {
-            setVideoLoaded(true);
-            // Request video frame for smoother playback
-            if (video.requestVideoFrameCallback) {
-                video.requestVideoFrameCallback(() => {
-                    // Video is ready
-                });
-            }
-        };
-
-        video.addEventListener('canplay', handleCanPlay);
-        
-        // Set initial video volume to 0 (will be controlled by GSAP)
-        video.volume = 0;
-        
-        // Try to play video
-        const playPromise = video.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(() => {
-                // Autoplay was prevented, will play on user interaction
-            });
+        if (videoRef.current) {
+            videoRef.current.volume = 0;
         }
-
-        return () => {
-            video.removeEventListener('canplay', handleCanPlay);
-        };
     }, [shouldLoadVideo]);
 
     useEffect(() => {
@@ -238,25 +206,24 @@ export function Hero() {
                     <video
                         ref={videoRef}
                         className={`absolute inset-0 h-full w-full object-cover ${
-                            videoLoaded ? '' : 'opacity-0'
+                            videoLoaded ? 'opacity-50' : 'opacity-0'
                         }`}
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        preload="metadata" // Only loads metadata, not full video
-                        crossOrigin="anonymous" // Required for external video sources
-                        poster="/images/hero/video-poster.jpg" // Show poster while loading (create this)
+                        autoPlay={true}
+                        muted={true}
+                        loop={true}
+                        playsInline={true}
+                        preload="auto"
+                        onCanPlay={() => setVideoLoaded(true)}
+                        onLoadedData={() => setVideoLoaded(true)}
+                        onError={(e) => console.error('Hero Video Error:', e)}
                         style={{
                             willChange: 'opacity, transform',
                             transform: 'translateZ(0)', // HW acceleration
                             objectFit: 'cover',
-                            // Additional performance optimizations
                             backfaceVisibility: 'hidden',
                             WebkitBackfaceVisibility: 'hidden',
                         }}
                     >
-                        {/* WebM format (better compression) - add if available */}
                         <source src="/videos/bg_1080p.mp4" type="video/mp4" />
                     </video>
                     ) : (
