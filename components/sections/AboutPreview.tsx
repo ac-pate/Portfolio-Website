@@ -35,21 +35,9 @@ function InfographicSummary() {
   return (
     <div className="space-y-8 w-full">
       <div className="space-y-4">
-        <p className="text-lg md:text-xl text-foreground font-medium leading-tight">
-          &ldquo;I build intelligent machines that interacts with the physical world. Passionate about 
-          bridging the gap between silicon and sensing.&rdquo;
+        <p className="text-lg md:text-xl text-foreground font-display font-bold leading-tight">
+          &ldquo;I build intelligent machines that interact with the physical world.&rdquo;
         </p>
-      </div>
-
-      {/* Career Path Diagram */}
-      <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-black/20 group">
-        <Image 
-          src="/images/about/career-path.png" 
-          alt="Engineering Career Path Diagram" 
-          width={800} 
-          height={400} 
-          className="w-full h-auto transition-transform duration-500 group-hover:scale-[1.02]"
-        />
       </div>
 
       {/* Strengths & Weaknesses - Refined Layout */}
@@ -127,7 +115,7 @@ export function AboutPreview() {
     >
       <div className="section-container w-full relative z-10 pt-12 lg:px-4">
         {/* Sticky Header - Follows dynamic section pattern */}
-        <div className="sticky top-16 z-20 py-2 bg-background/80 backdrop-blur-md -mx-4 px-4 mb-10 border-b border-white/5">
+        <div className="sticky top-16 z-20 py-2 bg-background/80 backdrop-blur-md -mx-4 px-4 mb-6 border-b border-white/5">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -150,20 +138,44 @@ export function AboutPreview() {
           </motion.div>
         </div>
 
-        {/* Flex layout: Image on left, content on right */}
-        <div className="flex flex-col lg:flex-row items-start gap-10 lg:gap-14 max-w-6xl mx-auto">
-          {/* Left: Profile Picture & Actions */}
+        {/* 1. Career Path Diagram - Centered and Thinner */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="max-w-lg mx-auto mb-8 relative px-4"
+        >
+          <div className="relative rounded-lg overflow-hidden z-20 border border-white/10 bg-black/20 group">
+            <Image 
+              src="/images/about/career-path.png" 
+              alt="Engineering Career Path Diagram" 
+              width={800} 
+              height={100} 
+              className="w-full h-auto transition-transform duration-500 group-hover:scale-[1.01]"
+              priority
+            />
+          </div>
+          <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-accent/80 backdrop-blur-sm px-4 py-1 rounded-full text-[10px] uppercase font-bold tracking-widest text-white shadow-glow-sm border border-white/10">
+            Roadmap to Autonomy
+          </div>
+        </motion.div>
+
+        {/* 2. Image and Overlapping Text Grid */}
+        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 max-w-7xl mx-auto items-start relative px-4">
+          
+          {/* Left: Profile Photo Column */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="flex-shrink-0 flex flex-col items-center lg:items-start space-y-8 lg:sticky lg:top-48"
+            className="lg:col-span-5 flex flex-col items-center lg:items-start lg:sticky lg:top-20 z-10 lg:-mt-12"
           >
             <GlowWrapper 
               preset="card" 
-              borderRadius={210} 
-              spread={150} 
+              borderRadius={200} 
+              spread={160} 
               innerBleed={300}
               mouseIntensity={1.0} 
               showHighlight={false}
@@ -171,7 +183,7 @@ export function AboutPreview() {
             >
               <Link 
                 href="/about"
-                className="block relative w-[340px] h-[340px] md:w-[400px] md:h-[400px]"
+                className="block relative w-[300px] h-[300px] md:w-[420px] md:h-[420px]"
                 onMouseEnter={() => {
                   setIsHovering(true);
                   playFlickerSound();
@@ -193,7 +205,7 @@ export function AboutPreview() {
                   />
                 </div>
 
-                {/* Floating accent rings that follow the blob */}
+                {/* Floating accent rings */}
                 <div className="absolute inset-[-10px] animate-blob border-2 border-accent/10 pointer-events-none" 
                      style={{ animationDuration: '25s', animationDirection: 'reverse' }} />
                 <div className="absolute inset-[-20px] animate-blob border border-accent/5 pointer-events-none" 
@@ -201,74 +213,136 @@ export function AboutPreview() {
               </Link>
             </GlowWrapper>
 
-            {/* Tech Highlights moved here - between image and buttons */}
-            <div className="flex flex-wrap gap-2 max-w-[420px] justify-center lg:justify-start">
-              {techHighlights.map((tech, index) => (
-                <motion.span
-                  key={tech}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.1 + index * 0.05 }}
-                  className="px-2.5 py-1 text-[11px] rounded-lg bg-background-secondary border border-border text-foreground-secondary hover:border-accent/50 hover:text-accent transition-all duration-200 cursor-default"
-                >
-                  {tech}
-                </motion.span>
-              ))}
-            </div>
+            {/* Action Buttons - Moved under the image */}
+            <div className="w-full max-w-[460px] space-y-6 pt-4">
+              <div className="flex flex-wrap items-center gap-4 justify-center lg:justify-start">
+                <GlowWrapper preset="button" className="rounded-lg flex-1 min-w-[200px]">
+                  <Link
+                    href="/about"
+                    className="inline-flex items-center justify-center gap-2 w-full px-6 py-3 bg-accent hover:bg-accent-dark text-white font-medium rounded-lg transition-all duration-200 hover:shadow-glow-sm whitespace-nowrap"
+                  >
+                    Read My Full Story
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </GlowWrapper>
 
-            {/* CTA & Social Buttons */}
-            <div className="flex flex-wrap items-center gap-3">
-              <GlowWrapper preset="button" className="rounded-lg">
-                <Link
-                  href="/about"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent hover:bg-accent-dark text-white text-sm font-medium rounded-lg transition-all duration-200 hover:shadow-glow-sm whitespace-nowrap"
-                >
-                  Read My Full Story
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </GlowWrapper>
-
-              <div className="flex items-center gap-2">
-                <a
-                  href={siteConfig.social.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2.5 rounded-lg bg-background-secondary border border-border text-foreground-secondary hover:text-accent hover:border-accent/30 transition-all"
-                  aria-label="GitHub"
-                >
-                  <Github className="w-5 h-5" />
-                </a>
-                <a
-                  href={siteConfig.social.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2.5 rounded-lg bg-background-secondary border border-border text-foreground-secondary hover:text-accent hover:border-accent/30 transition-all"
-                  aria-label="LinkedIn"
-                >
-                  <Linkedin className="w-5 h-5" />
-                </a>
-                <a
-                  href={`mailto:${siteConfig.email}`}
-                  className="p-2.5 rounded-lg bg-background-secondary border border-border text-foreground-secondary hover:text-accent hover:border-accent/30 transition-all"
-                  aria-label="Email"
-                >
-                  <Mail className="w-5 h-5" />
-                </a>
+                <div className="flex items-center gap-3">
+                  <a
+                    href={siteConfig.social.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-3 rounded-xl bg-background-secondary border border-border text-foreground-secondary hover:text-accent hover:border-accent/30 transition-all shadow-sm"
+                    aria-label="GitHub"
+                  >
+                    <Github className="w-5 h-5" />
+                  </a>
+                  <a
+                    href={siteConfig.social.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-3 rounded-xl bg-background-secondary border border-border text-foreground-secondary hover:text-accent hover:border-accent/30 transition-all shadow-sm"
+                    aria-label="LinkedIn"
+                  >
+                    <Linkedin className="w-5 h-5" />
+                  </a>
+                  <a
+                    href={`mailto:${siteConfig.email}`}
+                    className="p-3 rounded-xl bg-background-secondary border border-border text-foreground-secondary hover:text-accent hover:border-accent/30 transition-all shadow-sm"
+                    aria-label="Email"
+                  >
+                    <Mail className="w-5 h-5" />
+                  </a>
+                </div>
               </div>
             </div>
           </motion.div>
 
-          {/* Right: Content - Transparentized */}
+          {/* Right: Content Column */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="flex-1 space-y-10"
+            className="lg:col-span-7 flex flex-col space-y-8"
           >
-            {/* Infographic Summary */}
-            <InfographicSummary />
+            {/* 1. Overlapping Quote Row */}
+            <div className="relative z-20 lg:-ml-40 lg:mt-6 lg:pr-4">
+              <p 
+                className="text-xl md:text-2xl lg:text-3xl text-foreground font-display font-bold leading-tight italic"
+                style={{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }}
+              >
+                &ldquo;I build intelligent machines that interact with the physical world.&rdquo;
+              </p>
+            </div>
+
+            {/* 2. Standard Detail Row - No Overlap */}
+            <div className="space-y-8 relative z-0">
+              {/* Tech Highlights moved here - above strengths on the right */}
+              <div className="space-y-3">
+                <h5 className="text-[12px] uppercase tracking-[0.2em] text-accent/90 font-bold ml-1">
+                  Technical Interests & Expertise
+                </h5>
+                <div className="flex flex-wrap gap-2">
+                  {techHighlights.map((tech, index) => (
+                    <motion.span
+                      key={tech}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.1 + index * 0.05 }}
+                      className="px-3 py-1.5 text-xs rounded-lg bg-background-secondary border border-border text-foreground-secondary hover:border-accent/50 hover:text-accent transition-all duration-200 cursor-default"
+                    >
+                      {tech}
+                    </motion.span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div className="space-y-5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                      <span className="text-emerald-500 font-bold">+</span>
+                    </div>
+                    <h4 className="text-lg font-display font-bold text-foreground">Strengths</h4>
+                  </div>
+                  <ul className="space-y-4">
+                    {[
+                      "Addicted to precision machining and control theory.",
+                      "Fluent in low-latency communication (CAN, SPI, C++).",
+                      "High torque problem-solving capacity under pressure."
+                    ].map((strength, i) => (
+                      <li key={i} className="flex gap-3 text-sm text-foreground-secondary leading-relaxed">
+                        <div className="mt-1.5 w-1 h-1 rounded-full bg-accent flex-shrink-0" />
+                        {strength}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="space-y-5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
+                      <span className="text-accent font-bold">−</span>
+                    </div>
+                    <h4 className="text-lg font-display font-bold text-foreground">Weaknesses</h4>
+                  </div>
+                  <ul className="space-y-4">
+                    {[
+                      "Cannot stop optimizing until O(1) is achieved.",
+                      "Propensity to disassemble and 'improve' working devices.",
+                      "CPU stalls when coffee levels fall below 20%."
+                    ].map((weakness, i) => (
+                      <li key={i} className="flex gap-3 text-sm text-foreground-secondary leading-relaxed">
+                        <div className="mt-1.5 w-1 h-1 rounded-full bg-accent/40 flex-shrink-0" />
+                        {weakness}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+            </div>
           </motion.div>
         </div>
       </div>
