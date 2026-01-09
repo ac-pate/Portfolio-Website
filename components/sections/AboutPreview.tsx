@@ -25,7 +25,7 @@ export function AboutPreview() {
 
       <div className="section-container w-full relative z-10 pt-24 md:pt-32">
         {/* Sticky Header - Follows dynamic section pattern */}
-        <div className="sticky top-20 z-20 py-1 bg-background/80 backdrop-blur-md -mx-4 px-4 mb-8 border-b border-white/5">
+        <div className="sticky top-16 z-20 py-2 bg-background/80 backdrop-blur-md -mx-4 px-4 mb-10 border-b border-white/5">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -36,18 +36,14 @@ export function AboutPreview() {
             <h2 className="text-4xl md:text-5xl font-display font-bold">
               About Me<span className="text-accent">.</span>
             </h2>
-            <div className="mt-1 flex flex-wrap justify-center items-center gap-x-6 gap-y-1 text-base md:text-lg text-foreground-secondary font-medium">
-              <span className="flex items-center">
-                4th Year Computer Engineering @ Concordia
-              </span>
-              <span className="hidden md:block w-1.5 h-1.5 rounded-full bg-accent/40" />
-              <span className="flex items-center">
-                Robotics Researcher @ CUARL
-              </span>
-              <span className="hidden md:block w-1.5 h-1.5 rounded-full bg-accent/40" />
-              <span className="flex items-center">
-                Team Lead @ Mimic Robotics
-              </span>
+            <div className="mt-2 flex justify-center items-center gap-x-4 gap-y-2 text-sm md:text-base text-foreground-secondary font-medium">
+              <span className="whitespace-nowrap">4th Year Computer Engineering @ Concordia</span>
+              <span className="hidden md:inline text-accent/30 text-lg select-none">|</span>
+              <span className="whitespace-nowrap">Teaching Assistant @ Concordia</span>
+              <span className="hidden md:inline text-accent/30 text-lg select-none">|</span>
+              <span className="whitespace-nowrap">Robotics Researcher @ CUARL</span>
+              <span className="hidden md:inline text-accent/30 text-lg select-none">|</span>
+              <span className="whitespace-nowrap">Team Lead @ Mimic Robotics</span>
             </div>
           </motion.div>
         </div>
@@ -66,6 +62,7 @@ export function AboutPreview() {
               preset="card" 
               borderRadius={250} 
               spread={180} 
+              innerBleed={300}
               mouseIntensity={1.0} 
               showHighlight={false}
               className="rounded-full animate-blob"
