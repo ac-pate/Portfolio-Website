@@ -19,7 +19,7 @@ export function Hero() {
     const heroRef = useRef<HTMLDivElement>(null);
     const stickyRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
-    const videoRef = useRef<HTMLVideoElement>(null);
+    const videoRef = useRef<HTMLDivElement>(null);
     const overlayRef = useRef<HTMLDivElement>(null);
     const [videoLoaded, setVideoLoaded] = useState(false);
     const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
@@ -37,7 +37,7 @@ export function Hero() {
     // Initialize video volume
     useEffect(() => {
         if (videoRef.current) {
-            videoRef.current.volume = 0;
+            // videoRef.current.volume = 0; // Disabled for YouTube embed
         }
     }, [shouldLoadVideo]);
 
@@ -109,13 +109,13 @@ export function Hero() {
         }
         
         // Audio transitions at Phase 2 start (position 1)
-        // Fade out background audio and fade in video audio
+        // Fade out background audio (and video audio if it was local)
         tl.add(() => {
+            // Fade out background audio anyway
+            fadeBackgroundAudio(0, 500);
+            
+            /* YT VIDEO NOTE: Direct volume control via videoRef is disabled for YouTube embed
             if (videoRef.current) {
-                // Fade out background audio
-                fadeBackgroundAudio(0, 500);
-                
-                // Unmute and fade in video audio
                 videoRef.current.muted = false;
                 const videoVolume = { value: 0 };
                 gsap.to(videoVolume, {
@@ -129,6 +129,7 @@ export function Hero() {
                     }
                 });
             }
+            */
         }, "1");
 
         // Phase 3: Transition, Navbar fades back in (300vh to 400vh = 100vh = 1/4 of the scroll)
@@ -145,10 +146,13 @@ export function Hero() {
         }
         
         // Audio transitions at Phase 3 start (position 3)
-        // Fade out video audio and fade in background audio
+        // Fade in background audio
         tl.add(() => {
+            // Fade in background audio anyway
+            fadeBackgroundAudio(0.1, 500);
+
+            /* YT VIDEO NOTE: Direct volume control via videoRef is disabled for YouTube embed
             if (videoRef.current) {
-                // Fade out video audio
                 const videoVolume = { value: videoRef.current.volume };
                 gsap.to(videoVolume, {
                     value: 0,
@@ -160,16 +164,13 @@ export function Hero() {
                         }
                     },
                     onComplete: () => {
-                        // Mute video after fade out
                         if (videoRef.current) {
                             videoRef.current.muted = true;
                         }
                     }
                 });
-                
-                // Fade in background audio
-                fadeBackgroundAudio(0.1, 500);
             }
+            */
         }, "<");
 
         return () => {
@@ -203,29 +204,59 @@ export function Hero() {
                 {/* Video Background */}
                 <div className="absolute inset-0 z-0">
                     {shouldLoadVideo ? (
-                    <video
-                        ref={videoRef}
-                        className={`absolute inset-0 h-full w-full object-cover ${
-                            videoLoaded ? 'opacity-50' : 'opacity-0'
-                        }`}
-                        autoPlay={true}
-                        muted={true}
-                        loop={true}
-                        playsInline={true}
-                        preload="auto"
-                        onCanPlay={() => setVideoLoaded(true)}
-                        onLoadedData={() => setVideoLoaded(true)}
-                        onError={(e) => console.error('Hero Video Error:', e)}
-                        style={{
-                            willChange: 'opacity, transform',
-                            transform: 'translateZ(0)', // HW acceleration
-                            objectFit: 'cover',
-                            backfaceVisibility: 'hidden',
-                            WebkitBackfaceVisibility: 'hidden',
-                        }}
-                    >
-                        <source src="/videos/bg_1080p.mp4" type="video/mp4" />
-                    </video>
+                        <>
+                            {/* YouTube Video Background (Tristan Method) */}
+                            <div 
+                                className={`absolute inset-0 h-full w-full overflow-hidden transition-opacity duration-1000 ${
+                                    videoLoaded ? 'opacity-50' : 'opacity-0'
+                                }`}
+                                ref={videoRef as any}
+                                style={{
+                                    willChange: 'opacity, transform',
+                                    transform: 'translateZ(0)',
+                                    pointerEvents: 'none',
+                                }}
+                            >
+                                <iframe
+                                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none"
+                                    style={{
+                                        width: '102vw', // Slight overshoot to hide edges
+                                        height: '57.37vw', // 16:9
+                                        minHeight: '102vh',
+                                        minWidth: '181.33vh',
+                                    }}
+                                    src="https://www.youtube.com/embed/aq0iCOYylgI?autoplay=1&mute=1&loop=1&playlist=aq0iCOYylgI&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&enablejsapi=1&origin=http://localhost:3000"
+                                    allow="autoplay; encrypted-media"
+                                    onLoad={() => setVideoLoaded(true)}
+                                />
+                            </div>
+
+                            {/* OLD LOCAL VIDEO (KEEPING FOR RAINY DAY AS REQUESTED)
+                            <video
+                                ref={videoRef}
+                                className={`absolute inset-0 h-full w-full object-cover ${
+                                    videoLoaded ? 'opacity-50' : 'opacity-0'
+                                }`}
+                                autoPlay={true}
+                                muted={true}
+                                loop={true}
+                                playsInline={true}
+                                preload="auto"
+                                onCanPlay={() => setVideoLoaded(true)}
+                                onLoadedData={() => setVideoLoaded(true)}
+                                onError={(e) => console.error('Hero Video Error:', e)}
+                                style={{
+                                    willChange: 'opacity, transform',
+                                    transform: 'translateZ(0)',
+                                    objectFit: 'cover',
+                                    backfaceVisibility: 'hidden',
+                                    WebkitBackfaceVisibility: 'hidden',
+                                }}
+                            >
+                                <source src="/videos/bg_1080p.mp4" type="video/mp4" />
+                            </video>
+                            */}
+                        </>
                     ) : (
                         // Placeholder while video loads
                         <div className="absolute inset-0 bg-gradient-to-br from-background via-background-secondary to-background" />

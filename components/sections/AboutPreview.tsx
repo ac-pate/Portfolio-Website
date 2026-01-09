@@ -103,7 +103,7 @@ export function AboutPreview() {
 
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % FLICKER_IMAGES.length);
-    }, 200); // Syncs with camera-flicker.mp3 burst frequency
+    }, 220); // Syncs with camera-flicker.mp3 burst frequency
 
     return () => clearInterval(interval);
   }, [isHovering]);
@@ -269,7 +269,7 @@ export function AboutPreview() {
             <div className="relative z-20 lg:-ml-40 lg:mt-6 lg:pr-4">
               <p 
                 className="text-xl md:text-2xl lg:text-3xl text-foreground font-display font-bold leading-tight italic"
-                style={{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }}
+                // style={{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }}
               >
                 &ldquo;I build intelligent machines that interact with the physical world.&rdquo;
               </p>
