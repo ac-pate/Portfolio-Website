@@ -17,6 +17,7 @@ import {
   Users
 } from 'lucide-react';
 import { SectionHeading } from '@/components/ui/SectionHeading';
+import GlowWrapper from '@/components/ui/GlowWrapper';
 import { siteConfig } from '@/lib/config';
 import { formatDateRange } from '@/lib/utils';
 import type { ContentItem, JobFrontmatter, EducationFrontmatter, VolunteerFrontmatter } from '@/lib/mdx';
@@ -29,28 +30,40 @@ interface AboutPageProps {
 
 const technicalSkills = [
   {
-    category: 'Languages',
-    skills: ['Python', 'C/C++', 'VHDL', 'SystemVerilog', 'MATLAB'],
+    category: 'Programming',
+    skills: ['Python', 'C/C++', 'VHDL', 'SystemVerilog', 'MATLAB', 'Bash'],
   },
   {
-    category: 'Robotics',
-    skills: ['ROS2', 'Gazebo', 'Control Systems', 'Sensor Fusion', 'Computer Vision'],
+    category: 'Robotics & AI',
+    skills: ['ROS2', 'Gazebo', 'Isaac Sim', 'VLA Models', 'Imitation Learning', 'SLAM'],
   },
   {
-    category: 'Hardware',
-    skills: ['Arduino', 'Raspberry Pi', 'STM32', 'FPGA', 'PCB Design'],
+    category: 'Computer Vision',
+    skills: ['ZED Camera', 'Stereo Vision', 'Point Clouds', 'Visual Odometry', 'OpenCV'],
   },
   {
-    category: 'Tools',
-    skills: ['Git', 'Linux', 'Docker', 'CAD (Fusion 360)', 'Simulink'],
+    category: 'Control Systems',
+    skills: ['Model Predictive Control', 'Optimal Control', 'PID Tuning', 'Kalman Filtering'],
+  },
+  {
+    category: 'Embedded Hardware',
+    skills: ['ESP32', 'STM32', 'Arduino', 'Jetson (Nano/AGX)', 'Raspberry Pi', 'FPGA'],
+  },
+  {
+    category: 'Protocols & IoT',
+    skills: ['CAN', 'SPI', 'I2C', 'WiFi', 'Bluetooth', 'Zigbee', 'Thread', 'MQTT'],
+  },
+  {
+    category: 'Tools & Platforms',
+    skills: ['Git', 'Linux', 'Docker', 'PyTorch', 'TensorFlow', 'CAD (Fusion 360)'],
   },
 ];
 
 const interests = [
   { icon: Cpu, label: 'Embedded Systems' },
-  { icon: Cog, label: 'Robotics' },
-  { icon: Code, label: 'Autonomous Systems' },
-  { icon: Wrench, label: 'Hardware Prototyping' },
+  { icon: Cog, label: 'Robotics & Autonomy' },
+  { icon: Code, label: 'Machine Learning' },
+  { icon: Wrench, label: 'Hardware Tinkering' },
 ];
 
 export function AboutPage({ jobs, education, volunteer }: AboutPageProps) {
@@ -62,22 +75,61 @@ export function AboutPage({ jobs, education, volunteer }: AboutPageProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="max-w-3xl mb-16"
+          className="max-w-4xl mb-16"
         >
-          <h1 className="text-display-md md:text-display-lg font-display font-bold text-foreground mb-6">
+          <h1 className="text-display-md md:text-display-lg font-display font-bold text-foreground mb-8">
             About Me<span className="text-accent">.</span>
           </h1>
-          <p className="text-xl text-foreground-secondary leading-relaxed mb-6">
-            I&apos;m a Computer Engineering student at Concordia University passionate about 
-            building intelligent systems that interact with the physical world. My work spans 
-            robotics research, embedded systems, and autonomous systems.
-          </p>
-          <p className="text-lg text-foreground-secondary leading-relaxed">
-            Currently working on experimental space-rover platforms at CUARL and leading 
-            multiple robotics projects through IEEE Concordia. I believe in learning by doing 
-            — whether it&apos;s designing a custom PCB, implementing control algorithms, or 
-            building full ROS2 stacks.
-          </p>
+          
+          {/* Main Story */}
+          <div className="space-y-6 text-lg text-foreground-secondary leading-relaxed">
+            <p>
+              I&apos;m a <span className="text-accent font-semibold">4th year Computer Engineering student</span> at Concordia University 
+              in Montreal, and I live and breathe robotics. Every single day, I&apos;m thinking about the next breakthrough 
+              in autonomous systems—whether it&apos;s Vision-Language-Action models enabling robots to understand commands, 
+              optimal control algorithms for precise manipulation, or stereo vision systems for real-time localization.
+            </p>
+
+            <p>
+              My journey started as an <span className="text-foreground font-medium">international student from India</span>. Initially, 
+              I was fascinated by chip manufacturing—the idea of designing processors at the silicon level. That passion led me to an 
+              internship at <span className="text-accent font-semibold">Microchip Technology</span>, where I worked on Ethernet chips 
+              and High-Performance Space Computers. But I had a realization: <span className="text-foreground font-medium">I wanted to 
+              USE the technology, not just manufacture it</span>. I wanted to build machines that move, sense, and think.
+            </p>
+
+            <p>
+              That&apos;s when I dove headfirst into robotics. I joined <span className="text-accent font-semibold">IEEE Concordia</span> as 
+              VP Marketing in my second year, then became <span className="text-accent font-semibold">VP of Projects</span> in my third year—the 
+              best position in the club. I led teams building autonomous drones with optical flow, IoT automation systems with Zigbee and 
+              Alexa integration, 6-axis robotic arms with ROS2 Control, FPGA-based 32-bit multicore CPUs, and autonomous sumobots. Each project 
+              pushed me deeper into the world of embedded systems, real-time control, and hardware-software integration.
+            </p>
+
+            <p>
+              In Summer 2025, I joined <span className="text-accent font-semibold">CUARL (Concordia University Aerospace Robotics Lab)</span> working 
+              on an articulated wheel-legged rover for extraterrestrial exploration. I designed the CAN bus system, built the Gazebo simulation, 
+              and developed a complete <span className="text-foreground font-medium">position tracking system using ZED2 stereo cameras</span>—enabling 
+              closed-loop control where previously only open-loop existed. That single contribution unlocked motion algorithm development for the entire team.
+            </p>
+
+            <p>
+              Now, for my capstone project, I&apos;m building <span className="text-accent font-semibold">MIMIC</span>—a dual-arm humanoid robot powered 
+              by Vision-Language-Action models and imitation learning. Our goal? Create a robot that can do <em>anything</em> you tell it, even tasks 
+              it&apos;s never seen before. We&apos;re partnering with McGill&apos;s Mobile Robotics Lab, revamping their industrial bi-manual robot from 
+              ROS1 to ROS2, building custom teleoperation systems, and training generalized policies. It&apos;s the culmination of everything I&apos;ve learned.
+            </p>
+
+            <p className="text-foreground font-medium">
+              Beyond projects, I&apos;m taking graduate-level courses in control systems, machine learning (earned an <span className="text-accent font-semibold">A+</span>), 
+              and Kalman filtering. I&apos;m a Teaching Assistant for VHDL and electronics courses. And in my spare time? I&apos;m training VLA models, 
+              building ESP32 IoT devices, experimenting with Jetson platforms, and keeping up with the latest robotics research.
+            </p>
+
+            <p className="text-accent font-semibold text-xl">
+              I don&apos;t just want to build robots. I want to build robots that think, adapt, and change the world.
+            </p>
+          </div>
         </motion.div>
 
         <div className="grid lg:grid-cols-3 gap-12">

@@ -70,7 +70,7 @@ export function TimelineStatic({ items, onToggleView }: TimelineStaticProps) {
     <div className="pb-20">
       <div className="section-container">
         {/* Sticky Header Group */}
-        <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-md -mx-4 px-4 pt-20 md:pt-24 pb-4 border-b border-white/5">
+        <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-md -mx-4 px-4 pt-4 md:pt-16 pb-4 border-b border-white/5">
           {/* Header Title & Button */}
           <div className="mb-0 relative">
             <SectionHeading
@@ -147,7 +147,7 @@ export function TimelineStatic({ items, onToggleView }: TimelineStaticProps) {
             <div key={termKey} className="mb-16 last:mb-0">
               {/* Term Header */}
               <div className="flex items-center gap-4 mb-6 px-8 md:px-12 lg:px-16">
-                <h4 className="text-lg font-display font-semibold text-foreground">
+                <h4 className="text-3xl font-display font-semibold text-foreground">
                   {termKey}
                 </h4>
                 <div className="flex-1 h-px bg-border/30" />
@@ -217,59 +217,59 @@ function StaticCard({ item }: StaticCardProps) {
   };
 
   return (
-    <Link
-      href={link}
-      className={`
-        group block p-4 rounded-lg 
-        bg-background-secondary/30 border border-border/30
-        border-l-2 ${typeColors[item.type] || 'border-l-muted'}
-        hover:bg-background-secondary/50 hover:border-accent/30
+      <Link
+        href={link}
+        className={`
+          group block p-4 rounded-lg 
+          bg-background-secondary/30 border border-border/30
+          border-l-2 ${typeColors[item.type] || 'border-l-muted'}
+          hover:bg-background-secondary/50 hover:border-accent/30
         transition-all duration-300
-      `}
-    >
-      {/* Thumbnail */}
-      {item.image && (
-        <div className="relative w-full aspect-[5/3] mb-3 rounded-md overflow-hidden bg-background">
-          <Image
-            src={item.image}
-            alt={item.title}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-        </div>
-      )}
+        `}
+      >
+        {/* Thumbnail */}
+        {item.image && (
+          <div className="relative w-full aspect-[5/3] mb-3 rounded-md overflow-hidden bg-background">
+            <Image
+              src={item.image}
+              alt={item.title}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          </div>
+        )}
 
-      {/* Date */}
-      <span className="text-[10px] text-muted uppercase tracking-wider">
-        {dateRange}
-      </span>
+        {/* Date */}
+        <span className="text-[10px] text-muted uppercase tracking-wider">
+          {dateRange}
+        </span>
 
-      {/* Title */}
-      <h5 className="mt-1 text-sm font-medium text-foreground group-hover:text-accent transition-colors line-clamp-2">
-        {item.title}
-      </h5>
+        {/* Title */}
+        <h5 className="mt-1 text-sm font-medium text-foreground group-hover:text-accent transition-colors line-clamp-2">
+          {item.title}
+        </h5>
 
-      {/* Subtitle */}
-      {item.subtitle && (
-        <p className="mt-1 text-xs text-foreground-secondary line-clamp-1">
-          {item.subtitle}
-        </p>
-      )}
+        {/* Subtitle */}
+        {item.subtitle && (
+          <p className="mt-1 text-xs text-foreground-secondary line-clamp-1">
+            {item.subtitle}
+          </p>
+        )}
 
-      {/* Tags */}
-      {item.tags && item.tags.length > 0 && (
-        <div className="mt-2 flex flex-wrap gap-1">
-          {item.tags.slice(0, 2).map((tag) => (
-            <span
-              key={tag}
-              className="px-1.5 py-0.5 text-[9px] text-muted bg-background rounded"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      )}
-    </Link>
+        {/* Tags */}
+        {item.tags && item.tags.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1">
+            {item.tags.slice(0, 2).map((tag) => (
+              <span
+                key={tag}
+                className="px-1.5 py-0.5 text-[9px] text-muted bg-background rounded"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+      </Link>
   );
 }
 

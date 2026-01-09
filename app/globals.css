@@ -429,6 +429,55 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Jellyfish Blob Animation */
+  .animate-blob {
+    animation: blobAnim 20s linear infinite;
+  }
+
+  @keyframes blobAnim {
+
+    0%,
+    100% {
+      border-radius: 52% 48% 59% 41% / 53% 40% 60% 47%;
+    }
+
+    10% {
+      border-radius: 33% 67% 50% 50% / 43% 39% 61% 57%;
+    }
+
+    20% {
+      border-radius: 51% 49% 31% 69% / 65% 39% 61% 35%;
+    }
+
+    30% {
+      border-radius: 51% 49% 56% 44% / 45% 39% 61% 55%;
+    }
+
+    40% {
+      border-radius: 66% 34% 33% 67% / 48% 71% 39% 52%;
+    }
+
+    50% {
+      border-radius: 46% 54% 33% 67% / 48% 30% 70% 52%;
+    }
+
+    60% {
+      border-radius: 46% 54% 56% 44% / 48% 30% 70% 52%;
+    }
+
+    70% {
+      border-radius: 46% 54% 56% 44% / 65% 53% 47% 35%;
+    }
+
+    80% {
+      border-radius: 67% 33% 56% 44% / 37% 53% 47% 63%;
+    }
+
+    90% {
+      border-radius: 46% 54% 32% 68% / 37% 53% 47% 63%;
+    }
+  }
 }
 
 /* Film grain is now applied directly to body background (see body styles above) */

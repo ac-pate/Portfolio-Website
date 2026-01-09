@@ -41,10 +41,11 @@ export function ProjectsPreview({ projects }: ProjectsPreviewProps) {
     >
       <div className="section-container w-full pt-24 md:pt-32">
         {/* Sticky Header */}
-        <div className="sticky top-20 z-10 py-4 bg-background/80 backdrop-blur-md -mx-4 px-4 mb-8 border-b border-white/5">
+        <div className="sticky top-16 z-10 py-2 bg-background/80 backdrop-blur-md -mx-4 px-4 mb-8 border-b border-white/5">
           <SectionHeading
             title="Featured Projects"
             subtitle="Selected work in robotics, embedded systems, and software."
+            className="mb-0 md:mb-0"
           />
         </div>
 

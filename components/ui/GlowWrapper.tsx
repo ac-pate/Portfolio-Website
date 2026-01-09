@@ -179,6 +179,7 @@ interface GlowWrapperProps {
   className?: string;
   preset?: GlowPreset;
   color?: string;
+  showHighlight?: boolean;
   
   // Overrides
   spread?: number;
@@ -194,6 +195,7 @@ export default function GlowWrapper({
   className = "",
   preset = "card",
   color = GLOBAL_CONFIG.defaultGlowColor,
+  showHighlight = true,
   ...overrides
 }: GlowWrapperProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -251,10 +253,10 @@ export default function GlowWrapper({
     const px = parseFloat(css || "");
 
     if (!isNaN(px) && px > 0) {
-      return { css, px };
+      return { css: css || `${settings.borderRadius}px`, px };
     }
 
-    return { css, px: settings.borderRadius };
+    return { css: `${settings.borderRadius}px`, px: settings.borderRadius };
   };
 
   useEffect(() => {
@@ -437,14 +439,16 @@ export default function GlowWrapper({
         {children}
 
         {/* SHARP BORDER HIGHLIGHT (attached to the actual content box) */}
-        <div
-          className="absolute inset-0 border border-transparent group-hover:border-[var(--hover-border-color)] transition-colors duration-500 pointer-events-none"
-          style={{
-            '--hover-border-color': GLOBAL_CONFIG.hoverBorderColor,
-            borderRadius: borderRadiusCss,
-            boxShadow: `inset 0 0 0 2px ${GLOBAL_CONFIG.insetShadowColor}`,
-          } as React.CSSProperties}
-        />
+        {showHighlight && (
+          <div
+            className="absolute inset-0 border border-transparent group-hover:border-[var(--hover-border-color)] transition-colors duration-500 pointer-events-none"
+            style={{
+              '--hover-border-color': GLOBAL_CONFIG.hoverBorderColor,
+              borderRadius: borderRadiusCss,
+              boxShadow: `inset 0 0 0 2px ${GLOBAL_CONFIG.insetShadowColor}`,
+            } as React.CSSProperties}
+          />
+        )}
       </div>
     </div>
   );

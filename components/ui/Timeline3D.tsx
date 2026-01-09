@@ -14,7 +14,6 @@
 'use client';
 
 import { useEffect, useRef, useState, useMemo, forwardRef } from 'react';
-import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import * as THREE from 'three';
@@ -104,9 +103,9 @@ const MAX_DISTANCE_AHEAD = 1000; // Hide cards that are too far ahead
 const STARFIELD_CONFIG = {
   count: 6000, // Number of stars
   depth: 300, // How far back stars extend (Z units)
-  speed: 0.7, // Base speed multiplier for star movement
+  speed: 0.5, // Base speed multiplier for star movement
   twinkleSpeed: 100, // Speed of twinkling animation (lower = slower, softer blink)
-  size: 0.45, // Base star size (reduced for smaller stars)
+  size: 0.35, // Base star size (reduced for smaller stars)
   color: 0xffffff, // Star color (white)
   opacity: 0.99, // Base star opacity
 };
@@ -123,12 +122,11 @@ export function Timeline3D({ items, onToggleView }: Timeline3DProps) {
   const [isMounted, setIsMounted] = useState(false);
   const [show3D, setShow3D] = useState(true);
   
-  // Get theme for star color
-  
-  // Get theme for star color
+  // Get theme for star color and star count
   const { theme, resolvedTheme } = useTheme();
   const isLightMode = resolvedTheme === 'light' || theme === 'light';
   const starColor = isLightMode ? 0x000000 : 0xffffff; // Black for light mode, white for dark mode
+  const starCount = isLightMode ? STARFIELD_CONFIG.count * 3 : STARFIELD_CONFIG.count; // 3x more stars in light mode for visibility
   
   // Refs for Three.js objects
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -223,15 +221,15 @@ export function Timeline3D({ items, onToggleView }: Timeline3DProps) {
     
     // Create starfield particle system
     const starGeometry = new THREE.BufferGeometry();
-    const starPositions = new Float32Array(STARFIELD_CONFIG.count * 3);
-    const starSizes = new Float32Array(STARFIELD_CONFIG.count);
-    const starOpacities = new Float32Array(STARFIELD_CONFIG.count);
-    const starDepths = new Float32Array(STARFIELD_CONFIG.count); // Store Z depth for parallax
-    const starPhases = new Float32Array(STARFIELD_CONFIG.count); // Random phase offset for each star
-    const starFrequencies = new Float32Array(STARFIELD_CONFIG.count); // Random twinkle frequency
+    const starPositions = new Float32Array(starCount * 3);
+    const starSizes = new Float32Array(starCount);
+    const starOpacities = new Float32Array(starCount);
+    const starDepths = new Float32Array(starCount); // Store Z depth for parallax
+    const starPhases = new Float32Array(starCount); // Random phase offset for each star
+    const starFrequencies = new Float32Array(starCount); // Random twinkle frequency
     
     // Initialize stars with random positions across the full animation range
-    for (let i = 0; i < STARFIELD_CONFIG.count; i++) {
+    for (let i = 0; i < starCount; i++) {
       const i3 = i * 3;
       
       // Random X, Y positions (spread across viewport)
@@ -306,7 +304,7 @@ export function Timeline3D({ items, onToggleView }: Timeline3DProps) {
           
           // Natural twinkling: each star has unique phase and frequency
           // Full dim to bright cycle like real stars
-          float twinkleTime = time * 0.05 * frequency; // Slower speed for gentle twinkling
+          float twinkleTime = time * 0.03 * frequency; // Slower speed for gentle twinkling
           float twinkleWave = sin(twinkleTime + phase);
           // Full range: 0.0 (completely dim) to 1.0 (full brightness)
           float twinkle = twinkleWave * 0.5 + 0.5;
@@ -785,18 +783,18 @@ export function Timeline3D({ items, onToggleView }: Timeline3DProps) {
       </div>
 
       {/* Lane Labels */}
-      <div className="absolute top-40 left-0 right-0 flex justify-center gap-24 md:gap-36 lg:gap-48 px-8 z-20 pointer-events-none">
-        <span className="relative text-sm font-medium text-muted uppercase tracking-[0.15em] pb-1">
+      <div className="absolute top-20 md:top-44 lg:top-48 left-0 right-0 flex justify-center gap-24 md:gap-36 lg:gap-48 px-8 z-20 pointer-events-none">
+        <span className="relative text-sm font-medium text-muted uppercase tracking-[0.15em] pb-2">
           Projects
-          <span className="absolute bottom-0 left-0 right-0 h-px bg-blue-500 shadow-[0_0_10px_1px_rgba(59,130,246,0.8)]" />
+          <span className="absolute bottom-0 left-0 right-0 h-px bg-blue-500 shadow-[0_0_6px_1px_rgba(59,130,246,0.6)]" />
         </span>
-        <span className="relative text-sm font-medium text-muted uppercase tracking-[0.15em] pb-1">
+        <span className="relative text-sm font-medium text-muted uppercase tracking-[0.15em] pb-2">
           Experience
-          <span className="absolute bottom-0 left-0 right-0 h-px bg-emerald-500 shadow-[0_0_10px_1px_rgba(16,185,129,0.8)]" />
+          <span className="absolute bottom-0 left-0 right-0 h-px bg-emerald-500 shadow-[0_0_6px_1px_rgba(16,185,129,0.6)]" />
         </span>
-        <span className="relative text-sm font-medium text-muted uppercase tracking-[0.15em] pb-1">
+        <span className="relative text-sm font-medium text-muted uppercase tracking-[0.15em] pb-2">
           Activities
-          <span className="absolute bottom-0 left-0 right-0 h-px bg-amber-500 shadow-[0_0_10px_1px_rgba(245,158,11,0.8)]" />
+          <span className="absolute bottom-0 left-0 right-0 h-px bg-amber-500 shadow-[0_0_6px_1px_rgba(245,158,11,0.6)]" />
         </span>
       </div>
 
@@ -808,44 +806,84 @@ export function Timeline3D({ items, onToggleView }: Timeline3DProps) {
         isActive={isActive}
       />
 
-      {/* Progress Dots */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
-        {sortedItems.slice(0, 10).map((_, i) => (
-          <div
-            key={i}
-            className={`
-              w-1.5 h-1.5 rounded-full transition-all duration-300
-              ${i === currentIndex ? 'bg-accent w-6' : 'bg-muted/40'}
-            `}
+      {/* Seek Bar with Counter */}
+      <div className="absolute bottom-32 left-1/2 -translate-x-1/2 w-[calc(100%-200px)] max-w-4xl flex items-center gap-4 z-20">
+        {/* Seek Bar Container */}
+        <div 
+          className="flex-1 h-1.5 bg-white/10 backdrop-blur-sm rounded-full cursor-pointer group relative overflow-visible"
+          onClick={(e) => {
+            // Calculate click position as percentage
+            const rect = e.currentTarget.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const percentage = clickX / rect.width;
+            const targetIndex = Math.floor(percentage * sortedItems.length);
+            const clampedIndex = Math.max(0, Math.min(sortedItems.length - 1, targetIndex));
+            
+            // Calculate scroll position to reach this card
+            const targetScrollProgress = clampedIndex / Math.max(1, sortedItems.length - 1);
+            const scrollDistancePx = Math.max(1, sortedItems.length - 1) * SCROLL_DISTANCE_PER_CARD;
+            const targetScroll = targetScrollProgress * scrollDistancePx;
+            
+            // Scroll to position
+            if (wrapperRef.current) {
+              const wrapperTop = wrapperRef.current.offsetTop;
+              window.scrollTo({
+                top: wrapperTop + targetScroll,
+                behavior: 'smooth'
+              });
+            }
+          }}
+        >
+          {/* Background Track */}
+          <div className="absolute inset-0 bg-white/5 rounded-full" />
+          
+          {/* Item Markers */}
+          {sortedItems.map((_, index) => (
+            <div
+              key={index}
+              className="absolute top-1/2 -translate-y-1/2 w-px h-3 bg-white/20"
+              style={{
+                left: `${(index / (sortedItems.length - 1)) * 100}%`
+              }}
+            />
+          ))}
+          
+          {/* Progress Bar (Accent Color) */}
+          <div 
+            className="absolute left-0 top-0 bottom-0 bg-accent shadow-[0_0_12px_2px_rgba(var(--accent-rgb),0.5)] transition-all duration-300 rounded-full"
+            style={{
+              width: `${((currentIndex + 1) / sortedItems.length) * 100}%`
+            }}
           />
-        ))}
+          
+          {/* Hover Indicator */}
+          <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-full" />
+        </div>
+        
+        {/* Card Counter */}
+        <div className="text-sm text-muted font-mono whitespace-nowrap">
+          {String(currentIndex + 1).padStart(2, '0')} / {String(sortedItems.length).padStart(2, '0')}
+        </div>
       </div>
       
       {/* View Toggle Button */}
-      <div className="absolute top-40 right-8 z-50 overflow-visible">
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <GlowWrapper preset="button" className="rounded-full">
-            <button
-              onClick={onToggleView}
-              className="flex items-center gap-2 px-4 py-2 text-xs font-medium uppercase tracking-wider text-muted hover:text-accent bg-background/50 backdrop-blur-sm border border-white/10 rounded-full transition-all"
-            >
-              <span>List View</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="8" y1="6" x2="21" y2="6"></line>
-                <line x1="8" y1="12" x2="21" y2="12"></line>
-                <line x1="8" y1="18" x2="21" y2="18"></line>
-                <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                <line x1="3" y1="18" x2="3.01" y2="18"></line>
-              </svg>
-            </button>
-          </GlowWrapper>
-        </motion.div>
-      </div>
-
-      {/* Card Counter */}
-      <div className="absolute bottom-8 right-8 text-sm text-muted font-mono z-20">
-        {String(currentIndex + 1).padStart(2, '0')} / {String(sortedItems.length).padStart(2, '0')}
+      <div className="absolute top-24 right-8 z-50 overflow-visible">
+        <GlowWrapper preset="button" className="rounded-full">
+          <button
+            onClick={onToggleView}
+            className="flex items-center gap-2 px-4 py-2 text-xs font-medium uppercase tracking-wider text-muted hover:text-accent bg-background/50 backdrop-blur-sm border border-white/10 rounded-full transition-all"
+          >
+            <span>List View</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+          </button>
+        </GlowWrapper>
       </div>
     </div>
   </div>

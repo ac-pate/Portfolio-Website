@@ -18,10 +18,10 @@ export const siteConfig: SiteConfig = {
   title: 'Computer Engineering Student | Robotics & Embedded Systems',
   description: 'Portfolio of Achal Patel - Computer Engineering student at Concordia University, passionate about robotics, embedded systems, and autonomous systems.',
   tagline: 'Building intelligent machines, one system at a time.',
-  email: 'Achalypatel3403@gmail.com',
+  email: 'achalypatel3403@gmail.com',
   social: {
     github: 'https://github.com/ac-pate',
-    linkedin: 'https://linkedin.com/in/achal-patel',
+    linkedin: 'https://www.linkedin.com/in/achal-patel-3ab6b7270',
   },
   navItems: [
     { label: 'About', href: '/about' },

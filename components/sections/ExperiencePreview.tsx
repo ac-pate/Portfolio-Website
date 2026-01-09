@@ -39,10 +39,11 @@ export function ExperiencePreview({ jobs }: ExperiencePreviewProps) {
     >
       <div className="section-container w-full pt-24 md:pt-32">
         {/* Sticky Header - Z-20 to stay on top */}
-        <div className="sticky top-20 z-20 py-4 bg-background/80 backdrop-blur-md -mx-4 px-4 mb-8 border-b border-white/5">
+        <div className="sticky top-0 z-20 pt-16 md:pt-20 py-1 bg-background/80 backdrop-blur-md -mx-4 px-4 mb-8 border-b border-white/5">
           <SectionHeading
             title="Experience"
             subtitle="Professional experience in robotics, embedded systems, and engineering."
+            className="mb-0 md:mb-0"
           />
         </div>
 

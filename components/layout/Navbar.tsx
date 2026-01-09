@@ -18,7 +18,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
-import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { SoundToggle } from '@/components/ui/SoundToggle';
 import { useSound } from '@/components/providers/SoundProvider';
 import { siteConfig } from '@/lib/config';
@@ -103,14 +102,12 @@ export function Navbar() {
             ))}
             <div className="ml-4 pl-4 border-l border-border flex items-center gap-2">
               <SoundToggle />
-              <ThemeToggle />
             </div>
           </div>
 
           {/* Mobile Menu Button */}
           <div className="flex md:hidden items-center gap-3">
             <SoundToggle />
-            <ThemeToggle />
             <motion.button
               whileTap={{ scale: 0.95 }}
               onHoverStart={playHoverSound}
