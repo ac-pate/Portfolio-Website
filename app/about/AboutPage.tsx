@@ -75,66 +75,46 @@ export function AboutPage({ jobs, education, volunteer }: AboutPageProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="max-w-4xl mb-16"
+          className="max-w-4xl mb-12"
         >
-          <h1 className="text-display-md md:text-display-lg font-display font-bold text-foreground mb-8">
+          <h1 className="text-display-md md:text-display-lg font-display font-bold text-foreground">
             About Me<span className="text-accent">.</span>
           </h1>
-          
-          {/* Main Story */}
-          <div className="space-y-6 text-lg text-foreground-secondary leading-relaxed">
-            <p>
-              I&apos;m a <span className="text-accent font-semibold">4th year Computer Engineering student</span> at Concordia University 
-              in Montreal, and I live and breathe robotics. Every single day, I&apos;m thinking about the next breakthrough 
-              in autonomous systems—whether it&apos;s Vision-Language-Action models enabling robots to understand commands, 
-              optimal control algorithms for precise manipulation, or stereo vision systems for real-time localization.
-            </p>
-
-            <p>
-              My journey started as an <span className="text-foreground font-medium">international student from India</span>. Initially, 
-              I was fascinated by chip manufacturing—the idea of designing processors at the silicon level. That passion led me to an 
-              internship at <span className="text-accent font-semibold">Microchip Technology</span>, where I worked on Ethernet chips 
-              and High-Performance Space Computers. But I had a realization: <span className="text-foreground font-medium">I wanted to 
-              USE the technology, not just manufacture it</span>. I wanted to build machines that move, sense, and think.
-            </p>
-
-            <p>
-              That&apos;s when I dove headfirst into robotics. I joined <span className="text-accent font-semibold">IEEE Concordia</span> as 
-              VP Marketing in my second year, then became <span className="text-accent font-semibold">VP of Projects</span> in my third year—the 
-              best position in the club. I led teams building autonomous drones with optical flow, IoT automation systems with Zigbee and 
-              Alexa integration, 6-axis robotic arms with ROS2 Control, FPGA-based 32-bit multicore CPUs, and autonomous sumobots. Each project 
-              pushed me deeper into the world of embedded systems, real-time control, and hardware-software integration.
-            </p>
-
-            <p>
-              In Summer 2025, I joined <span className="text-accent font-semibold">CUARL (Concordia University Aerospace Robotics Lab)</span> working 
-              on an articulated wheel-legged rover for extraterrestrial exploration. I designed the CAN bus system, built the Gazebo simulation, 
-              and developed a complete <span className="text-foreground font-medium">position tracking system using ZED2 stereo cameras</span>—enabling 
-              closed-loop control where previously only open-loop existed. That single contribution unlocked motion algorithm development for the entire team.
-            </p>
-
-            <p>
-              Now, for my capstone project, I&apos;m building <span className="text-accent font-semibold">MIMIC</span>—a dual-arm humanoid robot powered 
-              by Vision-Language-Action models and imitation learning. Our goal? Create a robot that can do <em>anything</em> you tell it, even tasks 
-              it&apos;s never seen before. We&apos;re partnering with McGill&apos;s Mobile Robotics Lab, revamping their industrial bi-manual robot from 
-              ROS1 to ROS2, building custom teleoperation systems, and training generalized policies. It&apos;s the culmination of everything I&apos;ve learned.
-            </p>
-
-            <p className="text-foreground font-medium">
-              Beyond projects, I&apos;m taking graduate-level courses in control systems, machine learning (earned an <span className="text-accent font-semibold">A+</span>), 
-              and Kalman filtering. I&apos;m a Teaching Assistant for VHDL and electronics courses. And in my spare time? I&apos;m training VLA models, 
-              building ESP32 IoT devices, experimenting with Jetson platforms, and keeping up with the latest robotics research.
-            </p>
-
-            <p className="text-accent font-semibold text-xl">
-              I don&apos;t just want to build robots. I want to build robots that think, adapt, and change the world.
-            </p>
-          </div>
         </motion.div>
 
         <div className="grid lg:grid-cols-3 gap-12">
           {/* Main content */}
           <div className="lg:col-span-2 space-y-16">
+            {/* Main Story */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="space-y-8 text-lg text-foreground-secondary leading-relaxed bg-background-secondary/30 p-8 rounded-2xl border border-white/5"
+            >
+              <h3 className="text-2xl font-display font-bold text-foreground mb-4">The Deep Dive</h3>
+              
+              <p>
+                As a <span className="text-accent font-semibold">4th year Computer Engineering student</span> at Concordia, 
+                I live at the intersection of bits and bolts. My obsession with robotics began as a fascination with 
+                chip manufacturing at <span className="text-accent font-semibold">Microchip Technology</span>, but I soon realized 
+                that I didn&apos;t just want to build the silicon—I wanted to make it move.
+              </p>
+
+              <p>
+                Through <span className="text-accent font-semibold">IEEE Concordia</span> and later <span className="text-accent font-semibold">CUARL</span>, 
+                I&apos;ve dedicated thousands of hours to mastering autonomous systems. I&apos;ve built everything from 32-bit multicore 
+                CPUs to <span className="text-foreground font-medium">position tracking systems for lunar rovers</span>. Each project 
+                was a lesson in low-latency control and hardware-software synergy.
+              </p>
+
+              <p>
+                Today, my focus is <span className="text-accent font-semibold">MIMIC</span>: a dual-arm humanoid robot that 
+                doesn&apos;t just follow code, but learns through imitation. By leveraging <span className="text-foreground font-medium">Vision-Language-Action models</span>, 
+                we&apos;re teaching machines to understand the world as we do. It&apos;s not just about building robots; it&apos;s 
+                about building the next generation of intelligent agency.
+              </p>
+            </motion.div>
             {/* Experience Preview */}
             <section>
               <div className="flex items-center justify-between mb-6">

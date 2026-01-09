@@ -37,9 +37,9 @@ export function ProjectsPreview({ projects }: ProjectsPreviewProps) {
     <section 
       ref={sectionRef} 
       id="projects" 
-      className="sticky top-0 min-h-screen bg-background z-20 pb-20 mb-[40vh]"
+      className="sticky top-0 min-h-screen bg-background z-20 pb-20 mb-[60vh]"
     >
-      <div className="section-container w-full pt-24 md:pt-32">
+      <div className="section-container w-full pt-24 md:pt-24">
         {/* Sticky Header */}
         <div className="sticky top-16 z-10 py-2 bg-background/80 backdrop-blur-md -mx-4 px-4 mb-8 border-b border-white/5">
           <SectionHeading

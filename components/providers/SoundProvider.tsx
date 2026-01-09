@@ -8,6 +8,8 @@ interface SoundContextType {
   playHoverSound: () => void;
   stopHoverSound: () => void;
   playClickSound: () => void;
+  playFlickerSound: () => void;
+  stopFlickerSound: () => void;
   fadeBackgroundAudio: (targetVolume: number, duration?: number) => void;
   getBackgroundAudio: () => HTMLAudioElement | null;
 }
@@ -27,6 +29,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
   const bgAudioRef = useRef<HTMLAudioElement | null>(null);
   const hoverAudioRef = useRef<HTMLAudioElement | null>(null);
   const clickAudioRef = useRef<HTMLAudioElement | null>(null);
+  const flickerAudioRef = useRef<HTMLAudioElement | null>(null);
   const fadeIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const currentHoverAudioRef = useRef<HTMLAudioElement | null>(null);
   const hasBeenEnabledRef = useRef<boolean>(false); // Track if sounds have ever been enabled
@@ -53,6 +56,13 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
       clickAudio.preload = 'auto';
       clickAudioRef.current = clickAudio;
 
+      // Flicker sound effect
+      const flickerAudio = new Audio('/sounds/camera-flicker.mp3');
+      flickerAudio.volume = 0.4;
+      flickerAudio.preload = 'auto';
+      flickerAudio.loop = true;
+      flickerAudioRef.current = flickerAudio;
+
       return () => {
         // Cleanup fade interval
         if (fadeIntervalRef.current) {
@@ -74,6 +84,11 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
           clickAudioRef.current.pause();
           clickAudioRef.current.src = '';
           clickAudioRef.current = null;
+        }
+        if (flickerAudioRef.current) {
+          flickerAudioRef.current.pause();
+          flickerAudioRef.current.src = '';
+          flickerAudioRef.current = null;
         }
       };
     }
@@ -246,6 +261,28 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
     }
   }, [soundsEnabled]);
 
+  // Play flicker sound (loops while hovering)
+  const playFlickerSound = useCallback(() => {
+    if (!soundsEnabled || !flickerAudioRef.current) return;
+    
+    try {
+      flickerAudioRef.current.currentTime = 0;
+      flickerAudioRef.current.play().catch((e) => {
+        // Silently handle play errors
+      });
+    } catch (e) {
+      // Ignore audio errors
+    }
+  }, [soundsEnabled]);
+
+  // Stop flicker sound
+  const stopFlickerSound = useCallback(() => {
+    if (flickerAudioRef.current) {
+      flickerAudioRef.current.pause();
+      flickerAudioRef.current.currentTime = 0;
+    }
+  }, []);
+
   // Fade background audio to target volume
   const fadeBackgroundAudio = useCallback((targetVolume: number, duration: number = 1000) => {
     if (!bgAudioRef.current) return;
@@ -303,6 +340,8 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
         playHoverSound,
         stopHoverSound,
         playClickSound,
+        playFlickerSound,
+        stopFlickerSound,
         fadeBackgroundAudio,
         getBackgroundAudio,
       }}
