@@ -145,7 +145,7 @@ export function AboutPreview() {
         >
           <div className="relative overflow-hidden z-20 border-y border-white/10 bg-black/20 group">
             <Image 
-              src="/images/about/career_path.drawio.png" 
+              src="/images/about/career_path.png" 
               alt="Engineering Career Path Diagram" 
               width={1920} 
               height={200} 
