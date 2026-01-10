@@ -126,37 +126,34 @@ export function AboutPreview() {
             <h2 className="text-4xl md:text-5xl font-display font-bold">
               About Me<span className="text-accent">.</span>
             </h2>
-            <div className="mt-2 flex justify-center items-center gap-x-4 gap-y-2 text-sm md:text-base text-foreground-secondary font-medium">
-              <span className="whitespace-nowrap">4th Year Computer Engineering @ Concordia</span>
-              <span className="hidden md:inline text-accent/30 text-lg select-none">|</span>
-              <span className="whitespace-nowrap">Teaching Assistant @ Concordia</span>
-              <span className="hidden md:inline text-accent/30 text-lg select-none">|</span>
-              <span className="whitespace-nowrap">Robotics Researcher @ CUARL</span>
-              <span className="hidden md:inline text-accent/30 text-lg select-none">|</span>
-              <span className="whitespace-nowrap">Team Lead @ Mimic Robotics</span>
+            <div className="mt-6 flex flex-wrap justify-center items-center gap-x-3 gap-y-3 text-xs md:text-sm text-foreground/70 font-medium max-w-4xl mx-auto">
+              <span className="px-3 py-1 rounded-full bg-accent/5 border border-accent/20 hover:bg-accent/10 transition-colors">4th Year Computer Engineering @ Concordia</span>
+              <span className="px-3 py-1 rounded-full bg-accent/5 border border-accent/20 hover:bg-accent/10 transition-colors">Teaching Assistant @ Concordia</span>
+              <span className="px-3 py-1 rounded-full bg-accent/5 border border-accent/20 hover:bg-accent/10 transition-colors">Robotics Researcher @ CUARL</span>
+              <span className="px-3 py-1 rounded-full bg-accent/5 border border-accent/20 hover:bg-accent/10 transition-colors">Team Lead @ Mimic Robotics</span>
             </div>
           </motion.div>
         </div>
 
-        {/* 1. Career Path Diagram - Centered and Thinner */}
+        {/* 1. Career Path Diagram - Edge to Edge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="max-w-lg mx-auto mb-8 relative px-4"
+          className="w-full mb-16 mt-12 relative -mx-4 md:-mx-8"
         >
-          <div className="relative rounded-lg overflow-hidden z-20 border border-white/10 bg-black/20 group">
+          <div className="relative overflow-hidden z-20 border-y border-white/10 bg-black/20 group">
             <Image 
-              src="/images/about/career-path.png" 
+              src="/images/about/career_path.drawio.png" 
               alt="Engineering Career Path Diagram" 
-              width={800} 
-              height={100} 
-              className="w-full h-auto transition-transform duration-500 group-hover:scale-[1.01]"
+              width={1920} 
+              height={200} 
+              className="w-full h-auto transition-transform duration-500 group-hover:scale-[1.02]"
               priority
             />
           </div>
-          <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-accent/80 backdrop-blur-sm px-4 py-1 rounded-full text-[10px] uppercase font-bold tracking-widest text-white shadow-glow-sm border border-white/10">
+          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-accent/90 backdrop-blur-md px-6 py-2 rounded-full text-xs uppercase font-bold tracking-widest text-white shadow-glow-md border border-white/20">
             Roadmap to Autonomy
           </div>
         </motion.div>

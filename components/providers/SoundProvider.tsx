@@ -33,6 +33,12 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
   const fadeIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const currentHoverAudioRef = useRef<HTMLAudioElement | null>(null);
   const hasBeenEnabledRef = useRef<boolean>(false); // Track if sounds have ever been enabled
+  const soundsEnabledRef = useRef<boolean>(soundsEnabled);
+
+  // Sync ref with state
+  useEffect(() => {
+    soundsEnabledRef.current = soundsEnabled;
+  }, [soundsEnabled]);
 
   // Initialize audio elements
   useEffect(() => {
@@ -46,7 +52,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
 
       // Hover sound effect
       const hoverAudio = new Audio('/sounds/hover-sound.mp3');
-      hoverAudio.volume = 0.7;
+      hoverAudio.volume = 0.8;
       hoverAudio.preload = 'auto';
       hoverAudioRef.current = hoverAudio;
 
@@ -58,7 +64,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
 
       // Flicker sound effect
       const flickerAudio = new Audio('/sounds/camera-flicker.mp3');
-      flickerAudio.volume = 0.4;
+      flickerAudio.volume = 0.15;
       flickerAudio.preload = 'auto';
       flickerAudio.loop = true;
       flickerAudioRef.current = flickerAudio;
@@ -191,7 +197,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
 
   // Play hover sound
   const playHoverSound = useCallback(() => {
-    if (!soundsEnabled) return;
+    if (!soundsEnabledRef.current) return;
     
     try {
       // Stop any currently playing hover sound
@@ -223,7 +229,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
       // Ignore audio errors
       currentHoverAudioRef.current = null;
     }
-  }, [soundsEnabled]);
+  }, []); // Stabilized
 
   // Stop hover sound
   const stopHoverSound = useCallback(() => {
@@ -236,7 +242,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
 
   // Play click sound
   const playClickSound = useCallback(() => {
-    if (!soundsEnabled || !clickAudioRef.current) return;
+    if (!soundsEnabledRef.current || !clickAudioRef.current) return;
     
     try {
       // Clone the audio to allow overlapping plays
@@ -259,11 +265,11 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
         // Ignore audio errors
       }
     }
-  }, [soundsEnabled]);
+  }, []); // Stabilized
 
   // Play flicker sound (loops while hovering)
   const playFlickerSound = useCallback(() => {
-    if (!soundsEnabled || !flickerAudioRef.current) return;
+    if (!soundsEnabledRef.current || !flickerAudioRef.current) return;
     
     try {
       flickerAudioRef.current.currentTime = 0;
@@ -273,7 +279,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
     } catch (e) {
       // Ignore audio errors
     }
-  }, [soundsEnabled]);
+  }, []); // Stabilized
 
   // Stop flicker sound
   const stopFlickerSound = useCallback(() => {
@@ -317,7 +323,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
         // If volume is 0, pause the audio
         if (targetVolume === 0) {
           audio.pause();
-        } else if (audio.paused && soundsEnabled) {
+        } else if (audio.paused && soundsEnabledRef.current) {
           // If fading in and sounds are enabled, ensure it's playing
           audio.play().catch(() => {});
         }
@@ -325,7 +331,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
     }, 16); // ~60fps
     
     fadeIntervalRef.current = fadeInterval;
-  }, [soundsEnabled]);
+  }, []); // Stabilized
 
   // Get background audio element reference
   const getBackgroundAudio = useCallback(() => {

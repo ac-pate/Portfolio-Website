@@ -17,6 +17,7 @@ import { ArrowUpRight, Github, ExternalLink } from 'lucide-react';
 import type { ProjectFrontmatter } from '@/lib/mdx';
 import { cn } from '@/lib/utils';
 import { ContentCard } from '@/components/ui/ContentCard';
+import { useSound } from '@/components/providers/SoundProvider';
 
 interface ProjectCardProps {
   slug: string;
@@ -26,6 +27,7 @@ interface ProjectCardProps {
 
 export function ProjectCard({ slug, frontmatter, index = 0 }: ProjectCardProps) {
   const { title, description, tags, image, github, demo, status, projectType } = frontmatter;
+  const { playHoverSound, playClickSound } = useSound();
 
   // Status badge overlay
   const statusOverlay =
@@ -51,7 +53,11 @@ export function ProjectCard({ slug, frontmatter, index = 0 }: ProjectCardProps) 
             href={github}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
+            onMouseEnter={playHoverSound}
+            onClick={(e) => {
+              e.stopPropagation();
+              playClickSound();
+            }}
             className="p-2 rounded-lg bg-background/80 backdrop-blur-sm border border-border hover:border-accent hover:text-accent transition-colors block"
             aria-label="View on GitHub"
           >
@@ -63,7 +69,11 @@ export function ProjectCard({ slug, frontmatter, index = 0 }: ProjectCardProps) 
             href={demo}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
+            onMouseEnter={playHoverSound}
+            onClick={(e) => {
+              e.stopPropagation();
+              playClickSound();
+            }}
             className="p-2 rounded-lg bg-background/80 backdrop-blur-sm border border-border hover:border-accent hover:text-accent transition-colors block"
             aria-label="View Demo"
           >

@@ -59,11 +59,7 @@ export function ContentCard({
   const { playHoverSound, stopHoverSound } = useSound();
 
   return (
-    <div 
-      className={cn('group relative h-full', className)} 
-      onMouseEnter={playHoverSound}
-      onMouseLeave={stopHoverSound}
-    >
+    <div className={cn('group relative h-full', className)}>
       {linkWrapper(
         <GlowWrapper className="rounded-2xl h-full" preset="card">
           <div className="relative h-full rounded-2xl border border-transparent bg-background-secondary/50 transition-all duration-300 glass overflow-hidden flex">

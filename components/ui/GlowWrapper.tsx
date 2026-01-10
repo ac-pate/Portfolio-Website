@@ -4,6 +4,7 @@ import React, { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
 import gsap from "gsap";
 import { useTheme } from "next-themes";
+import { useSound } from "@/components/providers/SoundProvider";
 
 /**
  * GLOW WRAPPER COMPONENT - DISPERSE STOCHASTIC BOUNDARY
@@ -213,6 +214,7 @@ export default function GlowWrapper({
   const currentMouseRef = useRef({ x: 0.5, y: 0.5 });
 
   const { theme, systemTheme } = useTheme();
+  const { playHoverSound, stopHoverSound, playClickSound } = useSound();
   
   // Determine the actual theme (considering system theme)
   const actualTheme = theme === 'system' ? systemTheme : theme;
@@ -398,12 +400,14 @@ export default function GlowWrapper({
   }, [effectiveColor, settings.spread, settings.innerBleed, settings.baseIntensity, settings.mouseIntensity, settings.falloffPower, settings.borderRadius, PADDING]);
 
   const handleMouseEnter = () => {
+    playHoverSound();
     if (!materialRef.current) return;
     gsap.to(materialRef.current.uniforms.uOpacity, { value: 1.0, duration: GLOBAL_CONFIG.transitionDuration });
     gsap.to(materialRef.current.uniforms.uIntensity, { value: 1.0, duration: GLOBAL_CONFIG.transitionDuration });
   };
 
   const handleMouseLeave = () => {
+    stopHoverSound();
     if (!materialRef.current) return;
     gsap.to(materialRef.current.uniforms.uOpacity, { value: 0.0, duration: GLOBAL_CONFIG.transitionDuration + GLOBAL_CONFIG.fadeOutDelay });
     gsap.to(materialRef.current.uniforms.uIntensity, { value: 0.0, duration: GLOBAL_CONFIG.transitionDuration + GLOBAL_CONFIG.fadeOutDelay });
@@ -425,6 +429,7 @@ export default function GlowWrapper({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onMouseMove={handleMouseMove}
+      onClick={playClickSound}
     >
       {/* GLOW LAYER */}
       <div 

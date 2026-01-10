@@ -1,368 +1,269 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, memo } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowDown, FileText, FolderOpen } from 'lucide-react';
+import { FileText, FolderOpen } from 'lucide-react';
 import Link from 'next/link';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { siteConfig } from '@/lib/config';
-import GlowWrapper from '@/components/ui/GlowWrapper';
 import { useSound } from '@/components/providers/SoundProvider';
+import GlowWrapper from '@/components/ui/GlowWrapper';
 
-// Ensure ScrollTrigger is registered
-if (typeof window !== 'undefined') {
-    gsap.registerPlugin(ScrollTrigger);
-}
+if (typeof window !== 'undefined') gsap.registerPlugin(ScrollTrigger);
+
+const USE_YOUTUBE = true;
+const YOUTUBE_ID = 'aq0iCOYylgI';
+
+const VideoBackground = memo(({ videoLoaded, shouldLoadVideo, videoRef }: any) => {
+    if (!shouldLoadVideo) return <div className="absolute inset-0 bg-black" />;
+    return (
+        <div className={`absolute inset-0 h-full w-full overflow-hidden transition-opacity duration-1000 ${videoLoaded ? 'opacity-50' : 'opacity-0'}`} ref={videoRef} style={{ willChange: 'opacity, transform', pointerEvents: 'none' }}>
+            {USE_YOUTUBE ? (
+                <div id="hero-youtube-video" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none w-[102vw] h-[57.37vw] min-h-[102vh] min-w-[181.33vh]" />
+            ) : (
+                <video className="absolute inset-0 h-full w-full object-cover" autoPlay muted loop playsInline onCanPlay={() => window.dispatchEvent(new CustomEvent('hero-video-ready'))}>
+                    <source src="/videos/bg_1080p.mp4" type="video/mp4" />
+                </video>
+            )}
+        </div>
+    );
+});
 
 export function Hero() {
     const heroRef = useRef<HTMLDivElement>(null);
     const stickyRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
-    const videoRef = useRef<HTMLDivElement>(null);
+    const videoRef = useRef<any>(null);
     const overlayRef = useRef<HTMLDivElement>(null);
+    const captionRef = useRef<HTMLDivElement>(null);
+    const nameFirstRef = useRef<HTMLDivElement>(null);
+    const playerRef = useRef<any>(null);
     const [videoLoaded, setVideoLoaded] = useState(false);
     const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
-    const { fadeBackgroundAudio } = useSound();
+    const { fadeBackgroundAudio, soundsEnabled } = useSound();
+    const soundsEnabledRef = useRef(soundsEnabled);
+    const currentPhaseRef = useRef(1);
 
-    // Lazy load video - only start loading when component is mounted
+    soundsEnabledRef.current = soundsEnabled;
+
     useEffect(() => {
-        // Small delay to let page render first
-        const timer = setTimeout(() => {
-            setShouldLoadVideo(true);
-        }, 100);
-        return () => clearTimeout(timer);
+        const handleReady = () => setVideoLoaded(true);
+        window.addEventListener('hero-video-ready', handleReady);
+        const timer = setTimeout(() => setShouldLoadVideo(true), 100);
+        return () => {
+            window.removeEventListener('hero-video-ready', handleReady);
+            clearTimeout(timer);
+        };
     }, []);
 
-    // Initialize video volume
-    useEffect(() => {
-        if (videoRef.current) {
-            // videoRef.current.volume = 0; // Disabled for YouTube embed
+    const syncAudio = (phase: number) => {
+        currentPhaseRef.current = phase;
+        const isVideoActive = phase === 2;
+        const shouldBeAudible = soundsEnabledRef.current && isVideoActive;
+        const musicVolume = isVideoActive ? 0 : 0.1;
+
+        fadeBackgroundAudio(musicVolume, 500);
+
+        if (USE_YOUTUBE && playerRef.current?.mute) {
+            shouldBeAudible ? (playerRef.current.unMute(), playerRef.current.setVolume(100)) : playerRef.current.mute();
+        } else if (videoRef.current) {
+            videoRef.current.muted = !shouldBeAudible;
+            videoRef.current.volume = shouldBeAudible ? 1 : 0;
         }
+    };
+
+    useEffect(() => syncAudio(currentPhaseRef.current), [soundsEnabled]);
+
+    useEffect(() => {
+        if (!USE_YOUTUBE || !shouldLoadVideo || !videoRef.current || playerRef.current) return;
+        const initPlayer = () => {
+            if (playerRef.current) return;
+            playerRef.current = new window.YT.Player('hero-youtube-video', {
+                videoId: YOUTUBE_ID,
+                playerVars: { autoplay: 1, mute: 1, loop: 1, playlist: YOUTUBE_ID, controls: 0, showinfo: 0, rel: 0, modestbranding: 1, enablejsapi: 1, origin: window.location.origin },
+                events: {
+                    'onReady': () => syncAudio(currentPhaseRef.current),
+                    'onStateChange': (e: any) => e.data === 1 && window.dispatchEvent(new CustomEvent('hero-video-ready'))
+                }
+            });
+        };
+        if (window.YT?.Player) initPlayer();
+        else {
+            if (!document.getElementById('yt-api')) {
+                const t = document.createElement('script'); t.id = 'yt-api'; t.src = "https://www.youtube.com/iframe_api";
+                document.head.appendChild(t);
+            }
+            window.onYouTubeIframeAPIReady = initPlayer;
+        }
+        return () => playerRef.current?.destroy?.();
     }, [shouldLoadVideo]);
 
     useEffect(() => {
-        if (!heroRef.current || !stickyRef.current || !contentRef.current || !videoRef.current || !overlayRef.current) return;
+        if (!heroRef.current || !stickyRef.current || !videoRef.current || !captionRef.current || !nameFirstRef.current) return;
+        const nav = document.querySelector('[data-navbar="main"]') as HTMLElement;
 
-        // Find navbar element
-        const navbarElement = document.querySelector('[data-navbar="main"]') as HTMLElement;
-        if (!navbarElement) {
-            // If navbar not found, continue without navbar animation
-            console.warn('Navbar element not found for animation');
-        }
-
-        // Set initial states via GSAP (not className) to ensure GSAP has full control
-        gsap.set(videoRef.current, { opacity: 0.5 }); // Start at 50% opacity
-        gsap.set(overlayRef.current, { opacity: 1 }); // Start overlay visible
-        gsap.set(contentRef.current, { opacity: 1 }); // Start content visible
-        if (navbarElement) {
-            gsap.set(navbarElement, { opacity: 1 }); // Start navbar visible
-        }
-
-        // Total scroll distance is 400vh (height of heroRef)
-        // This provides 3 phases:
-        // 1. 0-100vh: Hero Text Wipes Out + Overlay fades
-        // 2. 100-300vh: Video Hold (Video stays at full opacity for 200vh, Navbar fades out)
-        // 3. 300-400vh: About Me Wipes In (covers the video, Navbar fades back in)
         const tl = gsap.timeline({
             scrollTrigger: {
-                trigger: heroRef.current,
-                start: 'top top',
-                end: 'bottom top', 
-                pin: stickyRef.current,
-                pinSpacing: false, // Allows next section to overlap at the end of the track
-                scrub: true,
-                invalidateOnRefresh: true,
-            },
+                trigger: heroRef.current, start: 'top top', end: 'bottom top', pin: stickyRef.current, scrub: true,
+                onUpdate: (self) => {
+                    const p = self.progress;
+                    let newPhase = 1;
+                    if (p > 0.2 && p < 0.75) newPhase = 2;
+                    else if (p >= 0.75) newPhase = 3;
+                    if (newPhase !== currentPhaseRef.current) syncAudio(newPhase);
+                }
+            }
         });
 
-        // Phase 1: Text Disappears + Overlay fades (0 to 100vh = 1/4 of the 400vh scroll)
-        tl.to(contentRef.current, {
-            opacity: 0,
-            y: -100,
-            duration: 1, 
-            ease: 'none',
-        }, 0);
-        
-        // Fade out overlay in parallel with text
-        tl.to(overlayRef.current, {
-            opacity: 0,
-            duration: 1,
-            ease: 'none',
-        }, 0);
+        tl.to(contentRef.current, { opacity: 0, y: -50, duration: 1 }, 0)
+          .to(overlayRef.current, { opacity: 0, duration: 1 }, 0)
+          .to(videoRef.current, { opacity: 1, duration: 1.5 }, 0.5)
+          .to(captionRef.current, { opacity: 1, duration: 1 }, 0)
+          .to(captionRef.current.querySelector('p'), { color: '#a3002a', fontSize: '0.875rem', duration: 1 }, 0)
+          .to(nameFirstRef.current, { 
+              webkitTextFillColor: 'transparent',
+              webkitTextStroke: '3px rgba(255,255,255,0.9)',
+              duration: 0.8 
+          }, 0);
 
-        // Phase 2: Video goes to full opacity and stays, Navbar fades out (100vh to 300vh = 200vh = 1/2 of the scroll)
-        // Start slightly before Phase 1 ends for smoothness
-        tl.to(videoRef.current, {
-            opacity: 1,
-            duration: 2, // 200vh duration (half of 400vh total)
-            ease: 'power2.inOut'
-        }, "-=0.5");
-        
-        // Fade out navbar during Phase 2 (starts at beginning of Phase 2)
-        if (navbarElement) {
-            tl.to(navbarElement, {
-                opacity: 0,
-                duration: 0.5, // Quick fade out at start of Phase 2
-                ease: 'power2.inOut'
-            }, "1"); // Start at position 1 (beginning of Phase 2)
+        if (nav) {
+            tl.to(nav, { opacity: 0, duration: 0.5 }, 0.5)
+              .to(nav, { opacity: 1, duration: 0.5 }, 2.5);
         }
-        
-        // Audio transitions at Phase 2 start (position 1)
-        // Fade out background audio (and video audio if it was local)
-        tl.add(() => {
-            // Fade out background audio anyway
-            fadeBackgroundAudio(0, 500);
-            
-            /* YT VIDEO NOTE: Direct volume control via videoRef is disabled for YouTube embed
-            if (videoRef.current) {
-                videoRef.current.muted = false;
-                const videoVolume = { value: 0 };
-                gsap.to(videoVolume, {
-                    value: 1,
-                    duration: 1,
-                    ease: 'power2.inOut',
-                    onUpdate: () => {
-                        if (videoRef.current) {
-                            videoRef.current.volume = videoVolume.value;
-                        }
-                    }
-                });
-            }
-            */
-        }, "1");
 
-        // Phase 3: Transition, Navbar fades back in (300vh to 400vh = 100vh = 1/4 of the scroll)
-        // This phase is where the next section (starting at 400vh) moves from 100vh to 0vh
-        tl.to({}, { duration: 1 });
-        
-        // Fade in navbar at start of Phase 3
-        if (navbarElement) {
-            tl.to(navbarElement, {
-                opacity: 1,
-                duration: 0.5, // Quick fade in at start of Phase 3
-                ease: 'power2.inOut'
-            }, "<"); // Start at the same time as Phase 3 (when next section starts wiping up)
-        }
-        
-        // Audio transitions at Phase 3 start (position 3)
-        // Fade in background audio
-        tl.add(() => {
-            // Fade in background audio anyway
-            fadeBackgroundAudio(0.1, 500);
-
-            /* YT VIDEO NOTE: Direct volume control via videoRef is disabled for YouTube embed
-            if (videoRef.current) {
-                const videoVolume = { value: videoRef.current.volume };
-                gsap.to(videoVolume, {
-                    value: 0,
-                    duration: 0.5,
-                    ease: 'power2.inOut',
-                    onUpdate: () => {
-                        if (videoRef.current) {
-                            videoRef.current.volume = videoVolume.value;
-                        }
-                    },
-                    onComplete: () => {
-                        if (videoRef.current) {
-                            videoRef.current.muted = true;
-                        }
-                    }
-                });
-            }
-            */
-        }, "<");
-
-        return () => {
-            if (tl.scrollTrigger) tl.scrollTrigger.kill();
-            tl.kill();
-        };
-    }, [videoLoaded, fadeBackgroundAudio]); // Re-run when video loads to ensure refs are ready
+        return () => { tl.scrollTrigger?.kill(); tl.kill(); };
+    }, [videoLoaded]);
 
     return (
-        /* 
-          HERO TRACK:
-          Provides the scroll length for pinning. 
-          Height is 400vh to accommodate text exit, video hold (200vh), and wipe entry.
-          
-          SCROLL DISTANCE CONTROL:
-          - h-[400vh] on line 143 controls the total scroll distance
-          - This creates a 400vh (4 viewport heights) scroll track
-          - GSAP ScrollTrigger uses this height to determine animation phases
-          - Phase 1: 100vh (text/overlay fade), Phase 2: 200vh (video at full opacity), Phase 3: 100vh (transition)
-        */
-        <section 
-            ref={heroRef} 
-            className="relative h-[400vh] w-full bg-black z-0"
-            id="hero"
-        >
-            {/* 
-                STICKY WRAPPER:
-                Pinned for the entire duration of heroRef.
-            */}
+        <section ref={heroRef} className="relative h-[400vh] w-full bg-black" id="hero">
             <div ref={stickyRef} className="h-screen w-full overflow-hidden">
-                {/* Video Background */}
-                <div className="absolute inset-0 z-0">
-                    {shouldLoadVideo ? (
-                        <>
-                            {/* YouTube Video Background (Tristan Method) */}
-                            <div 
-                                className={`absolute inset-0 h-full w-full overflow-hidden transition-opacity duration-1000 ${
-                                    videoLoaded ? 'opacity-50' : 'opacity-0'
-                                }`}
-                                ref={videoRef as any}
-                                style={{
-                                    willChange: 'opacity, transform',
-                                    transform: 'translateZ(0)',
-                                    pointerEvents: 'none',
-                                }}
-                            >
-                                <iframe
-                                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none"
-                                    style={{
-                                        width: '102vw', // Slight overshoot to hide edges
-                                        height: '57.37vw', // 16:9
-                                        minHeight: '102vh',
-                                        minWidth: '181.33vh',
-                                    }}
-                                    src="https://www.youtube.com/embed/aq0iCOYylgI?autoplay=1&mute=1&loop=1&playlist=aq0iCOYylgI&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&enablejsapi=1&origin=http://localhost:3000"
-                                    allow="autoplay; encrypted-media"
-                                    onLoad={() => setVideoLoaded(true)}
-                                />
-                            </div>
-
-                            {/* OLD LOCAL VIDEO (KEEPING FOR RAINY DAY AS REQUESTED)
-                            <video
-                                ref={videoRef}
-                                className={`absolute inset-0 h-full w-full object-cover ${
-                                    videoLoaded ? 'opacity-50' : 'opacity-0'
-                                }`}
-                                autoPlay={true}
-                                muted={true}
-                                loop={true}
-                                playsInline={true}
-                                preload="auto"
-                                onCanPlay={() => setVideoLoaded(true)}
-                                onLoadedData={() => setVideoLoaded(true)}
-                                onError={(e) => console.error('Hero Video Error:', e)}
-                                style={{
-                                    willChange: 'opacity, transform',
-                                    transform: 'translateZ(0)',
-                                    objectFit: 'cover',
-                                    backfaceVisibility: 'hidden',
-                                    WebkitBackfaceVisibility: 'hidden',
-                                }}
-                            >
-                                <source src="/videos/bg_1080p.mp4" type="video/mp4" />
-                            </video>
-                            */}
-                        </>
-                    ) : (
-                        // Placeholder while video loads
-                        <div className="absolute inset-0 bg-gradient-to-br from-background via-background-secondary to-background" />
-                    )}
+                <VideoBackground videoLoaded={videoLoaded} shouldLoadVideo={shouldLoadVideo} videoRef={videoRef} />
+                
+                {/* Vignette overlay - subtle, lets image breathe while ensuring text contrast */}
+                <div ref={overlayRef} className="absolute inset-0 z-[5] pointer-events-none" style={{
+                    background: 'radial-gradient(ellipse 80% 70% at 50% 45%, transparent 0%, rgba(0,0,0,0.6) 100%)'
+                }} />
+                
+                {/* Video caption - stays with video layer */}
+                <div 
+                    ref={captionRef}
+                    style={{ opacity: 0.1 }}
+                    className="absolute bottom-10 left-1/2 -translate-x-1/2 z-[6] text-center pointer-events-none"
+                >
+                    <p className="text-white/70 text-[11px] md:text-xs font-['Poppins'] font-normal tracking-wide px-5 py-2 rounded-full backdrop-blur-md bg-black/40 whitespace-nowrap border border-white/10" 
+                        style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
+                        Autonomous Bimanual Handover Using VLA model on LeRobot Framework — Mimic Robotics Capstone Project
+                    </p>
                 </div>
 
-                {/* Dark Overlay for contrast (separate layer to animate out) */}
-                <div 
-                    ref={overlayRef}
-                    className="absolute inset-0 z-[5] bg-gradient-to-b from-black/80 via-black/20 to-black pointer-events-none" />
+                {/* Main content - intentional vertical rhythm */}
+                <div ref={contentRef} className="relative z-10 flex h-full flex-col items-center justify-between py-[12vh] md:py-[14vh] px-6 pointer-events-none">
+                    
+                    {/* Top: Portfolio label - quiet, pushed to top */}
+                    <motion.div 
+                        initial={{ opacity: 0, y: -10 }} 
+                        animate={{ opacity: 1, y: 0 }} 
+                        transition={{ duration: 0.8, delay: 0.1 }}
+                        className="pointer-events-none"
+                    >
+                        <span className="text-white/40 text-[10px] md:text-[11px] font-['Poppins'] font-medium tracking-[0.3em] uppercase">
+                            Portfolio
+                        </span>
+                    </motion.div>
 
-                {/* 
-                    HERO TEXT CONTENT:
-                    Animated by GSAP timeline.
-                */}
-                <div
-                    ref={contentRef}
-                    className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center pointer-events-none"
-                >
-                    <div className="max-w-4xl pointer-events-auto">
-                        {/* Eyebrow */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8 }}
-                            className="mb-8 flex justify-center"
-                        >
-                            <GlowWrapper preset="badge" className="rounded-full">
-                                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium backdrop-blur-md">
-                                    <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-                                    Open to opportunities
-                                </span>
-                            </GlowWrapper>
-                        </motion.div>
-
-                        {/* Main heading */}
-                        <h1 className="text-display-lg md:text-display-2xl font-display font-bold text-white mb-6 tracking-tight">
-                            Hi, I&apos;m{' '}
-                            <span className="relative inline-block">
-                                <span className="text-accent-glow">
-                                    {siteConfig.name.split(' ')[0]}
-                                </span>
-                                <motion.span
-                                    className="absolute -bottom-2 left-0 right-0 h-1.5 bg-accent rounded-full shadow-glow-sm"
-                                    initial={{ scaleX: 0 }}
-                                    animate={{ scaleX: 1 }}
-                                    transition={{ duration: 0.8, delay: 0.4 }}
-                                />
-                            </span>
-                        </h1>
-
-                        {/* Subtitle */}
-                        <motion.p
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, delay: 0.2 }}
-                            className="text-2xl md:text-3xl text-white/90 mb-6 font-display"
-                        >
-                            {siteConfig.title}
-                        </motion.p>
-
-                        {/* Tagline */}
-                        <motion.p
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, delay: 0.3 }}
-                            className="text-lg md:text-xl text-white/70 mb-12 max-w-2xl mx-auto leading-relaxed"
-                        >
-                            {siteConfig.tagline}
-                        </motion.p>
-
-                        {/* CTA Buttons */}
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                            <motion.div 
-                                whileHover={{ scale: 1.05 }} 
-                                whileTap={{ scale: 0.95 }}
+                    {/* Center: Name - dominant focal point with generous whitespace */}
+                    <div className="flex flex-col items-center pointer-events-none -mt-4">
+                        {/* ACHAL - Solid white, establishes weight */}
+                        <div className="overflow-hidden" ref={nameFirstRef}>
+                            <motion.h1 
+                                className="text-[15vw] md:text-[12vw] lg:text-[11vw] font-['Poppins'] font-black italic leading-[0.9] tracking-[-0.02em] flex text-white"
                             >
-                                <GlowWrapper preset="button" className="rounded-xl">
-                                    <Link href="/projects" className="flex items-center gap-3 px-8 py-4 bg-accent text-white rounded-xl font-semibold text-lg hover:bg-accent/90 transition-all shadow-glow-sm">
-                                        <FolderOpen className="w-6 h-6" />
-                                        View Projects
-                                    </Link>
-                                </GlowWrapper>
-                            </motion.div>
-
-                            <motion.div 
-                                whileHover={{ scale: 1.05 }} 
-                                whileTap={{ scale: 0.95 }}
-                            >
-                                <GlowWrapper preset="button" className="rounded-xl">
-                                    <Link href="/resume" className="flex items-center gap-3 px-8 py-4 bg-white/10 text-white rounded-xl font-semibold text-lg border border-white/20 hover:bg-white/20 transition-all backdrop-blur-sm">
-                                        <FileText className="w-6 h-6" />
-                                        Resume
-                                    </Link>
-                                </GlowWrapper>
-                            </motion.div>
+                                {'ACHAL'.split('').map((letter, i) => (
+                                    <motion.span
+                                        key={i}
+                                        initial={{ y: '110%', opacity: 0 }}
+                                        animate={{ y: 0, opacity: 1 }}
+                                        transition={{ 
+                                            duration: 0.7, 
+                                            delay: 0.2 + i * 0.05,
+                                            ease: [0.33, 1, 0.68, 1]
+                                        }}
+                                        className="inline-block"
+                                    >
+                                        {letter}
+                                    </motion.span>
+                                ))}
+                            </motion.h1>
                         </div>
+                        
+                        {/* PATEL - Thick hollow outline, creates hierarchy contrast */}
+                        <div className="overflow-hidden -mt-[1.5vw]">
+                            <motion.h1 
+                                className="text-[15vw] md:text-[12vw] lg:text-[11vw] font-['Poppins'] font-black italic leading-[0.9] tracking-[-0.02em] flex"
+                                style={{
+                                    WebkitTextStroke: '3px rgba(255,255,255,0.9)',
+                                    WebkitTextFillColor: 'transparent',
+                                }}
+                            >
+                                {'PATEL'.split('').map((letter, i) => (
+                                    <motion.span
+                                        key={i}
+                                        initial={{ y: '110%', opacity: 0 }}
+                                        animate={{ y: 0, opacity: 1 }}
+                                        transition={{ 
+                                            duration: 0.7, 
+                                            delay: 0.45 + i * 0.05,
+                                            ease: [0.33, 1, 0.68, 1]
+                                        }}
+                                        className="inline-block"
+                                    >
+                                        {letter}
+                                    </motion.span>
+                                ))}
+                            </motion.h1>
+                        </div>
+
+                        {/* Subtitle - single clean line, slightly lower, increased weight */}
+                        <motion.p 
+                            initial={{ opacity: 0, y: 15 }} 
+                            animate={{ opacity: 1, y: 0 }} 
+                            transition={{ duration: 0.6, delay: 0.85 }}
+                            className="mt-8 md:mt-10 text-sm md:text-base lg:text-lg text-white/80 font-['Poppins'] font-normal tracking-wide"
+                            style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}
+                        >
+                            Robotics, Embedded Systems, Code That Moves
+                        </motion.p>
                     </div>
 
-                    {/* Bottom Down Arrow */}
-                    <motion.div
-                        className="absolute bottom-12 left-1/2 -translate-x-1/2 text-white/40"
-                        animate={{ y: [0, 8, 0] }}
-                        transition={{ duration: 2, repeat: Infinity }}
+                    {/* Bottom: Buttons - anchored, not floating */}
+                    <motion.div 
+                        initial={{ opacity: 0 }} 
+                        animate={{ opacity: 1 }} 
+                        transition={{ duration: 0.5, delay: 1 }}
+                        className="flex items-center gap-10 pointer-events-auto"
                     >
-                        <ArrowDown className="w-6 h-6 text-accent" />
+                        {/* Projects - primary, visually heavier */}
+                        <GlowWrapper preset="button" className="rounded-full">
+                            <Link 
+                                href="/projects" 
+                                className="group inline-flex items-center gap-2.5 px-7 py-3.5 bg-accent text-white font-['Poppins'] font-semibold text-sm tracking-wide rounded-full transition-all duration-300 hover:bg-accent-dark hover:shadow-[0_0_30px_rgba(128,0,32,0.4)]"
+                            >
+                                <FolderOpen className="w-4 h-4" />
+                                Projects
+                            </Link>
+                        </GlowWrapper>
+                        
+                        {/* Resume - secondary, lighter */}
+                        <Link 
+                            href="/resume" 
+                            className="group inline-flex items-center gap-2 text-white/60 hover:text-white font-['Poppins'] font-medium text-sm tracking-wide transition-all duration-300"
+                        >
+                            <FileText className="w-4 h-4" />
+                            <span className="relative">
+                                Resume
+                                <span className="absolute -bottom-0.5 left-0 w-0 h-[1px] bg-white group-hover:w-full transition-all duration-300" />
+                            </span>
+                        </Link>
                     </motion.div>
                 </div>
             </div>

@@ -231,4 +231,91 @@ Started with passion for chip manufacturing → Interned at Microchip Technology
 
 ---
 
+# Summary
+
+Thanks for checking out my portfolio. This is a compressed but honest snapshot of how my interests evolved, what changed my mind along the way, and why robotics eventually won.
+
+---
+
+## A Slightly Longer but More Accurate Timeline
+
+### What I Thought I Wanted to Be (Top Row)
+
+- 🦷 Dentist  
+- 🔧 Tinkerer / Builder  
+- 💻 Programmer  
+- 🧠 Aspiring Chip Designer  
+- ⚙️ Computer Engineering Student  
+- 🤖 Robotics Engineer  
+- 🚀 Robotics Researcher and Systems Engineer (in progress)
+
+---
+
+### Life Phases and Turning Points (Bottom Row)
+
+- **Early Childhood Phase, India**  
+  Wanted to be a dentist for reasons that no longer make sense.  
+  That dream quietly disappeared.
+
+- **Curious Kid Phase, India**  
+  Didn’t know what career I wanted, but always wanted to build, take things apart, and tinker.  
+  Creating things mattered more than the title.
+
+- **High School Phase, India**  
+  Discovered programming and realized I enjoyed making things work through code.  
+  Considered Computer Science seriously.
+
+- **Decision Phase, Montreal**  
+  Chose Computer Engineering at Concordia over Computer Science because hardware mattered.  
+  Became deeply interested in chip design and semiconductor manufacturing.
+
+- **Semiconductor Focus Phase**  
+  First internship at Microchip Technology.  
+  Worked on high performance computing systems used in aerospace contexts, including NASA-related projects.  
+  Learned a lot about chip design and manufacturing.
+
+- **First Robotics Spark, Ego Included**  
+  Entered my first robotics competition purely out of ego.  
+  Built an autonomous sumo robot for Robowars.  
+  It was my first real robotics project.  
+  It didn’t work as planned, but I had way too much fun.
+
+- **Realization Phase, Post Internship**  
+  During and after the Microchip internship, realized something important.  
+  I wanted to be the person *using* powerful computers, not the person manufacturing them.  
+  This was the moment I **doubled down on robotics**.
+
+- **Teaching and Foundations Phase**  
+  Started working as a Teaching Assistant before internships.  
+  TAed VHDL, programming basics, and electronics basics.  
+  Strengthened fundamentals while continuing to build robots on the side.
+
+- **Robotics Research Phase**  
+  Research internship at Concordia Aerospace Robotics Lab.  
+  Worked on aerospace rover systems.  
+  Contributed to computer vision, localization, and navigation pipelines.  
+  This experience locked in my interest in robotics research.
+
+- **Competition Validation Phase**  
+  Participated in multiple robotics competitions at the national level.  
+  Won the Canadian Engineering Competition in March 2025.  
+  This was the moment I **tripled down on robotics**.
+
+- **Current Phase, Montreal**  
+  Computer Engineering student focused on robotics and embedded systems.  
+  Research experience, competitions, teaching, and projects all point in the same direction now.  
+  Still building, still learning, still refining what kind of robotics engineer I want to be.
+
+---
+
+## Current Focus
+
+- Robotics systems  
+- Embedded systems  
+- Computer vision and autonomy  
+- Navigation and motion planning  
+- Making machines move, sense, and behave intelligently  
+
+(Still taking suggestions.)
+
 **Last Updated**: January 2026

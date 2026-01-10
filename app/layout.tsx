@@ -15,6 +15,7 @@ import { SoundProvider } from '@/components/providers/SoundProvider';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { GrainOverlay } from '@/components/ui/GrainOverlay';
+import { Preloader } from '@/components/ui/Preloader';
 import { siteConfig } from '@/lib/config';
 import { inter, jetbrainsMono, spaceGrotesk } from '@/lib/fonts';
 import './globals.css';
@@ -78,6 +79,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <SoundProvider>
+            <Preloader />
             <div className="relative min-h-screen flex flex-col">
               <Navbar />
               <main className="flex-1">{children}</main>

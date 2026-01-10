@@ -14,8 +14,8 @@
  * but only the selected font set is exported.
  */
 
-import { 
-  Inter, 
+import {
+  Inter,
   JetBrains_Mono,
   Barlow_Condensed,
   Poppins,
@@ -87,8 +87,8 @@ export const jetbrainsMono = jetbrainsMonoFont;
 // Conditionally export based on FONT_SET
 export const inter = FONT_SET === 'default' ? poppinsBody
   : FONT_SET === 'poppins' ? poppinsBody
-  : barlowBody;
+    : barlowBody;
 
 export const spaceGrotesk = FONT_SET === 'default' ? interDisplay
   : FONT_SET === 'poppins' ? poppinsDisplay
-  : barlowDisplay;
+    : barlowDisplay;

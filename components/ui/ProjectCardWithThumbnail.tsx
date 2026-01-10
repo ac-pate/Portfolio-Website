@@ -49,8 +49,6 @@ export function ProjectCardWithThumbnail({
       <Link 
         href={`/projects/${slug}`} 
         className="block"
-        onMouseEnter={playHoverSound}
-        onMouseLeave={stopHoverSound}
       >
         <GlowWrapper className="rounded-xl" preset="card">
           <div className={cn(
