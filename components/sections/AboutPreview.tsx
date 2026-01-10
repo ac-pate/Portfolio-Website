@@ -146,7 +146,7 @@ export function AboutPreview() {
           transition={{ duration: 0.8 }}
           className="w-full mb-16 mt-12 relative -mx-4 md:-mx-8"
         >
-          <div className="relative overflow-hidden z-20  bg-black/20 group">
+          <div className="relative overflow-hidden z-20  group">
             <Image 
               src="/images/about/career_path.png" 
               alt="Engineering Career Path Diagram" 
@@ -263,7 +263,7 @@ export function AboutPreview() {
             className="lg:col-span-7 flex flex-col space-y-8"
           >
             {/* 1. Overlapping Quote Row */}
-            <div className="relative z-20 lg:-ml-40 lg:mt-6 lg:pr-4">
+            <div className="relative z-20 lg:-ml-40 lg:mt-0 lg:pr-4">
               <p 
                 className="text-xl md:text-2xl lg:text-3xl text-foreground font-display font-bold leading-tight italic"
                 // style={{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }}
