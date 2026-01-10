@@ -221,7 +221,7 @@ export function Hero() {
                     style={{ opacity: 0.1 }}
                     className="absolute bottom-10 left-1/2 -translate-x-1/2 z-[6] text-center pointer-events-none"
                 >
-                    <p className="text-white/70 text-[11px] md:text-xs font-['Poppins'] font-normal tracking-wide px-5 py-2 rounded-full backdrop-blur-md bg-black/40 whitespace-nowrap border border-white/10" 
+                    <p className="text-white/70 text-[14px] md:text-[11px] font-['Poppins'] font-bold italic tracking-wide px-5 py-2 rounded-full backdrop-blur-md bg-black/60 whitespace-nowrap border border-white/10" 
                         style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
                         Autonomous Bimanual Handover Using VLA model on LeRobot Framework — Mimic Robotics Capstone Project
                     </p>
