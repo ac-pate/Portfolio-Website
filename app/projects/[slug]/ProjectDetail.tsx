@@ -70,20 +70,40 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
             </div>
           )}
 
-          {/* Title */}
-          <h1 className="text-display-md md:text-display-lg font-display font-bold text-foreground mb-4">
-            {frontmatter.title}
-          </h1>
+          <div className="flex items-start gap-6 mb-6">
+            {/* Project thumbnail/icon */}
+            <div className="w-16 h-16 rounded-xl overflow-hidden bg-background-secondary flex-shrink-0">
+              {frontmatter.image ? (
+                <Image
+                  src={frontmatter.image}
+                  alt={frontmatter.title}
+                  width={64}
+                  height={64}
+                  className="object-cover w-full h-full"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-accent/10">
+                  <FileText className="w-8 h-8 text-accent" />
+                </div>
+              )}
+            </div>
 
-          {/* Description */}
-          {frontmatter.description && (
-            <p className="text-xl text-foreground-secondary mb-6 max-w-3xl">
-              {frontmatter.description}
-            </p>
-          )}
+            <div className="flex-1">
+              {/* Title */}
+              <h1 className="text-display-md md:text-display-lg font-display font-bold text-foreground mb-2">
+                {frontmatter.title}
+              </h1>
+              {/* Description */}
+              {frontmatter.description && (
+                <p className="text-lg text-foreground-secondary max-w-3xl">
+                  {frontmatter.description}
+                </p>
+              )}
+            </div>
+          </div>
 
           {/* Meta info */}
-          <div className="flex flex-wrap items-center gap-6 text-sm text-foreground-secondary mb-6">
+          <div className="flex flex-wrap items-center gap-6 text-sm text-foreground-secondary mb-6 mt-4">
             {frontmatter.startDate && (
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4" />
