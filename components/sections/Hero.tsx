@@ -43,7 +43,7 @@ export function Hero() {
     const buttonsRef = useRef<HTMLDivElement>(null);
     const playerRef = useRef<any>(null);
     const [videoLoaded, setVideoLoaded] = useState(false);
-    const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
+    const [shouldLoadVideo, setShouldLoadVideo] = useState(true);
     const [preloaderDone, setPreloaderDone] = useState(false);
     const { fadeBackgroundAudio, soundsEnabled } = useSound();
     const soundsEnabledRef = useRef(soundsEnabled);
@@ -58,14 +58,12 @@ export function Hero() {
         window.addEventListener('hero-video-ready', handleReady);
         window.addEventListener('preloader-done', handlePreloaderDone);
         
-        const timer = setTimeout(() => setShouldLoadVideo(true), 100);
         // Fallback if preloader event never fires
-        const preloaderFallback = setTimeout(() => setPreloaderDone(true), 3000);
+        const preloaderFallback = setTimeout(() => setPreloaderDone(true), 10000);
         
         return () => {
             window.removeEventListener('hero-video-ready', handleReady);
             window.removeEventListener('preloader-done', handlePreloaderDone);
-            clearTimeout(timer);
             clearTimeout(preloaderFallback);
         };
     }, []);
@@ -118,18 +116,22 @@ export function Hero() {
                             : qualities.includes('large') ? 'large' 
                             : 'default';
                         player.setPlaybackQuality(preferredQuality);
+                        player.playVideo();
                         syncAudio(currentPhaseRef.current);
                     },
                     'onStateChange': (e: any) => {
                         if (e.data === 1) {
-                            // When video starts playing, ensure quality
+                            // When video starts playing, ensure quality and signal ready
                             const player = e.target;
                             const currentQuality = player.getPlaybackQuality?.() || '';
                             const lowQualities = ['tiny', 'small', 'medium'];
                             if (lowQualities.includes(currentQuality)) {
                                 player.setPlaybackQuality('hd720');
                             }
-                            window.dispatchEvent(new CustomEvent('hero-video-ready'));
+                            // Only dispatch when video is actually playing
+                            setTimeout(() => {
+                                window.dispatchEvent(new CustomEvent('hero-video-ready'));
+                            }, 100);
                         }
                     },
                     'onPlaybackQualityChange': (event: any) => {

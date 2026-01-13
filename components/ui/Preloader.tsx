@@ -29,7 +29,7 @@ export function Preloader() {
 
     const fallback = setTimeout(() => {
       setIsReadyToEnter(true);
-    }, 5000);
+    }, 8000);
 
     return () => {
       window.removeEventListener('hero-video-ready', handleVideoReady);

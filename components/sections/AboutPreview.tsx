@@ -255,11 +255,11 @@ export function AboutPreview() {
               </div>
 
               {/* Action Buttons Section */}
-              <div className="flex flex-col items-center gap-6">
-                <GlowWrapper preset="button" className="rounded-lg w-full max-w-md">
+              <div className="flex flex-wrap items-center justify-center gap-4">
+                <GlowWrapper preset="button" className="rounded-lg">
                   <Link
                     href="/about"
-                    className="inline-flex items-center justify-center gap-2 w-full px-6 py-3 bg-accent hover:bg-accent-dark text-white font-medium rounded-lg transition-all duration-200 hover:shadow-glow-sm whitespace-nowrap"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent hover:bg-accent-dark text-white font-medium rounded-lg transition-all duration-200 hover:shadow-glow-sm whitespace-nowrap"
                   >
                     Read My Full Story
                     <ArrowRight className="w-4 h-4" />
