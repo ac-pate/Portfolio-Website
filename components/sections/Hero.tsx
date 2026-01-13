@@ -11,13 +11,13 @@ import GlowWrapper from '@/components/ui/GlowWrapper';
 
 if (typeof window !== 'undefined') gsap.registerPlugin(ScrollTrigger);
 
-const USE_YOUTUBE = true;
+const USE_YOUTUBE = false;
 const YOUTUBE_ID = 'aq0iCOYylgI';
 
 const VideoBackground = memo(({ videoLoaded, shouldLoadVideo, videoRef }: any) => {
     if (!shouldLoadVideo) return <div className="absolute inset-0 bg-black" />;
     return (
-        <div className={`absolute inset-0 h-full w-full overflow-hidden transition-opacity duration-1000 ${videoLoaded ? 'opacity-50' : 'opacity-0'}`} ref={videoRef} style={{ willChange: 'opacity, transform', pointerEvents: 'none' }}>
+        <div className={`absolute inset-0 h-full w-full overflow-hidden transition-opacity duration-400 ${videoLoaded ? 'opacity-50' : 'opacity-0'}`} ref={videoRef} style={{ willChange: 'opacity, transform', pointerEvents: 'none' }}>
             {USE_YOUTUBE ? (
                 <div id="hero-youtube-video" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none w-[102vw] h-[57.37vw] min-h-[102vh] min-w-[181.33vh]" />
             ) : (
@@ -194,8 +194,8 @@ export function Hero() {
         tl.to(nameFirstRef.current, { opacity: 0, y: -60, duration: 0.8 }, 1.2)
           .to(nameSecondRef.current, { opacity: 0, y: -40, duration: 0.8 }, 1.2);
 
-        // Video fades in throughout
-        tl.to(videoRef.current, { opacity: 1, duration: 1.5 }, 0.8)
+        // Video fades in early and fast - starts right away
+        tl.to(videoRef.current, { opacity: 1, duration: 0.8 }, 0)
           .to(captionRef.current, { opacity: 1, duration: 0.8 }, 1.0)
           .to(captionRef.current.querySelector('p'), { color: '#a3002a', fontSize: '0.875rem', duration: 0.8 }, 1.0);
 
@@ -208,7 +208,7 @@ export function Hero() {
     }, [videoLoaded]);
 
     return (
-        <section ref={heroRef} className="relative h-[500vh] w-full bg-black" id="hero">
+        <section ref={heroRef} className="relative h-[350vh] w-full bg-black" id="hero">
             <div ref={stickyRef} className="h-screen w-full overflow-hidden">
                 <VideoBackground videoLoaded={videoLoaded} shouldLoadVideo={shouldLoadVideo} videoRef={videoRef} />
                 
