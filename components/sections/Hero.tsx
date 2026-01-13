@@ -11,7 +11,7 @@ import GlowWrapper from '@/components/ui/GlowWrapper';
 
 if (typeof window !== 'undefined') gsap.registerPlugin(ScrollTrigger);
 
-const USE_YOUTUBE = false;
+const USE_YOUTUBE = true;
 const YOUTUBE_ID = 'aq0iCOYylgI';
 
 const VideoBackground = memo(({ videoLoaded, shouldLoadVideo, videoRef }: any) => {
