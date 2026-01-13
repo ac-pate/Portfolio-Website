@@ -115,6 +115,61 @@ export function AboutPage({ jobs, education, volunteer }: AboutPageProps) {
                 about building the next generation of intelligent agency.
               </p>
             </motion.div>
+
+            {/* Strengths & Weaknesses Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="space-y-6"
+            >
+              <h3 className="text-2xl font-display font-bold text-foreground">Strengths & Weaknesses</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Strengths */}
+                <div className="glass rounded-xl p-6 space-y-5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                      <span className="text-emerald-500 font-bold">+</span>
+                    </div>
+                    <h4 className="text-lg font-display font-bold text-foreground">Strengths</h4>
+                  </div>
+                  <ul className="space-y-4">
+                    {[
+                      "Addicted to precision machining and control theory.",
+                      "Fluent in low-latency communication (CAN, SPI, C++).",
+                      "High torque problem-solving capacity under pressure."
+                    ].map((strength, i) => (
+                      <li key={i} className="flex gap-3 text-sm text-foreground-secondary leading-relaxed">
+                        <div className="mt-1.5 w-1 h-1 rounded-full bg-accent flex-shrink-0" />
+                        {strength}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Weaknesses */}
+                <div className="glass rounded-xl p-6 space-y-5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
+                      <span className="text-accent font-bold">−</span>
+                    </div>
+                    <h4 className="text-lg font-display font-bold text-foreground">Weaknesses</h4>
+                  </div>
+                  <ul className="space-y-4">
+                    {[
+                      "Cannot stop optimizing until O(1) is achieved.",
+                      "Propensity to disassemble and 'improve' working devices.",
+                      "CPU stalls when coffee levels fall below 20%."
+                    ].map((weakness, i) => (
+                      <li key={i} className="flex gap-3 text-sm text-foreground-secondary leading-relaxed">
+                        <div className="mt-1.5 w-1 h-1 rounded-full bg-accent/40 flex-shrink-0" />
+                        {weakness}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </motion.div>
             {/* Experience Preview */}
             <section>
               <div className="flex items-center justify-between mb-6">

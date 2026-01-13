@@ -210,48 +210,7 @@ export function AboutPreview() {
               </Link>
             </GlowWrapper>
 
-            {/* Action Buttons - Moved under the image */}
-            <div className="w-full max-w-[460px] space-y-6 pt-4">
-              <div className="flex flex-wrap items-center gap-4 justify-center lg:justify-start">
-                <GlowWrapper preset="button" className="rounded-lg flex-1 min-w-[200px]">
-                  <Link
-                    href="/about"
-                    className="inline-flex items-center justify-center gap-2 w-full px-6 py-3 bg-accent hover:bg-accent-dark text-white font-medium rounded-lg transition-all duration-200 hover:shadow-glow-sm whitespace-nowrap"
-                  >
-                    Read My Full Story
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </GlowWrapper>
 
-                <div className="flex items-center gap-3">
-                  <a
-                    href={siteConfig.social.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-3 rounded-xl bg-background-secondary border border-border text-foreground-secondary hover:text-accent hover:border-accent/30 transition-all shadow-sm"
-                    aria-label="GitHub"
-                  >
-                    <Github className="w-5 h-5" />
-                  </a>
-                  <a
-                    href={siteConfig.social.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-3 rounded-xl bg-background-secondary border border-border text-foreground-secondary hover:text-accent hover:border-accent/30 transition-all shadow-sm"
-                    aria-label="LinkedIn"
-                  >
-                    <Linkedin className="w-5 h-5" />
-                  </a>
-                  <a
-                    href={`mailto:${siteConfig.email}`}
-                    className="p-3 rounded-xl bg-background-secondary border border-border text-foreground-secondary hover:text-accent hover:border-accent/30 transition-all shadow-sm"
-                    aria-label="Email"
-                  >
-                    <Mail className="w-5 h-5" />
-                  </a>
-                </div>
-              </div>
-            </div>
           </motion.div>
 
           {/* Right: Content Column */}
@@ -295,47 +254,44 @@ export function AboutPreview() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div className="space-y-5">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                      <span className="text-emerald-500 font-bold">+</span>
-                    </div>
-                    <h4 className="text-lg font-display font-bold text-foreground">Strengths</h4>
-                  </div>
-                  <ul className="space-y-4">
-                    {[
-                      "Addicted to precision machining and control theory.",
-                      "Fluent in low-latency communication (CAN, SPI, C++).",
-                      "High torque problem-solving capacity under pressure."
-                    ].map((strength, i) => (
-                      <li key={i} className="flex gap-3 text-sm text-foreground-secondary leading-relaxed">
-                        <div className="mt-1.5 w-1 h-1 rounded-full bg-accent flex-shrink-0" />
-                        {strength}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+              {/* Action Buttons Section */}
+              <div className="flex flex-col items-center gap-6">
+                <GlowWrapper preset="button" className="rounded-lg w-full max-w-md">
+                  <Link
+                    href="/about"
+                    className="inline-flex items-center justify-center gap-2 w-full px-6 py-3 bg-accent hover:bg-accent-dark text-white font-medium rounded-lg transition-all duration-200 hover:shadow-glow-sm whitespace-nowrap"
+                  >
+                    Read My Full Story
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </GlowWrapper>
 
-                <div className="space-y-5">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
-                      <span className="text-accent font-bold">−</span>
-                    </div>
-                    <h4 className="text-lg font-display font-bold text-foreground">Weaknesses</h4>
-                  </div>
-                  <ul className="space-y-4">
-                    {[
-                      "Cannot stop optimizing until O(1) is achieved.",
-                      "Propensity to disassemble and 'improve' working devices.",
-                      "CPU stalls when coffee levels fall below 20%."
-                    ].map((weakness, i) => (
-                      <li key={i} className="flex gap-3 text-sm text-foreground-secondary leading-relaxed">
-                        <div className="mt-1.5 w-1 h-1 rounded-full bg-accent/40 flex-shrink-0" />
-                        {weakness}
-                      </li>
-                    ))}
-                  </ul>
+                <div className="flex items-center gap-4">
+                  <a
+                    href={siteConfig.social.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-3 rounded-xl bg-background-secondary border border-border text-foreground-secondary hover:text-accent hover:border-accent/30 transition-all shadow-sm"
+                    aria-label="GitHub"
+                  >
+                    <Github className="w-5 h-5" />
+                  </a>
+                  <a
+                    href={siteConfig.social.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-3 rounded-xl bg-background-secondary border border-border text-foreground-secondary hover:text-accent hover:border-accent/30 transition-all shadow-sm"
+                    aria-label="LinkedIn"
+                  >
+                    <Linkedin className="w-5 h-5" />
+                  </a>
+                  <a
+                    href={`mailto:${siteConfig.email}`}
+                    className="p-3 rounded-xl bg-background-secondary border border-border text-foreground-secondary hover:text-accent hover:border-accent/30 transition-all shadow-sm"
+                    aria-label="Email"
+                  >
+                    <Mail className="w-5 h-5" />
+                  </a>
                 </div>
               </div>
 
