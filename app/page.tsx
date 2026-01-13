@@ -3,7 +3,6 @@ import { AboutPreview } from '@/components/sections/AboutPreview';
 import { ProjectsPreview } from '@/components/sections/ProjectsPreview';
 import { ExperiencePreview } from '@/components/sections/ExperiencePreview';
 import { TimelineSection } from '@/components/sections/TimelineSection';
-import { Preloader } from '@/components/ui/Preloader';
 
 import { getProjects, getJobs, getTimeline } from '@/lib/mdx';
 
@@ -14,7 +13,6 @@ export default function HomePage() {
 
   return (
     <>
-      <Preloader />
       <Hero />
       <AboutPreview />
       <ProjectsPreview projects={featuredProjects} />
