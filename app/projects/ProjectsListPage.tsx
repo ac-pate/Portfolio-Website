@@ -37,16 +37,16 @@ export function ProjectsListPage({ projects }: ProjectsListPageProps) {
             const termDateRange = formatAcademicTermDateRangeFromLabel(termLabel);
             
             return (
-              <section key={termLabel} className="mb-16">
-                <div className="mb-6 relative z-10">
-                  <h2 className="text-4xl font-display font-bold text-foreground mb-1">
+              <section key={termLabel} className="mb-12 sm:mb-16">
+                <div className="mb-4 sm:mb-6 relative z-10">
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-foreground mb-1">
                     {termLabel}{termDateRange ? ` (${termDateRange})` : ''}
                   </h2>
-                  <p className="text-sm text-foreground-secondary">
+                  <p className="text-xs sm:text-sm text-foreground-secondary">
                     {termProjects.length} {termProjects.length === 1 ? 'Project' : 'Projects'}
                   </p>
                 </div>
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   {termProjects.map((project, index) => (
                     <ProjectCard
                       key={project.slug}

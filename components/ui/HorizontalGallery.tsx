@@ -32,6 +32,25 @@ interface HorizontalGalleryProps {
   heading?: string;
 }
 
+// Hook to detect mobile screens - SSR-safe
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
+  
+  useEffect(() => {
+    setHasMounted(true);
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  // Return false until mounted to ensure SSR/client consistency
+  return hasMounted ? isMobile : false;
+}
+
 export function HorizontalGallery({ images, altPrefix = 'Gallery image', heading = 'Gallery' }: HorizontalGalleryProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const galleryRef = useRef<HTMLDivElement>(null);
@@ -39,6 +58,7 @@ export function HorizontalGallery({ images, altPrefix = 'Gallery image', heading
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [imageDimensions, setImageDimensions] = useState<Array<{ width: number; height: number }>>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const isMobile = useIsMobile();
 
   // Normalize images array - handle both string[] and Array<{image: string}>
   const normalizedImages = images.map((img) => (typeof img === 'string' ? img : img.image));
@@ -195,6 +215,39 @@ export function HorizontalGallery({ images, altPrefix = 'Gallery image', heading
 
   const cardHeight = getCardHeight();
 
+  // Mobile: Simple vertical scrollable gallery (no GSAP pinning)
+  if (isMobile) {
+    return (
+      <div className="w-full py-8 px-4">
+        {/* Heading */}
+        {heading && (
+          <h2 className="text-2xl font-display font-bold text-foreground uppercase text-center mb-6">{heading}</h2>
+        )}
+        <div className="flex flex-col gap-4">
+          {normalizedImages.map((image, index) => {
+            const dim = imageDimensions[index] || { width: 600, height: 450 };
+            return (
+              <div
+                key={index}
+                className="relative w-full rounded-xl overflow-hidden"
+              >
+                <Image
+                  src={image}
+                  alt={`${altPrefix} ${index + 1}`}
+                  width={dim.width}
+                  height={dim.height}
+                  className="w-full h-auto object-contain"
+                  sizes="100vw"
+                />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop: Horizontal scroll gallery with GSAP pinning
   return (
     <div
       ref={containerRef}

@@ -54,17 +54,17 @@ export function AboutPage({ education, content }: AboutPageProps) {
           </h1>
         </motion.div>
 
-        <div className="grid lg:grid-cols-3 gap-12">
+        <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
           {/* Main content */}
-          <div className="lg:col-span-2 space-y-16">
+          <div className="lg:col-span-2 space-y-12 sm:space-y-16">
             {/* Main Story */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="space-y-8 text-lg text-foreground-secondary leading-relaxed bg-background-secondary/30 p-8 rounded-2xl border border-white/5"
+              className="space-y-6 sm:space-y-8 text-base sm:text-lg text-foreground-secondary leading-relaxed bg-background-secondary/30 p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl border border-white/5"
             >
-              <h3 className="text-2xl font-display font-bold text-foreground mb-4">The Deep Dive</h3>
+              <h3 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-4">The Deep Dive</h3>
               
               {content.deepDive.map((paragraph, index) => (
                 <p key={index} dangerouslySetInnerHTML={{ __html: paragraph }} />
@@ -78,10 +78,10 @@ export function AboutPage({ education, content }: AboutPageProps) {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="space-y-6"
             >
-              <h3 className="text-2xl font-display font-bold text-foreground">Strengths & Weaknesses</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <h3 className="text-xl sm:text-2xl font-display font-bold text-foreground">Strengths & Weaknesses</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
                 {/* Strengths */}
-                <div className="glass rounded-xl p-6 space-y-5">
+                <div className="glass rounded-xl p-4 sm:p-6 space-y-4 sm:space-y-5">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center">
                       <span className="text-emerald-500 font-bold">+</span>
@@ -99,7 +99,7 @@ export function AboutPage({ education, content }: AboutPageProps) {
                 </div>
 
                 {/* Weaknesses */}
-                <div className="glass rounded-xl p-6 space-y-5">
+                <div className="glass rounded-xl p-4 sm:p-6 space-y-4 sm:space-y-5">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
                       <span className="text-accent font-bold">−</span>

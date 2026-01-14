@@ -30,16 +30,16 @@ export function ResumePage() {
             My professional experience, education, and skills. The resume is maintained in LaTeX and automatically compiled via GitHub Actions.
           </p>
 
-          {/* Action buttons */}
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-            {/* Left side - Resume buttons */}
-            <div className="flex flex-wrap items-center gap-4">
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          {/* Action buttons - stacks vertically on mobile */}
+          <div className="flex flex-col xl:flex-row xl:flex-wrap xl:items-center xl:justify-between gap-4 mb-8">
+            {/* Resume buttons */}
+            <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4">
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
                 <GlowWrapper preset="button" className="rounded-xl">
                   <a
                     href={githubPdfUrl}
                     download="Achal_Patel_Resume.pdf"
-                    className="flex items-center gap-2 px-6 py-3 bg-accent text-white rounded-xl font-semibold hover:bg-accent/90 transition-all shadow-glow-sm"
+                    className="flex items-center justify-center gap-2 px-6 py-3 bg-accent text-white rounded-xl font-semibold hover:bg-accent/90 transition-all shadow-glow-sm w-full sm:w-auto"
                   >
                     <Download className="w-4 h-4" />
                     Download PDF
@@ -47,13 +47,13 @@ export function ResumePage() {
                 </GlowWrapper>
               </motion.div>
 
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
                 <GlowWrapper preset="button" className="rounded-xl">
                   <a
                     href={resumeRepo}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-6 py-3 bg-white/5 text-white rounded-xl font-semibold border border-white/10 hover:bg-white/10 transition-all backdrop-blur-sm"
+                    className="flex items-center justify-center gap-2 px-6 py-3 bg-white/5 text-white rounded-xl font-semibold border border-white/10 hover:bg-white/10 transition-all backdrop-blur-sm w-full sm:w-auto"
                   >
                     <Github className="w-4 h-4" />
                     View LaTeX Source
@@ -62,35 +62,41 @@ export function ResumePage() {
               </motion.div>
             </div>
 
-            {/* Separator */}
-            <div className="hidden md:block h-10 w-px bg-white/20" />
+            {/* Separator - only visible on xl screens */}
+            <div className="hidden xl:block h-10 w-px bg-white/20" />
+            
+            {/* Mobile/tablet separator */}
+            <div className="xl:hidden h-px w-full bg-white/10 my-2" />
 
-            {/* Right side - Reference Letter Buttons */}
-            <div className="flex flex-wrap items-center gap-4">
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            {/* Reference Letter Buttons */}
+            <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4">
+              <p className="text-xs text-muted uppercase tracking-wider xl:hidden">Reference Letters</p>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
                 <GlowWrapper preset="button" className="rounded-xl" showHighlight={false}>
                   <a
                     href={researchReferenceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-5 py-3 bg-white/5 text-white rounded-xl font-medium border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all backdrop-blur-sm"
+                    className="flex items-center justify-center gap-2 px-5 py-3 bg-white/5 text-white rounded-xl font-medium border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all backdrop-blur-sm w-full sm:w-auto text-sm sm:text-base"
                   >
                     <Award className="w-4 h-4" />
-                    LOR — Research Supervisor
+                    <span className="hidden sm:inline">LOR — Research Supervisor</span>
+                    <span className="sm:hidden">Research Supervisor LOR</span>
                   </a>
                 </GlowWrapper>
               </motion.div>
               
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
                 <GlowWrapper preset="button" className="rounded-xl" showHighlight={false}>
                   <a
                     href={taReferenceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-5 py-3 bg-white/5 text-white rounded-xl font-medium border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all backdrop-blur-sm"
+                    className="flex items-center justify-center gap-2 px-5 py-3 bg-white/5 text-white rounded-xl font-medium border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all backdrop-blur-sm w-full sm:w-auto text-sm sm:text-base"
                   >
                     <Award className="w-4 h-4" />
-                    LOR — TA Coordinator
+                    <span className="hidden sm:inline">LOR — TA Coordinator</span>
+                    <span className="sm:hidden">TA Coordinator LOR</span>
                   </a>
                 </GlowWrapper>
               </motion.div>
@@ -125,7 +131,7 @@ export function ResumePage() {
             {/* Using Google Docs Viewer for GitHub-hosted PDFs */}
             <iframe
               src={`https://docs.google.com/viewer?url=${encodeURIComponent(githubPdfUrl)}&embedded=true`}
-              className="w-full h-[800px] md:h-[1000px] bg-white"
+              className="w-full h-[500px] sm:h-[650px] md:h-[800px] lg:h-[1000px] bg-white"
               title="Resume PDF"
             />
           </div>

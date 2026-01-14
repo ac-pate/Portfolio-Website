@@ -99,17 +99,17 @@ export function TimelineStatic({ items, onToggleView }: TimelineStaticProps) {
             </div>
           </div>
 
-          {/* Column Headers */}
-          <div className="flex justify-center gap-24 md:gap-36 lg:gap-48 -mt-8">
-            <span className="relative text-sm font-medium text-muted uppercase tracking-[0.15em] pb-1">
+          {/* Column Headers - visible on all screen sizes */}
+          <div className="flex justify-center gap-2 sm:gap-4 md:gap-8 lg:gap-24 xl:gap-36 -mt-8">
+            <span className="relative text-[10px] sm:text-xs md:text-sm font-medium text-muted uppercase tracking-[0.1em] sm:tracking-[0.15em] pb-1">
               Projects
               <span className="absolute bottom-0 left-0 right-0 h-px bg-blue-500 shadow-[0_0_10px_2px_rgba(59,130,246,0.8)]" />
             </span>
-            <span className="relative text-sm font-medium text-muted uppercase tracking-[0.15em] pb-1">
+            <span className="relative text-[10px] sm:text-xs md:text-sm font-medium text-muted uppercase tracking-[0.1em] sm:tracking-[0.15em] pb-1">
               Experience
               <span className="absolute bottom-0 left-0 right-0 h-px bg-emerald-500 shadow-[0_0_10px_2px_rgba(16,185,129,0.8)]" />
             </span>
-            <span className="relative text-sm font-medium text-muted uppercase tracking-[0.15em] pb-1">
+            <span className="relative text-[10px] sm:text-xs md:text-sm font-medium text-muted uppercase tracking-[0.1em] sm:tracking-[0.15em] pb-1">
               Activities
               <span className="absolute bottom-0 left-0 right-0 h-px bg-amber-500 shadow-[0_0_10px_2px_rgba(245,158,11,0.8)]" />
             </span>
@@ -146,19 +146,19 @@ export function TimelineStatic({ items, onToggleView }: TimelineStaticProps) {
           return (
             <div key={termKey} className="mb-16 last:mb-0">
               {/* Term Header */}
-              <div className="flex items-center gap-4 mb-6 px-8 md:px-12 lg:px-16">
-                <h4 className="text-3xl font-display font-semibold text-foreground">
+              <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6 px-4 sm:px-8 md:px-12 lg:px-16">
+                <h4 className="text-xl sm:text-2xl lg:text-3xl font-display font-semibold text-foreground whitespace-nowrap">
                   {termKey}
                 </h4>
                 <div className="flex-1 h-px bg-border/30" />
-                <span className="text-xs text-muted">
+                <span className="text-xs text-muted whitespace-nowrap">
                   {termItems.length} {termItems.length === 1 ? 'item' : 'items'}
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 px-8 md:px-12 lg:px-16">
+              <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 lg:gap-6 xl:gap-8 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-16">
                 {/* Projects Column */}
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   {projects.length > 0 ? (
                     projects.map((item, idx) => (
                       <StaticCard key={`proj-${termKey}-${item.slug}-${idx}`} item={item} />
@@ -169,7 +169,7 @@ export function TimelineStatic({ items, onToggleView }: TimelineStaticProps) {
                 </div>
 
                 {/* Experience Column */}
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   {experience.length > 0 ? (
                     experience.map((item, idx) => (
                       <StaticCard key={`exp-${termKey}-${item.slug}-${idx}`} item={item} />
@@ -180,7 +180,7 @@ export function TimelineStatic({ items, onToggleView }: TimelineStaticProps) {
                 </div>
 
                 {/* Activities Column */}
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   {activities.length > 0 ? (
                     activities.map((item, idx) => (
                       <StaticCard key={`act-${termKey}-${item.slug}-${idx}`} item={item} />

@@ -48,7 +48,7 @@ export function ExperienceDetail({ job }: ExperienceDetailProps) {
         >
           {/* Cover Image - Use coverImage if provided, otherwise fallback to image */}
           {frontmatter.coverImage && (
-            <div className="relative aspect-[21/9] rounded-2xl overflow-hidden mb-8 bg-background-secondary">
+            <div className="relative aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/9] rounded-xl sm:rounded-2xl overflow-hidden mb-6 sm:mb-8 bg-background-secondary">
               <Image
                 src={frontmatter.coverImage}
                 alt={frontmatter.company}
@@ -59,7 +59,7 @@ export function ExperienceDetail({ job }: ExperienceDetailProps) {
             </div>
           )}
           {!frontmatter.coverImage && frontmatter.image && (
-            <div className="relative aspect-[21/9] rounded-2xl overflow-hidden mb-8 bg-background-secondary">
+            <div className="relative aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/9] rounded-xl sm:rounded-2xl overflow-hidden mb-6 sm:mb-8 bg-background-secondary">
               <Image
                 src={frontmatter.image}
                 alt={frontmatter.company}
@@ -70,9 +70,9 @@ export function ExperienceDetail({ job }: ExperienceDetailProps) {
             </div>
           )}
 
-          <div className="flex items-start gap-6 mb-6">
+          <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 mb-6">
             {/* Company logo/icon */}
-            <div className="w-16 h-16 rounded-xl overflow-hidden bg-background-secondary flex-shrink-0">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg sm:rounded-xl overflow-hidden bg-background-secondary flex-shrink-0">
               {frontmatter.image ? (
                 <Image
                   src={frontmatter.image}
@@ -83,17 +83,17 @@ export function ExperienceDetail({ job }: ExperienceDetailProps) {
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-emerald-500/10">
-                  <Briefcase className="w-8 h-8 text-emerald-500" />
+                  <Briefcase className="w-6 h-6 sm:w-8 sm:h-8 text-emerald-500" />
                 </div>
               )}
             </div>
 
             <div>
-              <h1 className="text-display-sm md:text-display-md font-display font-bold text-foreground mb-2">
+              <h1 className="text-xl sm:text-display-sm md:text-display-md font-display font-bold text-foreground mb-2">
                 {frontmatter.title}
               </h1>
-              <p className="text-xl text-accent mb-2">{frontmatter.company}</p>
-              <div className="flex flex-wrap items-center gap-4 text-sm text-foreground-secondary">
+              <p className="text-lg sm:text-xl text-accent mb-2">{frontmatter.company}</p>
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-foreground-secondary">
                 {frontmatter.startDate && (
                   <span className="flex items-center gap-1">
                     <Calendar className="w-4 h-4" />

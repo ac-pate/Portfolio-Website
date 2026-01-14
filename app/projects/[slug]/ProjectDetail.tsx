@@ -48,7 +48,7 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
         >
           {/* Cover Image - Use coverImage if provided, otherwise fallback to image */}
           {frontmatter.coverImage && (
-            <div className="relative aspect-[21/9] rounded-2xl overflow-hidden mb-8 bg-background-secondary">
+            <div className="relative aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/9] rounded-xl sm:rounded-2xl overflow-hidden mb-6 sm:mb-8 bg-background-secondary">
               <Image
                 src={frontmatter.coverImage}
                 alt={frontmatter.title}
@@ -59,7 +59,7 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
             </div>
           )}
           {!frontmatter.coverImage && frontmatter.image && (
-            <div className="relative aspect-[21/9] rounded-2xl overflow-hidden mb-8 bg-background-secondary">
+            <div className="relative aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/9] rounded-xl sm:rounded-2xl overflow-hidden mb-6 sm:mb-8 bg-background-secondary">
               <Image
                 src={frontmatter.image}
                 alt={frontmatter.title}
@@ -70,9 +70,9 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
             </div>
           )}
 
-          <div className="flex items-start gap-6 mb-6">
+          <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 mb-6">
             {/* Project thumbnail/icon */}
-            <div className="w-16 h-16 rounded-xl overflow-hidden bg-background-secondary flex-shrink-0">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg sm:rounded-xl overflow-hidden bg-background-secondary flex-shrink-0">
               {frontmatter.image ? (
                 <Image
                   src={frontmatter.image}
@@ -83,19 +83,19 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-accent/10">
-                  <FileText className="w-8 h-8 text-accent" />
+                  <FileText className="w-6 h-6 sm:w-8 sm:h-8 text-accent" />
                 </div>
               )}
             </div>
 
             <div className="flex-1">
               {/* Title */}
-              <h1 className="text-display-md md:text-display-lg font-display font-bold text-foreground mb-2">
+              <h1 className="text-2xl sm:text-display-md md:text-display-lg font-display font-bold text-foreground mb-2">
                 {frontmatter.title}
               </h1>
               {/* Description */}
               {frontmatter.description && (
-                <p className="text-lg text-foreground-secondary max-w-3xl">
+                <p className="text-base sm:text-lg text-foreground-secondary max-w-3xl">
                   {frontmatter.description}
                 </p>
               )}
@@ -103,7 +103,7 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
           </div>
 
           {/* Meta info */}
-          <div className="flex flex-wrap items-center gap-6 text-sm text-foreground-secondary mb-6 mt-4">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-xs sm:text-sm text-foreground-secondary mb-6 mt-4">
             {frontmatter.startDate && (
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4" />

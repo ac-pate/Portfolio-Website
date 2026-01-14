@@ -101,7 +101,6 @@ export function AboutPreview({ content }: AboutPreviewProps) {
   // Flicker Logic
   useEffect(() => {
     if (!ENABLE_IMAGE_FLICKER || !isHovering) {
-      // setCurrentImageIndex(0); // Reset to main image when not hovering
       return;
     }
 
@@ -142,36 +141,38 @@ export function AboutPreview({ content }: AboutPreviewProps) {
           </motion.div>
         </div>
 
-        {/* 1. Career Path Diagram - Edge to Edge */}
+        {/* 1. Career Path Diagram - Scrollable on mobile, edge to edge on desktop */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="w-full mb-16 mt-12 relative -mx-4 md:-mx-8"
+          className="w-full mb-12 md:mb-16 mt-8 md:mt-12 relative -mx-4 md:-mx-8"
         >
-          <div className="relative overflow-hidden z-20  group">
+          <div className="relative overflow-x-auto md:overflow-hidden z-20 group scrollbar-hide">
             <Image 
               src="/images/about/career_path.png" 
               alt="Engineering Career Path Diagram" 
               width={1920} 
               height={200} 
-              className="w-full h-auto transition-transform duration-500 "
+              className="min-w-[800px] md:min-w-0 md:w-full h-auto transition-transform duration-500"
               priority
             />
           </div>
+          {/* Mobile scroll hint */}
+          <p className="text-xs text-muted text-center mt-2 md:hidden">← Scroll to see full timeline →</p>
         </motion.div>
 
         {/* 2. Image and Overlapping Text Grid */}
-        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 max-w-7xl mx-auto items-start relative px-4">
+        <div className="grid lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-12 max-w-7xl mx-auto items-start relative px-2 sm:px-4">
           
-          {/* Left: Profile Photo Column */}
+          {/* Left: Profile Photo Column - not sticky on mobile */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="lg:col-span-5 flex flex-col items-center lg:items-start lg:sticky lg:top-20 z-10 lg:-mt-12"
+            className="lg:col-span-5 flex flex-col items-center lg:items-start xl:sticky xl:top-20 z-10 xl:-mt-12"
           >
             <GlowWrapper 
               preset="card" 
@@ -184,7 +185,7 @@ export function AboutPreview({ content }: AboutPreviewProps) {
             >
               <Link 
                 href="/about"
-                className="block relative w-[300px] h-[300px] md:w-[420px] md:h-[420px]"
+                className="block relative w-[260px] h-[260px] sm:w-[280px] sm:h-[280px] md:w-[300px] md:h-[300px] lg:w-[320px] lg:h-[320px] xl:w-[380px] xl:h-[380px] 2xl:w-[420px] 2xl:h-[420px]"
                 onMouseEnter={() => {
                   setIsHovering(true);
                   playFlickerSound();
@@ -225,10 +226,10 @@ export function AboutPreview({ content }: AboutPreviewProps) {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="lg:col-span-7 flex flex-col space-y-8"
           >
-            {/* 1. Overlapping Quote Row */}
-            <div className="relative z-20 lg:-ml-40 lg:mt-0 lg:pr-4">
+            {/* 1. Overlapping Quote Row - only overlap on xl+ screens */}
+            <div className="relative z-20 xl:-ml-32 xl:mt-0 xl:pr-4">
               <p 
-                className="text-l md:text-xl lg:text-2xl text-foreground font-display font-bold leading-tight italic"
+                className="text-base sm:text-lg md:text-xl xl:text-2xl text-foreground font-display font-bold leading-tight italic"
               >
                 &ldquo;{content.quote}&rdquo;
               </p>
@@ -258,23 +259,23 @@ export function AboutPreview({ content }: AboutPreviewProps) {
               </div>
 
               {/* Action Buttons Section */}
-              <div className="flex flex-wrap items-center justify-center gap-4">
-                <GlowWrapper preset="button" className="rounded-lg">
+              <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4">
+                <GlowWrapper preset="button" className="rounded-lg w-full sm:w-auto">
                   <Link
                     href="/about"
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent hover:bg-accent-dark text-white font-medium rounded-lg transition-all duration-200 hover:shadow-glow-sm whitespace-nowrap"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent hover:bg-accent-dark text-white font-medium rounded-lg transition-all duration-200 hover:shadow-glow-sm whitespace-nowrap w-full sm:w-auto"
                   >
                     Read My Full Story
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                 </GlowWrapper>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 sm:gap-4">
                   <a
                     href={siteConfig.social.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-3 rounded-xl bg-background-secondary border border-border text-foreground-secondary hover:text-accent hover:border-accent/30 transition-all shadow-sm"
+                    className="p-2.5 sm:p-3 rounded-xl bg-background-secondary border border-border text-foreground-secondary hover:text-accent hover:border-accent/30 transition-all shadow-sm"
                     aria-label="GitHub"
                   >
                     <Github className="w-5 h-5" />
@@ -283,14 +284,14 @@ export function AboutPreview({ content }: AboutPreviewProps) {
                     href={siteConfig.social.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-3 rounded-xl bg-background-secondary border border-border text-foreground-secondary hover:text-accent hover:border-accent/30 transition-all shadow-sm"
+                    className="p-2.5 sm:p-3 rounded-xl bg-background-secondary border border-border text-foreground-secondary hover:text-accent hover:border-accent/30 transition-all shadow-sm"
                     aria-label="LinkedIn"
                   >
                     <Linkedin className="w-5 h-5" />
                   </a>
                   <a
                     href={`mailto:${siteConfig.email}`}
-                    className="p-3 rounded-xl bg-background-secondary border border-border text-foreground-secondary hover:text-accent hover:border-accent/30 transition-all shadow-sm"
+                    className="p-2.5 sm:p-3 rounded-xl bg-background-secondary border border-border text-foreground-secondary hover:text-accent hover:border-accent/30 transition-all shadow-sm"
                     aria-label="Email"
                   >
                     <Mail className="w-5 h-5" />
