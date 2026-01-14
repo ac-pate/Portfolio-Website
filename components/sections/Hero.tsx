@@ -238,6 +238,10 @@ export function Hero({ content }: HeroProps) {
               duration: 0.5
           }, 0);
 
+        // Video reaches full brightness by the time buttons start fading
+        // Starts from 0.5 (set by time-based fade) and goes to 1.0
+        tl.fromTo(videoRef.current, { opacity: 0.5 }, { opacity: 1, duration: 0.5 }, 0);
+
         // Phase 2 (0.5-1.2): Other elements fade out FAST
         // Using fromTo() to explicitly define start/end values since Framer Motion also animates these
         // Note: overlay is now auto-fading (not scroll-dependent), so removed from here

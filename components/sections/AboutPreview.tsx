@@ -228,7 +228,7 @@ export function AboutPreview({ content }: AboutPreviewProps) {
             {/* 1. Overlapping Quote Row */}
             <div className="relative z-20 lg:-ml-40 lg:mt-0 lg:pr-4">
               <p 
-                className="text-xl md:text-2xl lg:text-3xl text-foreground font-display font-bold leading-tight italic"
+                className="text-l md:text-xl lg:text-2xl text-foreground font-display font-bold leading-tight italic"
               >
                 &ldquo;{content.quote}&rdquo;
               </p>
