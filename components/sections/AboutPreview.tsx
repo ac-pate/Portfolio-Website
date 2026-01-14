@@ -9,10 +9,14 @@ import { siteConfig } from '@/lib/config';
 import GlowWrapper from '@/components/ui/GlowWrapper';
 import { useSound } from '@/components/providers/SoundProvider';
 
-const techHighlights = [
-  'ROS2', 'Computer Vision', 'Machine Learning', 'Control Systems',
-  'FPGA', 'Embedded Systems', 'Sensor Fusion'
-];
+interface AboutPreviewContent {
+  quote: string;
+  technicalInterests: string[];
+}
+
+interface AboutPreviewProps {
+  content: AboutPreviewContent;
+}
 
 // --- FEATURE TOGGLE & DATA ---
 const ENABLE_IMAGE_FLICKER = true; 
@@ -89,7 +93,7 @@ function InfographicSummary() {
 }
 // -----------------------------
 
-export function AboutPreview() {
+export function AboutPreview({ content }: AboutPreviewProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const { playFlickerSound, stopFlickerSound } = useSound();
@@ -225,9 +229,8 @@ export function AboutPreview() {
             <div className="relative z-20 lg:-ml-40 lg:mt-0 lg:pr-4">
               <p 
                 className="text-xl md:text-2xl lg:text-3xl text-foreground font-display font-bold leading-tight italic"
-                // style={{ textShadow: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }}
               >
-                &ldquo;I build intelligent machines that interact with the physical world.&rdquo;
+                &ldquo;{content.quote}&rdquo;
               </p>
             </div>
 
@@ -239,7 +242,7 @@ export function AboutPreview() {
                   Technical Interests & Expertise
                 </h5>
                 <div className="flex flex-wrap gap-2">
-                  {techHighlights.map((tech, index) => (
+                  {content.technicalInterests.map((tech, index) => (
                     <motion.span
                       key={tech}
                       initial={{ opacity: 0, scale: 0.8 }}

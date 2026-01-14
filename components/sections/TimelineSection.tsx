@@ -16,11 +16,16 @@ if (typeof window !== 'undefined') {
 
 const EXIT_HOLD_VH = 100;
 
-interface TimelineSectionProps {
-	items: TimelineItem[];
+interface TimelineSectionContent {
+	subtitle: string;
 }
 
-export function TimelineSection({ items }: TimelineSectionProps) {
+interface TimelineSectionProps {
+	items: TimelineItem[];
+	content: TimelineSectionContent;
+}
+
+export function TimelineSection({ items, content }: TimelineSectionProps) {
 	const [variant, setVariant] = useState<'3d' | 'static'>('3d');
 
 	// Static view fallback for reduced motion / small screens.
@@ -64,7 +69,7 @@ export function TimelineSection({ items }: TimelineSectionProps) {
 						<div className="max-w-7xl mx-auto pt-16">
 							<SectionHeading
 								title="My Journey"
-								// subtitle="My path through education, work, and projects."
+								subtitle={content.subtitle || undefined}
 							/>
 						</div>
 					</div>

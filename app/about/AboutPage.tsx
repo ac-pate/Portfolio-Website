@@ -14,59 +14,38 @@ import {
   Cog,
   Wrench,
   ArrowRight,
-  Users
+  Users,
+  LucideIcon
 } from 'lucide-react';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import GlowWrapper from '@/components/ui/GlowWrapper';
 import { siteConfig } from '@/lib/config';
 import { formatDateRange } from '@/lib/utils';
-import type { ContentItem, JobFrontmatter, EducationFrontmatter, VolunteerFrontmatter } from '@/lib/mdx';
+import type { ContentItem, JobFrontmatter, EducationFrontmatter, VolunteerFrontmatter, AboutPageContent } from '@/lib/mdx';
+
+// Map string icon names to Lucide components
+const iconMap: Record<string, LucideIcon> = {
+  Cpu,
+  Cog,
+  Code,
+  Wrench,
+  Briefcase,
+  GraduationCap,
+  Users,
+  Mail,
+  Github,
+  Linkedin,
+  MapPin,
+};
 
 interface AboutPageProps {
   jobs: ContentItem<JobFrontmatter>[];
   education: ContentItem<EducationFrontmatter>[];
   volunteer: ContentItem<VolunteerFrontmatter>[];
+  content: AboutPageContent;
 }
 
-const technicalSkills = [
-  {
-    category: 'Programming',
-    skills: ['Python', 'C/C++', 'VHDL', 'SystemVerilog', 'MATLAB', 'Bash'],
-  },
-  {
-    category: 'Robotics & AI',
-    skills: ['ROS2', 'Gazebo', 'Isaac Sim', 'VLA Models', 'Imitation Learning', 'SLAM'],
-  },
-  {
-    category: 'Computer Vision',
-    skills: ['ZED Camera', 'Stereo Vision', 'Point Clouds', 'Visual Odometry', 'OpenCV'],
-  },
-  {
-    category: 'Control Systems',
-    skills: ['Model Predictive Control', 'Optimal Control', 'PID Tuning', 'Kalman Filtering'],
-  },
-  {
-    category: 'Embedded Hardware',
-    skills: ['ESP32', 'STM32', 'Arduino', 'Jetson (Nano/AGX)', 'Raspberry Pi', 'FPGA'],
-  },
-  {
-    category: 'Protocols & IoT',
-    skills: ['CAN', 'SPI', 'I2C', 'WiFi', 'Bluetooth', 'Zigbee', 'Thread', 'MQTT'],
-  },
-  {
-    category: 'Tools & Platforms',
-    skills: ['Git', 'Linux', 'Docker', 'PyTorch', 'TensorFlow', 'CAD (Fusion 360)'],
-  },
-];
-
-const interests = [
-  { icon: Cpu, label: 'Embedded Systems' },
-  { icon: Cog, label: 'Robotics & Autonomy' },
-  { icon: Code, label: 'Machine Learning' },
-  { icon: Wrench, label: 'Hardware Tinkering' },
-];
-
-export function AboutPage({ jobs, education, volunteer }: AboutPageProps) {
+export function AboutPage({ jobs, education, volunteer, content }: AboutPageProps) {
   return (
     <div className="pt-24 pb-16">
       <div className="section-container">
@@ -94,26 +73,9 @@ export function AboutPage({ jobs, education, volunteer }: AboutPageProps) {
             >
               <h3 className="text-2xl font-display font-bold text-foreground mb-4">The Deep Dive</h3>
               
-              <p>
-                As a <span className="text-accent font-semibold">4th year Computer Engineering student</span> at Concordia, 
-                I live at the intersection of bits and bolts. My obsession with robotics began as a fascination with 
-                chip manufacturing at <span className="text-accent font-semibold">Microchip Technology</span>, but I soon realized 
-                that I didn&apos;t just want to build the silicon—I wanted to make it move.
-              </p>
-
-              <p>
-                Through <span className="text-accent font-semibold">IEEE Concordia</span> and later <span className="text-accent font-semibold">CUARL</span>, 
-                I&apos;ve dedicated thousands of hours to mastering autonomous systems. I&apos;ve built everything from 32-bit multicore 
-                CPUs to <span className="text-foreground font-medium">position tracking systems for lunar rovers</span>. Each project 
-                was a lesson in low-latency control and hardware-software synergy.
-              </p>
-
-              <p>
-                Today, my focus is <span className="text-accent font-semibold">MIMIC</span>: a dual-arm humanoid robot that 
-                doesn&apos;t just follow code, but learns through imitation. By leveraging <span className="text-foreground font-medium">Vision-Language-Action models</span>, 
-                we&apos;re teaching machines to understand the world as we do. It&apos;s not just about building robots; it&apos;s 
-                about building the next generation of intelligent agency.
-              </p>
+              {content.deepDive.map((paragraph, index) => (
+                <p key={index} dangerouslySetInnerHTML={{ __html: paragraph }} />
+              ))}
             </motion.div>
 
             {/* Strengths & Weaknesses Section */}
@@ -134,11 +96,7 @@ export function AboutPage({ jobs, education, volunteer }: AboutPageProps) {
                     <h4 className="text-lg font-display font-bold text-foreground">Strengths</h4>
                   </div>
                   <ul className="space-y-4">
-                    {[
-                      "Addicted to precision machining and control theory.",
-                      "Fluent in low-latency communication (CAN, SPI, C++).",
-                      "High torque problem-solving capacity under pressure."
-                    ].map((strength, i) => (
+                    {content.strengths.map((strength, i) => (
                       <li key={i} className="flex gap-3 text-sm text-foreground-secondary leading-relaxed">
                         <div className="mt-1.5 w-1 h-1 rounded-full bg-accent flex-shrink-0" />
                         {strength}
@@ -156,11 +114,7 @@ export function AboutPage({ jobs, education, volunteer }: AboutPageProps) {
                     <h4 className="text-lg font-display font-bold text-foreground">Weaknesses</h4>
                   </div>
                   <ul className="space-y-4">
-                    {[
-                      "Cannot stop optimizing until O(1) is achieved.",
-                      "Propensity to disassemble and 'improve' working devices.",
-                      "CPU stalls when coffee levels fall below 20%."
-                    ].map((weakness, i) => (
+                    {content.weaknesses.map((weakness, i) => (
                       <li key={i} className="flex gap-3 text-sm text-foreground-secondary leading-relaxed">
                         <div className="mt-1.5 w-1 h-1 rounded-full bg-accent/40 flex-shrink-0" />
                         {weakness}
@@ -355,7 +309,7 @@ export function AboutPage({ jobs, education, volunteer }: AboutPageProps) {
                 Technical Skills
               </h3>
               <div className="space-y-4">
-                {technicalSkills.map((category) => (
+                {content.technicalSkills.map((category) => (
                   <div key={category.category}>
                     <p className="text-sm text-muted mb-2">{category.category}</p>
                     <div className="flex flex-wrap gap-1.5">
@@ -385,15 +339,18 @@ export function AboutPage({ jobs, education, volunteer }: AboutPageProps) {
                 Interests
               </h3>
               <div className="grid grid-cols-2 gap-3">
-                {interests.map((interest) => (
-                  <div
-                    key={interest.label}
-                    className="flex items-center gap-2 text-foreground-secondary"
-                  >
-                    <interest.icon className="w-4 h-4 text-accent" />
-                    <span className="text-sm">{interest.label}</span>
-                  </div>
-                ))}
+                {content.interests.map((interest) => {
+                  const IconComponent = iconMap[interest.icon] || Cpu;
+                  return (
+                    <div
+                      key={interest.label}
+                      className="flex items-center gap-2 text-foreground-secondary"
+                    >
+                      <IconComponent className="w-4 h-4 text-accent" />
+                      <span className="text-sm">{interest.label}</span>
+                    </div>
+                  );
+                })}
               </div>
             </motion.div>
           </div>

@@ -15,11 +15,16 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-interface ProjectsPreviewProps {
-  projects: ContentItem<ProjectFrontmatter>[];
+interface ProjectsPreviewContent {
+  subtitle: string;
 }
 
-export function ProjectsPreview({ projects }: ProjectsPreviewProps) {
+interface ProjectsPreviewProps {
+  projects: ContentItem<ProjectFrontmatter>[];
+  content: ProjectsPreviewContent;
+}
+
+export function ProjectsPreview({ projects, content }: ProjectsPreviewProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -44,7 +49,7 @@ export function ProjectsPreview({ projects }: ProjectsPreviewProps) {
         <div className="sticky top-16 z-10 py-2 bg-background/80 backdrop-blur-md -mx-4 px-4 mb-8 border-b border-white/5">
           <SectionHeading
             title="Featured Projects"
-            subtitle="Selected work in robotics, embedded systems, and software."
+            subtitle={content.subtitle}
             className="mb-0 md:mb-0"
           />
         </div>

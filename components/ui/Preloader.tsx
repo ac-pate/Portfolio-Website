@@ -2,12 +2,19 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePathname } from 'next/navigation';
 
 export function Preloader() {
+  const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(true);
   const [isReadyToEnter, setIsReadyToEnter] = useState(false);
   const [progress, setProgress] = useState(0);
   const [showCurtain, setShowCurtain] = useState(false);
+
+  // Only show preloader on home page
+  if (pathname !== '/') {
+    return null;
+  }
 
   useEffect(() => {
     const handleVideoReady = () => {
@@ -16,20 +23,20 @@ export function Preloader() {
 
     window.addEventListener('hero-video-ready', handleVideoReady);
 
-    // Progress counter simulation - faster, more responsive
+    // Progress counter simulation - MUCH FASTER
     const interval = setInterval(() => {
       setProgress(prev => {
         if (isReadyToEnter) return 100;
-        if (prev >= 98) return prev;
-        // Smooth acceleration then deceleration
-        const speed = prev < 30 ? 3 : prev < 60 ? 2 : prev < 90 ? 1 : 0.5;
-        return Math.min(prev + speed, 98);
+        if (prev >= 95) return prev;
+        // Faster progression
+        const speed = prev < 40 ? 8 : prev < 70 ? 5 : prev < 85 ? 3 : 2;
+        return Math.min(prev + speed, 95);
       });
-    }, 50);
+    }, 40);
 
     const fallback = setTimeout(() => {
       setIsReadyToEnter(true);
-    }, 8000);
+    }, 5000);
 
     return () => {
       window.removeEventListener('hero-video-ready', handleVideoReady);
@@ -41,16 +48,16 @@ export function Preloader() {
   useEffect(() => {
     if (isReadyToEnter) {
       setProgress(100);
-      // Delay before curtain reveal
+      // Delay before curtain reveal - FASTER
       const curtainTimer = setTimeout(() => {
         setShowCurtain(true);
         // Dispatch event when curtain starts opening so hero can begin animations
         window.dispatchEvent(new CustomEvent('preloader-done'));
-      }, 400);
-      // Delay before fully hiding preloader
+      }, 150);
+      // Delay before fully hiding preloader - FASTER
       const hideTimer = setTimeout(() => {
         setIsLoading(false);
-      }, 1800);
+      }, 1000);
       return () => {
         clearTimeout(curtainTimer);
         clearTimeout(hideTimer);
@@ -67,7 +74,7 @@ export function Preloader() {
         initial={{ y: 0 }}
         animate={{ y: showCurtain ? '-100%' : 0 }}
         transition={{ 
-          duration: 1.2, 
+          duration: 0.8, 
           ease: [0.76, 0, 0.24, 1],
         }}
         className="absolute top-0 left-0 right-0 h-1/2 bg-black"
@@ -79,7 +86,7 @@ export function Preloader() {
         initial={{ y: 0 }}
         animate={{ y: showCurtain ? '100%' : 0 }}
         transition={{ 
-          duration: 1.2, 
+          duration: 0.8, 
           ease: [0.76, 0, 0.24, 1],
         }}
         className="absolute bottom-0 left-0 right-0 h-1/2 bg-black"

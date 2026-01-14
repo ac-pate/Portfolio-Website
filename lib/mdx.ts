@@ -101,6 +101,50 @@ export interface ExtracurricularFrontmatter {
   galleryImages?: string[];
 }
 
+// ===================
+// HOMEPAGE CONTENT
+// ===================
+export interface HomepageContent {
+  hero: {
+    tagline: string;
+    videoCaption: string;
+  };
+  aboutPreview: {
+    quote: string;
+    technicalInterests: string[];
+  };
+  projectsPreview: {
+    subtitle: string;
+  };
+  experiencePreview: {
+    subtitle: string;
+  };
+  timeline: {
+    subtitle: string;
+  };
+}
+
+// ===================
+// ABOUT PAGE CONTENT
+// ===================
+export interface TechnicalSkillCategory {
+  category: string;
+  skills: string[];
+}
+
+export interface InterestItem {
+  icon: string;
+  label: string;
+}
+
+export interface AboutPageContent {
+  deepDive: string[];
+  technicalSkills: TechnicalSkillCategory[];
+  strengths: string[];
+  weaknesses: string[];
+  interests: InterestItem[];
+}
+
 export interface ContentItem<T> {
   slug: string;
   frontmatter: T;
@@ -413,4 +457,125 @@ export function getAllExtracurricularSlugs(): string[] {
   return fs.readdirSync(extracurricularPath)
     .filter((file) => file.endsWith('.mdx'))
     .map((file) => file.replace('.mdx', ''));
+}
+
+// ===================
+// HOMEPAGE CONTENT
+// ===================
+const defaultHomepageContent: HomepageContent = {
+  hero: {
+    tagline: 'Robotics, Embedded Systems, Code That Moves',
+    videoCaption: 'Autonomous Bimanual Handover Using VLA model on LeRobot Framework — Mimic Robotics Capstone Project',
+  },
+  aboutPreview: {
+    quote: "I'm obsessed with autonomous robotics where embedded control systems meet modern AI. From writing hardware drivers & sensor fusion to training VLA models, I'm passionate about building robotic solutions that actually perceive and act in the real world.",
+    technicalInterests: ['ROS2', 'Computer Vision', 'Machine Learning', 'Control Systems', 'FPGA', 'Embedded Systems', 'Sensor Fusion'],
+  },
+  projectsPreview: {
+    subtitle: 'Selected work in robotics, embedded systems, and software.',
+  },
+  experiencePreview: {
+    subtitle: 'Professional experience in robotics, embedded systems, and engineering.',
+  },
+  timeline: {
+    subtitle: '',
+  },
+};
+
+export function getHomepageContent(): HomepageContent {
+  const filePath = path.join(contentDirectory, 'homepage', 'index.mdx');
+  
+  if (!fs.existsSync(filePath)) {
+    return defaultHomepageContent;
+  }
+  
+  try {
+    const fileContent = fs.readFileSync(filePath, 'utf8');
+    const { data } = matter(fileContent);
+    
+    // Merge with defaults to ensure all fields exist
+    return {
+      hero: {
+        tagline: data.hero?.tagline || defaultHomepageContent.hero.tagline,
+        videoCaption: data.hero?.videoCaption || defaultHomepageContent.hero.videoCaption,
+      },
+      aboutPreview: {
+        quote: data.aboutPreview?.quote || defaultHomepageContent.aboutPreview.quote,
+        technicalInterests: data.aboutPreview?.technicalInterests || defaultHomepageContent.aboutPreview.technicalInterests,
+      },
+      projectsPreview: {
+        subtitle: data.projectsPreview?.subtitle || defaultHomepageContent.projectsPreview.subtitle,
+      },
+      experiencePreview: {
+        subtitle: data.experiencePreview?.subtitle || defaultHomepageContent.experiencePreview.subtitle,
+      },
+      timeline: {
+        subtitle: data.timeline?.subtitle || defaultHomepageContent.timeline.subtitle,
+      },
+    };
+  } catch (error) {
+    console.error('Error reading homepage content:', error);
+    return defaultHomepageContent;
+  }
+}
+
+// ===================
+// ABOUT PAGE CONTENT
+// ===================
+const defaultAboutContent: AboutPageContent = {
+  deepDive: [
+    'As a <span class="text-accent font-semibold">4th year Computer Engineering student</span> at Concordia, I live at the intersection of bits and bolts.',
+    'Through <span class="text-accent font-semibold">IEEE Concordia</span> and later <span class="text-accent font-semibold">CUARL</span>, I\'ve dedicated thousands of hours to mastering autonomous systems.',
+    'Today, my focus is <span class="text-accent font-semibold">MIMIC</span>: a dual-arm humanoid robot that doesn\'t just follow code, but learns through imitation.',
+  ],
+  technicalSkills: [
+    { category: 'Programming', skills: ['Python', 'C/C++', 'VHDL', 'SystemVerilog', 'MATLAB', 'Bash'] },
+    { category: 'Robotics & AI', skills: ['ROS2', 'Gazebo', 'Isaac Sim', 'VLA Models', 'Imitation Learning', 'SLAM'] },
+    { category: 'Computer Vision', skills: ['ZED Camera', 'Stereo Vision', 'Point Clouds', 'Visual Odometry', 'OpenCV'] },
+    { category: 'Control Systems', skills: ['Model Predictive Control', 'Optimal Control', 'PID Tuning', 'Kalman Filtering'] },
+    { category: 'Embedded Hardware', skills: ['ESP32', 'STM32', 'Arduino', 'Jetson (Nano/AGX)', 'Raspberry Pi', 'FPGA'] },
+    { category: 'Protocols & IoT', skills: ['CAN', 'SPI', 'I2C', 'WiFi', 'Bluetooth', 'Zigbee', 'Thread', 'MQTT'] },
+    { category: 'Tools & Platforms', skills: ['Git', 'Linux', 'Docker', 'PyTorch', 'TensorFlow', 'CAD (Fusion 360)'] },
+  ],
+  strengths: [
+    'Addicted to precision machining and control theory.',
+    'Fluent in low-latency communication (CAN, SPI, C++).',
+    'High torque problem-solving capacity under pressure.',
+  ],
+  weaknesses: [
+    'Cannot stop optimizing until O(1) is achieved.',
+    "Propensity to disassemble and 'improve' working devices.",
+    'CPU stalls when coffee levels fall below 20%.',
+  ],
+  interests: [
+    { icon: 'Cpu', label: 'Embedded Systems' },
+    { icon: 'Cog', label: 'Robotics & Autonomy' },
+    { icon: 'Code', label: 'Machine Learning' },
+    { icon: 'Wrench', label: 'Hardware Tinkering' },
+  ],
+};
+
+export function getAboutContent(): AboutPageContent {
+  const filePath = path.join(contentDirectory, 'about', 'index.mdx');
+  
+  if (!fs.existsSync(filePath)) {
+    return defaultAboutContent;
+  }
+  
+  try {
+    const fileContent = fs.readFileSync(filePath, 'utf8');
+    const { data } = matter(fileContent);
+    
+    // Merge with defaults to ensure all fields exist
+    return {
+      deepDive: data.deepDive || defaultAboutContent.deepDive,
+      technicalSkills: data.technicalSkills || defaultAboutContent.technicalSkills,
+      strengths: data.strengths || defaultAboutContent.strengths,
+      weaknesses: data.weaknesses || defaultAboutContent.weaknesses,
+      interests: data.interests || defaultAboutContent.interests,
+    };
+  } catch (error) {
+    console.error('Error reading about content:', error);
+    return defaultAboutContent;
+  }
 }

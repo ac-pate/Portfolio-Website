@@ -15,11 +15,16 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-interface ExperiencePreviewProps {
-  jobs: ContentItem<JobFrontmatter>[];
+interface ExperiencePreviewContent {
+  subtitle: string;
 }
 
-export function ExperiencePreview({ jobs }: ExperiencePreviewProps) {
+interface ExperiencePreviewProps {
+  jobs: ContentItem<JobFrontmatter>[];
+  content: ExperiencePreviewContent;
+}
+
+export function ExperiencePreview({ jobs, content }: ExperiencePreviewProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -42,7 +47,7 @@ export function ExperiencePreview({ jobs }: ExperiencePreviewProps) {
         <div className="sticky top-0 z-20 pt-16 md:pt-20 py-1 bg-background/80 backdrop-blur-md -mx-4 px-4 mb-8 border-b border-white/5">
           <SectionHeading
             title="Experience"
-            subtitle="Professional experience in robotics, embedded systems, and engineering."
+            subtitle={content.subtitle}
             className="mb-0 md:mb-0"
           />
         </div>

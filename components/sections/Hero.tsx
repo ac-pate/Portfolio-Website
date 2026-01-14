@@ -14,10 +14,19 @@ if (typeof window !== 'undefined') gsap.registerPlugin(ScrollTrigger);
 const USE_YOUTUBE = true;
 const YOUTUBE_ID = 'aq0iCOYylgI';
 
+interface HeroContent {
+    tagline: string;
+    videoCaption: string;
+}
+
+interface HeroProps {
+    content: HeroContent;
+}
+
 const VideoBackground = memo(({ videoLoaded, shouldLoadVideo, videoRef }: any) => {
     if (!shouldLoadVideo) return <div className="absolute inset-0 bg-black" />;
     return (
-        <div className={`absolute inset-0 h-full w-full overflow-hidden transition-opacity duration-400 ${videoLoaded ? 'opacity-50' : 'opacity-0'}`} ref={videoRef} style={{ willChange: 'opacity, transform', pointerEvents: 'none' }}>
+        <div className="absolute inset-0 h-full w-full overflow-hidden opacity-0" ref={videoRef} style={{ willChange: 'opacity, transform', pointerEvents: 'none' }}>
             {USE_YOUTUBE ? (
                 <div id="hero-youtube-video" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none w-[102vw] h-[57.37vw] min-h-[102vh] min-w-[181.33vh]" />
             ) : (
@@ -29,12 +38,13 @@ const VideoBackground = memo(({ videoLoaded, shouldLoadVideo, videoRef }: any) =
     );
 });
 
-export function Hero() {
+export function Hero({ content }: HeroProps) {
     const heroRef = useRef<HTMLDivElement>(null);
     const stickyRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
     const videoRef = useRef<any>(null);
     const overlayRef = useRef<HTMLDivElement>(null);
+    const blackOverlayRef = useRef<HTMLDivElement>(null);
     const captionRef = useRef<HTMLDivElement>(null);
     const nameFirstRef = useRef<HTMLDivElement>(null);
     const nameSecondRef = useRef<HTMLDivElement>(null);
@@ -85,6 +95,50 @@ export function Hero() {
     };
 
     useEffect(() => syncAudio(currentPhaseRef.current), [soundsEnabled]);
+
+    // Track if the intro animation has completed
+    const introCompleteRef = useRef(false);
+    
+    // Auto-fade black background after name animation completes (not scroll-dependent)
+    useEffect(() => {
+        if (!preloaderDone || !blackOverlayRef.current) return;
+        
+        // Name animation finishes at: last letter of PATEL delay (0.45 + 4*0.05) + duration (0.7) = ~1.35s
+        // Add small buffer, start fading at ~1.5s after preloaderDone
+        const fadeDelay = 1.5;
+        const fadeDuration = 0.8;
+        
+        const timer = setTimeout(() => {
+            introCompleteRef.current = true;
+            // Fade out black overlay
+            gsap.to(blackOverlayRef.current, {
+                opacity: 0,
+                duration: fadeDuration,
+                ease: 'power2.out'
+            });
+            // If video is already loaded, fade it in now
+            if (videoLoaded && videoRef.current) {
+                gsap.to(videoRef.current, {
+                    opacity: 0.5,
+                    duration: fadeDuration,
+                    ease: 'power2.out'
+                });
+            }
+        }, fadeDelay * 1000);
+        
+        return () => clearTimeout(timer);
+    }, [preloaderDone]);
+    
+    // If video loads after intro complete, fade it in immediately
+    useEffect(() => {
+        if (videoLoaded && introCompleteRef.current && videoRef.current) {
+            gsap.to(videoRef.current, {
+                opacity: 0.5,
+                duration: 0.8,
+                ease: 'power2.out'
+            });
+        }
+    }, [videoLoaded]);
 
     useEffect(() => {
         if (!USE_YOUTUBE || !shouldLoadVideo || !videoRef.current || playerRef.current) return;
@@ -185,18 +239,37 @@ export function Hero() {
           }, 0);
 
         // Phase 2 (0.5-1.2): Other elements fade out FAST
-        tl.to(portfolioLabelRef.current, { opacity: 0, y: -30, duration: 0.4 }, 0.5)
-          .to(subtitleRef.current, { opacity: 0, y: 30, duration: 0.4 }, 0.5)
-          .to(buttonsRef.current, { opacity: 0, y: 40, duration: 0.4 }, 0.5)
-          .to(overlayRef.current, { opacity: 0, duration: 0.6 }, 0.5);
+        // Using fromTo() to explicitly define start/end values since Framer Motion also animates these
+        // Note: overlay is now auto-fading (not scroll-dependent), so removed from here
+        tl.fromTo(portfolioLabelRef.current, { opacity: 1, y: 0 }, { opacity: 0, y: -30, duration: 0.4 }, 0.5)
+          .fromTo(subtitleRef.current, { opacity: 1, y: 0 }, { opacity: 0, y: 30, duration: 0.4 }, 0.5)
+          .fromTo(buttonsRef.current, { opacity: 1, y: 0 }, { opacity: 0, y: 40, duration: 0.4 }, 0.5);
 
-        // Phase 3 (1.2-2.0): Name fades out SLOWER (stays longer)
-        tl.to(nameFirstRef.current, { opacity: 0, y: -60, duration: 0.8 }, 1.2)
-          .to(nameSecondRef.current, { opacity: 0, y: -40, duration: 0.8 }, 1.2);
+        // Phase 3 (1.2-2.0): Name exits with letter-by-letter animation (mirrors entrance)
+        // Get all letter spans inside each name container
+        const achalLetters = nameFirstRef.current?.querySelectorAll('span.inline-block') || [];
+        const patelLetters = nameSecondRef.current?.querySelectorAll('span.inline-block') || [];
+        
+        // Animate ACHAL letters sliding out (reverse of entrance)
+        achalLetters.forEach((letter, i) => {
+            tl.fromTo(letter, 
+                { y: '0%', opacity: 1 }, 
+                { y: '-110%', opacity: 0, duration: 0.3, ease: 'power2.in' }, 
+                1.2 + i * 0.04
+            );
+        });
+        
+        // Animate PATEL letters sliding out (reverse of entrance)
+        patelLetters.forEach((letter, i) => {
+            tl.fromTo(letter, 
+                { y: '0%', opacity: 1 }, 
+                { y: '-110%', opacity: 0, duration: 0.3, ease: 'power2.in' }, 
+                1.25 + i * 0.04
+            );
+        });
 
-        // Video fades in early and fast - starts right away
-        tl.to(videoRef.current, { opacity: 1, duration: 0.8 }, 0)
-          .to(captionRef.current, { opacity: 1, duration: 0.8 }, 1.0)
+        // Video caption fades in with scroll (video itself is now time-based, not scroll-dependent)
+        tl.to(captionRef.current, { opacity: 1, duration: 0.8 }, 0.5)
           .to(captionRef.current.querySelector('p'), { color: '#a3002a', fontSize: '0.875rem', duration: 0.8 }, 1.0);
 
         if (nav) {
@@ -212,6 +285,9 @@ export function Hero() {
             <div ref={stickyRef} className="h-screen w-full overflow-hidden">
                 <VideoBackground videoLoaded={videoLoaded} shouldLoadVideo={shouldLoadVideo} videoRef={videoRef} />
                 
+                {/* Solid black overlay - fades automatically after name animation */}
+                <div ref={blackOverlayRef} className="absolute inset-0 z-[2] bg-black pointer-events-none" />
+                
                 {/* Vignette overlay - subtle, lets image breathe while ensuring text contrast */}
                 <div ref={overlayRef} className="absolute inset-0 z-[5] pointer-events-none" style={{
                     background: 'radial-gradient(ellipse 80% 70% at 50% 45%, transparent 0%, rgba(0,0,0,0.6) 100%)'
@@ -225,7 +301,7 @@ export function Hero() {
                 >
                     <p className="text-white/70 text-[14px] md:text-[11px] font-['Poppins'] font-bold italic tracking-wide px-5 py-2 rounded-full backdrop-blur-md bg-black/60 whitespace-nowrap border border-white/10" 
                         style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
-                        Autonomous Bimanual Handover Using VLA model on LeRobot Framework — Mimic Robotics Capstone Project
+                        {content.videoCaption}
                     </p>
                 </div>
 
@@ -311,7 +387,7 @@ export function Hero() {
                             className="mt-8 md:mt-10 text-sm md:text-base lg:text-lg text-white/80 font-['Poppins'] font-normal tracking-wide"
                             style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}
                         >
-                            Robotics, Embedded Systems, Code That Moves
+                            {content.tagline}
                         </motion.p>
                     </div>
 

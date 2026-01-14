@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { AboutPage } from './AboutPage';
-import { getJobs, getEducation, getVolunteer } from '@/lib/mdx';
+import { getJobs, getEducation, getVolunteer, getAboutContent } from '@/lib/mdx';
 
 export const metadata: Metadata = {
   title: 'About',
@@ -11,6 +11,7 @@ export default function About() {
   const jobs = getJobs();
   const education = getEducation();
   const volunteer = getVolunteer();
+  const aboutContent = getAboutContent();
 
-  return <AboutPage jobs={jobs} education={education} volunteer={volunteer} />;
+  return <AboutPage jobs={jobs} education={education} volunteer={volunteer} content={aboutContent} />;
 }
