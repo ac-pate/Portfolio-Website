@@ -1,18 +1,18 @@
 ---
 title: 'Black Copy: Back with Vengeance — Robowars 2025'
-description: Engineered a competition sumo robot with advanced CAD design, custom PCB, and embedded C++ programming.
-term: Fall 2024
+description: The sequel to my first sumo robot — upgraded with brushless motors, Teensy 4.0, ToF sensors, and proper state machine architecture.
+term: Winter 2025
 startDate: 2024-11-01
-endDate: 2024-05-17
+endDate: 2025-05-17
 tags:
   - Embedded C++
-  - PCB Design
+  - Brushless Motors
+  - VESC
+  - Teensy 4.0
   - CAD
-  - 3D Printing
+  - Advanced 3D Printing
   - State Machine
-  - UART
-  - SPI
-  - I2C
+  - Time of Flight
 projectType:
   - Personal
   - Competition
@@ -21,29 +21,48 @@ github: https://github.com/ac-pate/robowars2025
 demo: ''
 featured: false
 status: completed
-date: 2024-02-01
+date: 2025-02-01
 ---
 ## Overview
 
-Engineered an autonomous Sumo robot for competition, achieving 4th place at Robowars 2025.
+Black Copy returns — bigger, faster, and properly engineered. After learning the fundamentals with my first sumo robot, I rebuilt the concept from the ground up with serious upgrades across every subsystem.
+
+This was one of two robots I entered into Robowars 2025. While Definitely Overkill went the computer vision route, Back with Vengeance focused on doing the fundamentals *right*: clean state machine logic, responsive sensors, and raw brushless power.
 
 ![](/images/uploads/screenshot-2025-10-22-032938.png)
+
+## What Changed from Black Copy V1
+
+| Component | V1 (2024) | V2 (2025) |
+|-----------|-----------|-----------|
+| Motors | Brushed DC | Brushless with VESCs |
+| Sensors | Analog IR | Digital Time-of-Flight |
+| Controller | Arduino | Teensy 4.0 |
+| Code | Ad-hoc logic | Finite State Machine |
+| Power | 3s - 12v Lipos | 6s - 24v LiPo with proper fusing |
 
 ## Technical Details
 
 ### Mechanical
-
-- Advanced CAD design using Fusion 360
-- Rapid prototyping with 3D printing
+- Refined CAD design in Fusion 360
 - Optimized weight distribution and low center of gravity
+- 3D printed chassis with improved tolerances
 
 ### Electronics
-
-- Custom PCB design
-- Multiple communication protocols: UART, SPI, I2C
+- **Brushless motors** with VESC speed controllers
+- **Time-of-Flight sensors** for precise distance measurement
+- **Teensy 4.0** for faster processing and better I/O
+- **LiPo power system** with proper fusing and power distribution
 
 ### Software
+- **Finite State Machine architecture** for clean, predictable behavior
+- Embedded C++ with proper abstractions
+- Sensor fusion for opponent detection and tracking
+- Communication protocols: UART, SPI, I2C
 
-- Embedded C++ programming
-- State machine architecture for behavior control
-- Sensor fusion for opponent detection
+## What I Learned
+
+- **Brushless motor control**: Understanding VESC configuration, sensorless vs sensored FOC operation, and current limits
+- **Power systems**: LiPo battery management, fusing, and safe discharge rates
+- **State machines**: How to structure embedded code for maintainability and debugging
+- **Iteration**: The value of rebuilding a project with lessons learned

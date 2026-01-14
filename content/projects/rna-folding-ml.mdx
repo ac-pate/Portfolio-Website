@@ -1,15 +1,20 @@
 ---
-title: RNA Folding - Machine Learning Project
-description: Developed a machine learning model to predict RNA sequence folding patterns and base pair matching for COEN 432 Project.
+title: RNA Folding Prediction — Custom Transformer Architecture
+description: Built a DeepResUNet-Transformer hybrid from scratch, achieving the highest F1 score in a class of PhD and Master's students.
 term: Fall 2025
 startDate: 2025-10-01
-endDate: 2024-12-01
+endDate: 2025-12-01
 tags:
   - Machine Learning
   - Python
-  - RNA
+  - PyTorch
+  - Transformers
+  - U-Net
+  - ResNet
   - Bioinformatics
-  - Neural Networks
+  - Kaggle
+projectType:
+  - Academic
 image: /images/uploads/hybridrna_architecture.png
 coverImage: /images/uploads/deepresunetse_architecture.png
 galleryImages:
@@ -23,19 +28,65 @@ github: https://github.com/ac-pate/Evolutionary-Algorithms-and-Machine-Learning
 demo: ''
 featured: true
 status: completed
-date: 2024-09-01
+date: 2025-09-01
 ---
 ## Overview
 
-Course project for Evolutionary Algorithm and Machine Learning course focusing on RNA folding prediction.
+Course project for COEN 432 (Evolutionary Algorithms and Machine Learning) that turned into one of my biggest academic wins. The task: predict how RNA sequences fold in 3D space — which nucleotides pair with which.
 
-## Problem Statement
+**Result: Highest F1 score in the entire class.**
 
-Given a set of random RNA sequences, predict how each sequence will fold and determine which nucleotides can pair with each other in 3D space.
+The class was full of PhD and Master's students. I'm an undergraduate. I beat them all — and not by a small margin.
 
-## Approach
+## The Challenge
 
-- Developed custom ML model for sequence analysis
-- Trained on known RNA folding patterns
-- Predicted base pair probabilities
-- Validated against known structures
+Given an RNA sequence (a string of A, U, G, C nucleotides), predict its 3D folding pattern. Specifically: output a contact map showing which bases pair with each other.
+
+This is a real bioinformatics problem. RNA structure determines function, and accurate prediction has implications for drug design, genetic research, and understanding disease mechanisms.
+
+## My Approach
+
+Instead of using an off-the-shelf architecture, I built a hybrid model from scratch:
+
+### DeepResUNet-Transformer
+
+| Component | Purpose |
+|-----------|---------|
+| **ResNet backbone** | Extract hierarchical features from sequence data |
+| **U-Net architecture** | Encoder-decoder with skip connections for spatial precision |
+| **Custom Transformer** | Capture long-range dependencies between nucleotides |
+
+I implemented the transformer attention mechanism myself — not imported from a library, but built from scratch to understand exactly how it works.
+
+## The Learning Process
+
+This wasn't just about winning. I spent immense time learning:
+- How U-Net works (and why skip connections matter)
+- How ResNet's residual connections enable deep networks
+- How transformers capture relationships across long sequences
+- Training dynamics, hyperparameter sweeps, and debugging loss curves
+
+## Competition Format
+
+This was structured as a Kaggle competition with:
+- **Public leaderboard**: Feedback during development
+- **Private leaderboard**: Final evaluation (hidden test set)
+
+I had the highest score on both.
+
+When I asked the professor for feedback, he confirmed: *"You have the highest score by far, by a big margin."*
+
+## Why Solo?
+
+The project allowed teams of two. I chose to work alone — not because I don't like collaboration, but because I wanted to learn everything deeply. Every architecture choice, every training run, every failure was mine to understand.
+
+## Technical Details
+
+- **Framework**: PyTorch
+- **Training**: Multiple architecture experiments, hyperparameter sweeps
+- **Metrics**: F1 score optimization for imbalanced base-pair prediction
+- **Hardware**: GPU training with mixed precision (FP16)
+
+## What This Proved
+
+I can compete with graduate students in ML when I put in the work. The key wasn't being smarter — it was investing the time to truly understand what I was building instead of copy-pasting someone else's solution.

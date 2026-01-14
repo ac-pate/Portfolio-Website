@@ -1,15 +1,16 @@
 ---
 title: MakeUofT 2024
-description: Representing IEEE Concordia at University of Toronto for a 24hr Hardware Hackathon
+description: Canada's largest hardware hackathon — built a Braille card stamping machine with bidirectional translation in 24 hours.
 startDate: 2024-02-17
 endDate: 2024-02-18
 type: competition
-location: Toronto, ON
+location: University of Toronto, Toronto, ON
 tags:
   - CAD
-  - Fusion
-  - Image Processing
+  - Fusion 360
   - Computer Vision
+  - Arduino
+  - Accessibility
   - Hackathon
 image: /images/uploads/20240218_145831.jpg
 coverImage: /images/uploads/20240217_145723.jpg
@@ -20,4 +21,39 @@ link: ''
 award: ''
 term: Winter 2024
 ---
--
+## Overview
+
+MakeUofT is Canada's largest make-a-thon — a 24-hour hardware hackathon hosted at the University of Toronto. Two teams from IEEE Concordia made the trip; one team won 1st place. I was on the other team.
+
+## What We Built: Braille Translation Machine
+
+An accessibility device for visually impaired users that works in both directions:
+
+### Text → Braille
+- User types text on a computer
+- Machine stamps Braille characters onto blank cards
+- Output: Physical Braille cards that can be read by touch
+
+### Braille → Text
+- Camera scans an existing Braille card
+- Computer vision detects and decodes the dot patterns
+- Output: Digital text displayed on screen or read aloud
+
+## Technical Implementation
+
+| Component | Technology |
+|-----------|------------|
+| Mechanical | Custom CAD in Fusion 360, 3D printed parts |
+| Actuation | Arduino-controlled stamping mechanism |
+| Vision | OpenCV for Braille dot detection |
+| Translation | Custom encoding/decoding logic |
+
+## My Contribution
+
+- CAD design and mechanical assembly
+- Integration between software and hardware systems
+- Rapid prototyping under time pressure
+
+## The 24-Hour Experience
+
+This was my first exposure to MakeUofT's intensity — designing, building, and debugging a functional hardware prototype overnight. The other IEEE team took home 1st place, which only motivated me to come back stronger the next year.

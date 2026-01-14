@@ -1,6 +1,6 @@
 ---
-title: Modern Control Theory - Linear Systems Project
-description: Designed state-feedback controller and observers for 2-DOF torsional apparatus for ELEC 481 Course.
+title: Modern Control Theory — Linear Systems Project
+description: Designed state-feedback controllers and observers for a 2-DOF torsional apparatus simulating satellite docking — ELEC 481 course project.
 term: Fall 2025
 startDate: 2025-09-22
 endDate: 2025-12-15
@@ -10,26 +10,48 @@ tags:
   - Control Systems
   - State-Space
   - Observer Design
+  - PID
+projectType:
+  - Academic
 image: /images/uploads/lab_ecp_equipment_girzoj.jpg
 coverImage: /images/uploads/q8_3_pid_noise_comparison_pscxfq.png
 github: https://github.com/ac-pate/ELEC-4E1-Linear-Systems
 demo: ''
+report: ''
 featured: false
 status: completed
-date: 2024-09-01
+date: 2025-09-01
 ---
 ## Overview
 
-Course project for ELEC 481 - Linear Systems, designing a PID, State Feedback Controller, and Full-Order $ Reduced-Order Observers for a 2-DOF torsional apparatus.
+Course project for ELEC 481 (Linear Systems) focused on advanced control system design. The challenge: control a 2-DOF torsional apparatus that simulates the dynamics of satellite docking — specifically the torsional stress applied when two spacecraft modules connect.
 
-## Application
+**Grade: 90/100**
 
-Simulating satellite docking or sub-module docking in space, specifically the torsional stress applied during connection.
+## The Physical System
 
-## Technical Work
+A laboratory apparatus with two rotating discs connected by a flexible shaft. The dynamics mimic the oscillations and coupling effects you'd see in real spacecraft docking scenarios.
 
-- State-space modeling of the 2-DOF system
-- State-feedback controller design
-- Full-order observer implementation
-- Reduced-order observer implementation
-- All work done in MATLAB/Simulink
+## Controllers Implemented
+
+### 1. PID Controller
+Baseline approach — tune proportional, integral, and derivative gains for acceptable performance.
+
+### 2. State Feedback Controller
+Full state feedback using pole placement. Faster response and better damping than PID, but requires all states to be measurable.
+
+### 3. Full-Order Observer
+Estimate all system states from limited measurements. Combined with state feedback for output-only control.
+
+### 4. Reduced-Order Observer
+More efficient observer that only estimates unmeasured states. Faster computation, same control performance.
+
+## Technical Stack
+
+- **MATLAB**: System modeling, controller design, analysis
+- **Simulink**: Real-time simulation and visualization
+- **State-space methods**: Modern control theory throughout
+
+## Application Context
+
+Why satellite docking? Because when two modules connect in orbit, the torsional dynamics are critical. Over-aggressive control causes oscillations. Under-damped response causes structural stress. Getting it right requires exactly the kind of controller tuning we practiced in this project.

@@ -2,320 +2,274 @@
 
 ## Basic Info
 - **Name**: Achal Patel
-- **Status**: 4th Year Computer Engineering Student
+- **Status**: 4th Year Computer Engineering Student (Co-op)
 - **University**: Concordia University, Montreal, QC
 - **Background**: International student from India
 - **Email**: achalypatel3403@gmail.com
 - **GitHub**: https://github.com/ac-pate
 - **LinkedIn**: https://www.linkedin.com/in/achal-patel-3ab6b7270
 
+---
+
 ## Professional Summary
-4th year Computer Engineering student passionate about robotics, autonomous systems, and intelligent machines. Specializes in embedded systems, ROS2 development, computer vision, and control systems. Experience spans from low-level hardware (FPGA, microcontrollers) to high-level AI/ML systems (VLA models, imitation learning).
 
-## Core Interests & Expertise
+4th year Computer Engineering student specializing in embedded systems, ROS2, computer vision, control systems, and AI-powered robotics. Came to Concordia with chip manufacturing as the dream, discovered robotics through competition, pursued both paths until CEC 2025 national win sealed the commitment to robotics. Now focused on imitation learning and VLA models for bimanual manipulation.
 
-### Robotics & Autonomous Systems
-- **Passion**: Dreams about robotics daily, especially cutting-edge technologies
-- **AI/ML in Robotics**: Vision-Language-Action (VLA) models, imitation learning, generalized policies
-- **Control Systems**: Optimal control, Model Predictive Control (MPC), state-space control, PID tuning
-- **Sensor Fusion**: Kalman filtering, sensor fusion algorithms (A+ in ML course)
-- **Cameras & Vision**: Visual odometry, stereo cameras (ZED2), point clouds, depth sensing
-- **LiDAR**: Point cloud processing and SLAM
-- **Simulation**: Isaac Sim, Gazebo, virtual environments
+---
 
-### ROS2 Ecosystem
-- ROS2 Humble/Jazzy
-- ROS2 Control (hardware drivers, custom implementations)
-- SLAM Toolbox
-- Nav2 stack
-- Custom package development
+## The Full Timeline
 
-### Communication Protocols
-- **Fieldbus**: CAN, SPI, I2C
-- **Wireless**: WiFi, Bluetooth, Zigbee, Thread
-- **IoT**: MQTT, HTTP, REST APIs
-- **All OSI Layers**: Deep understanding of networking stack
+### The Original Dream
+- Came to Concordia wanting to design chips — chose Computer Engineering for semiconductor manufacturing
+- This was the plan. Robotics wasn't on the radar.
 
-### Hardware & Embedded Systems
-- **Microcontrollers**: ESP32, STM32, Arduino
-- **Single Board Computers**: Jetson Nano, Jetson AGX, Raspberry Pi
-- **FPGA**: VHDL, SystemVerilog, 32-bit CPU design, multicore architectures
-- **Custom PCB Design**: Hardware prototyping and manufacturing
-- **Chip Architecture**: High-Performance Space Computers (HPSC), Ethernet chips
+### Winter 2024: The Accidental Spark — Robowars
+- Signed up for Robowars competition just to participate
+- To compete, had to build a robot → built **Black Copy** (solo, no prior experience)
+- Placed 4th at Robowars 2024
+- **Got hooked on robotics** — but chip manufacturing was still the career goal
+- Same term as ENGR 290 hovercraft project (4th place, best-looking design)
 
-### Programming & Tools
-- **Languages**: Python, C/C++, VHDL, SystemVerilog, MATLAB
-- **ML/AI**: PyTorch, TensorFlow, training custom models (CV, LLMs, VLA)
-- **CAD**: Fusion 360, SolidWorks
-- **Version Control**: Git, GitHub
-- **OS**: Linux (Ubuntu, embedded Linux)
-- **Tools**: Docker, VS Code, CMAKE
+### Summer 2024: VP Projects at IEEE Concordia
+- Started leading multi-disciplinary projects — not just robotics
+- **FPGA project**: 32-bit multicore CPU design
+- **IoT Automation**: Smart lab with Home Assistant, Zigbee, MQTT
+- **Robotic Arm**: ROS2, MoveIt2, custom hardware
+- **Drone project**: ArduPilot, optical flow
+- Took pride in being multi-disciplinary, not just a "robotics guy"
+
+### Fall 2024: Microchip Internship
+- Interned at Microchip Technology
+- Validated 800G Ethernet PHYs with 112G PAM4 SerDes
+- **Got trained on NASA HPSC** (High-Performance Spaceflight Computing) — learned how the project worked, understood the architecture
+- **Genuinely loved chip manufacturing** — this wasn't a rejection, it was a comparison
+- Meanwhile: won Englympic (qualified for QEC), still running robotics projects on the side
+
+### Winter 2025: The Realization — QEC
+- QEC 2025: 2nd place, qualified for nationals
+- After QEC + having completed Microchip internship, the realization hit:
+- "I want to be the one USING that HPSC chip, not the one MAKING it."
+- Still pursuing both paths, but leaning robotics
+
+### March 2025: The Decision — CEC
+- Won Canadian Engineering Competition (national level) in Halifax
+- First Concordia win in decades
+- Won by such a margin that even the competition organizers were baffled
+- Thought outside the expected solution — details in the project section
+- **This sealed it.** Committed fully to robotics.
+
+### Summer 2025 – Present: All-In on Robotics
+- Research internship at CUARL on CRAWLR (one articulated wheel-legged rover)
+- Built ROS2 motion controllers (ros2_control, ros2_canopen, MoveIt2)
+- Perception-based position estimation using ZED camera
+- Now co-leading MIMIC capstone with McGill MRL — bimanual imitation learning
+
+---
 
 ## Professional Experience
 
 ### CUARL (Concordia University Aerospace Robotics Lab)
 **Position**: Robotics Research Intern  
-**Duration**: Summer 2025 - December 2025 (Full-time summer, Part-time fall)  
-**Project**: Articulated Wheel-Legged Rover (Extraterrestrial Exploration)
+**Duration**: Summer 2025 – December 2025 (Full-time summer, Part-time fall)  
+**Supervisor**: Dr. Krzysztof Skonieczny  
+**Project**: CRAWLR — Articulated wheel-legged rover for extraterrestrial exploration research
 
-**Responsibilities & Achievements**:
-- Designed and implemented virtual CAN bus system for simulation
-- Developed complete Gazebo simulation environment for the rover
-- Created position tracking system using ZED2 stereo camera
-  - Offline mode: ArUco marker-based tracking for fast processing
-  - Real-time mode: Stereo vision point cloud processing on Jetson AGX
-- **Key Impact**: Enabled closed-loop control for motion algorithms (previously only open-loop)
-- Collaborated with PhD student on testing and data collection for paper publication
-- Worked with 4-legged rover where each leg is a 3-DOF robotic arm (12 DOF total + wheel)
+**Key Contributions**:
+- ROS2 motion controllers: ros2_control, ros2_controllers, ros2_canopen integration
+- Motor control over CAN (EPOS4) with Virtual CAN workflow for hardware-identical testing
+- Xacro conditional plugin loading for seamless sim/hardware switching
+- Complete Xbox joystick teleoperation package (Joy → Twist → CAN)
+- Perception-based position estimation using ZED2 camera and ArUco markers (20-30 Hz)
+- Enabled closed-loop control for motion algorithms (previously only open-loop)
 
-**Technologies**: ROS2, Gazebo, ZED2 SDK, Stereo Vision, Point Clouds, Visual Odometry, CAN Bus, Jetson AGX, C++, Python
+**Technologies**: ROS2, ros2_control, ros2_canopen, Gazebo, ZED SDK, CAN Bus, Xacro, C++, Python
 
-### Microchip Technology
+### Microchip Technology Inc.
 **Position**: Validation Engineering Intern  
 **Duration**: Fall 2024  
-**Focus**: Ethernet Chip Development & High-Performance Space Computing
+**Location**: Montreal, QC
 
-**Responsibilities**:
-- Worked on Ethernet chip validation and testing
-- Contributed to High-Performance Space Computer (HPSC) development
-- Gained experience in chip manufacturing, validation protocols, and hardware testing
+**Key Responsibilities**:
+- Validated 800G Ethernet PHYs with 112G PAM4 SerDes
+- Designed test scenarios using Pytest for IEEE standards compliance
+- SystemVerilog for hardware verification
 
-**Key Insight**: Realized passion lies in using technology (robotics applications) rather than manufacturing chips, leading to pivot toward robotics
+**Training Received**:
+- Got trained on NASA HPSC (High-Performance Spaceflight Computing) architecture
+- Learned how the project worked, understood the chip architecture
+- This training led to the realization: "I want to USE this chip, not MAKE it"
 
-**Technologies**: Ethernet protocols, HPSC architecture, chip validation tools, embedded C
+**Note**: Genuinely loved this work. The pivot to robotics wasn't rejection — it was preference when forced to choose.
 
 ### Concordia University - Teaching Assistant
-**Position**: TA for Computer Engineering Courses  
-**Duration**: Fall 2024 - Present (Part-time)  
+**Position**: TA for Engineering Courses  
+**Duration**: Summer 2024 – Present  
 **Courses**:
-- VHDL programming for Mechanical & Aerospace Engineers
-- Digital Programming courses
-- Electronics for Software Engineers
+- SOEN 228: System Hardware (building 4-bit RISC CPU on breadboard)
+- COEN 313: Digital Systems Design II (FPGA/VHDL)
+- MIAE 215: Programming for Mechanical Engineers (C++, robotics projects)
 
-**Responsibilities**:
-- Teaching FPGA design and VHDL programming
-- Assisting students with digital logic and embedded systems concepts
-- Grading assignments and providing technical support
+---
 
-## Academic Projects
+## Leadership Experience
 
-### MIMIC - Dual-Arm Mobile Robot (Capstone Project)
-**Duration**: Fall 2025 - Present  
-**Goal**: Create a humanoid robot capable of performing any task through VLA models and imitation learning
+### IEEE Concordia - VP of Projects (May 2024 – May 2025)
+**Key Achievements**:
+- Oversaw 6+ technical projects across **multiple disciplines** (not just robotics):
+  - **Robotics**: Drone, Robotic Arm, SumoBot
+  - **Electronics/FPGA**: 32-bit multicore CPU design in VHDL
+  - **IoT/Infrastructure**: Smart Lab with Home Assistant, Zigbee, MQTT, Coral TPU
+  - **Embedded**: Smart Bin with camera-based sorting
+- Secured ~$11,000 in funding from university, IEEE Montreal, and partners
+- Formed competition teams for MakeUofT, Englympic, QEC, CEC, Robowars
+- Mentored students in programming, electronics, CAD, Git, leadership
+- Directors trained under me now hold leadership roles (including current VP Projects)
 
-**System Architecture**:
-- 2x UR10 collaborative robotic arms
-- Omnidirectional mobile base
-- Vision-Language-Action (VLA) model integration
-- Imitation learning framework
+**Pride Point**: Multi-disciplinary builder, not just a "robotics guy" — touched everything from FPGA to IoT to ML
 
-**Partner**: McGill Mobile Robotics Lab (joint project)
+---
 
-**Achievements**:
-- Revamped legacy ROS1 industrial bi-manual robot to ROS2
-- Designed and built custom teleoperation system for dual-arm control
-- Implemented data collection pipeline for imitation learning
-- Training generalized policies for task execution
-- Currently in data collection and model training phase
+## Major Projects
 
-**Goal**: Enable zero-shot task execution through VLA models - robot can understand and execute tasks it has never seen before
+### MIMIC — Capstone Project (Fall 2025 – Present)
+**Collaboration**: Concordia + McGill Mobile Robotics Lab (MRL)
+**Supervisors**: Dr. Krzysztof Skonieczny (Concordia), Dr. Meyer (McGill)
+**Team**: 7 members (2 leads, multidisciplinary)
 
-**Technologies**: ROS2, UR10 arms, MoveIt2, imitation learning, VLA models, PyTorch, teleoperation, mobile manipulation
+**Goal**: Bimanual mobile robots for imitation learning research
+- Concordia side: Low-cost platform (Mecanum base + SO-101 arms)
+- McGill side: Revive MOVO industrial robot (Kinova Jaco arms)
+- Custom teleoperation system for data collection
+- VLA model training and evaluation
 
-### IEEE Concordia - VP of Projects (3rd Year)
-**Position**: Vice President of Projects  
-**Duration**: 2024-2025 Academic Year  
-**Organization**: IEEE Concordia Student Branch
+### Competition Robots
+| Robot | Year | Result |
+|-------|------|--------|
+| Black Copy | 2024 | 4th Place (Robowars) |
+| Back with Vengeance | 2025 | Competed (Robowars) |
+| Definitely Overkill | 2025 | Competed (Robowars) |
 
-**Role**: Led multiple project teams, managed funding applications, oversaw technical execution
+### Notable Course Projects
+- **RNA Folding ML**: Highest F1 score in class of PhD/Master's students (custom transformer)
+- **EKF Sensor Fusion**: IMU/GNSS fusion for vehicle position estimation
+- **Linear Systems**: 90/100, state-feedback controllers for satellite docking sim
 
-#### Project 1: Autonomous Hovering Drone
-- Built autonomous drone with optical flow-based hovering
-- Implemented FPV system for real-time camera feed
-- Custom flight controller development
+---
 
-#### Project 2: IoT Lab Automation System
-- Complete smart lab overhaul for IEEE Concordia electronics lab
-- Integrated devices: 3D printers, security cameras, monitors, computers, custom sensors
-- Technologies:
-  - Custom Zigbee IoT devices
-  - ESP32-based WiFi sensors (temperature, PIR motion, cameras)
-  - Alexa voice control integration
-  - Unified dashboard for monitoring and control
-- Created centralized control system for all lab equipment
+## Competition History
 
-#### Project 3: 6-Axis Robotic Arm (Belt-Drive Design)
-- Led multidisciplinary team to build robotic arm from scratch
-- Belt-driven actuation system
-- ROS2 Control integration with custom hardware drivers
-- Full kinematics and motion planning implementation
+| Competition | Year | Result | Role |
+|-------------|------|--------|------|
+| CEC (Canadian Engineering Competition) | 2025 | **1st Place — National Champions** | Programming Lead |
+| QEC (Quebec Engineering Competition) | 2025 | 2nd Place | Programming Lead |
+| Englympic | 2024 | 1st Place | Programming Lead |
+| MakeUofT | 2025 | Participated | Team Member |
+| MakeUofT | 2024 | Participated | Team Member |
+| Robowars | 2024 | 4th Place | Solo |
+| Robowars | 2025 | Competed (2 robots) | Solo |
+| IEEEXtreme 18.0 | 2023 | Participated | Team Member |
+| Autonomous Hovercraft | 2024 | 4th Place (3rd in hearts) | Team Lead |
 
-#### Project 4: FPGA 32-bit Multicore CPU
-- Designed 32-bit CPU core in VHDL
-- Each team member created unique core with custom optimizations
-- Combined multiple cores into multicore CPU architecture
-- Tested and validated on FPGA development board
+**CEC 2025 Story**: Thought outside the expected solution. Completed the task in 2.6 seconds while the organizers' own solution took 1 minute. No other team completed even one cycle. Won by such a margin that even the competition creators were baffled — we got full points while everyone else got zero. (Details in project section.)
 
-#### Project 5: Autonomous Sumobot (RoboWars Competition)
-- Designed and built autonomous sumobot
-- Sensor fusion for opponent detection
-- Competition-ready control algorithms
+---
 
-### IEEE Concordia - VP Marketing (2nd Year)
-**Position**: Vice President of Marketing  
-**Duration**: 2023-2024 Academic Year  
-**Responsibilities**: Marketing campaigns, event promotion, preliminary technical projects
+## Workshops Given
+| Workshop | When | Attendees | Duration |
+|----------|------|-----------|----------|
+| Intro to 3D Modeling & Printing (Fusion 360) | Fall 2024 | ~35 | 3 hours |
+| Intro to Microcontrollers (ESP32) | Winter 2025 | ~35 | 3 hours |
+| Formula WIEEE - Intro to Robotics | Fall 2025 | 120+ | 2 hours |
 
-## Education
+---
 
-### Concordia University - Bachelor of Engineering
-**Program**: Computer Engineering  
-**Year**: 4th Year (2022-2026)  
-**Status**: International Student from India
-
-**Notable Courses**:
-- Machine Learning (Graduate Level) - **Grade: A+**
-- Advanced Control Systems (Graduate Level)
-- Kalman Filtering and Sensor Fusion (Graduate Level)
-- FPGA Design and VHDL
-- Embedded Systems
-- Digital Signal Processing
-- Computer Architecture
-- Robotics
-
-## Technical Skills Summary
+## Technical Skills
 
 ### Expert Level
-- ROS2 Development
+- ROS2 Development (ros2_control, ros2_canopen, MoveIt2)
 - Python (ML, Robotics, Automation)
-- C/C++ (Embedded, Robotics)
-- Embedded Systems (ESP32, STM32, Arduino)
-- Computer Vision (OpenCV, ZED SDK)
-- FPGA Design (VHDL)
+- C/C++ (Embedded, Real-time)
+- Embedded Systems (ESP32, Teensy, STM32, Arduino)
+- CAD & 3D Printing (Fusion 360)
 - Linux
 
 ### Advanced Level
-- Machine Learning (PyTorch, TensorFlow)
-- Control Systems (MPC, Optimal Control, PID)
-- Sensor Fusion (Kalman Filtering)
+- Machine Learning (PyTorch, Hugging Face, custom architectures)
+- Computer Vision (OpenCV, YOLO, ZED SDK, RealSense, SLAM)
+- State Estimation (Kalman Filtering, Sensor Fusion, EKF/UKF)
+- Control Systems (State-space, PID, MPC, Optimal Control)
 - Gazebo Simulation
-- CAN Bus, SPI, I2C
-- PCB Design
-- Jetson Platforms
+- CAN Bus, SPI, I2C, UART, BLE, WiFi, MQTT, Zigbee
+- Jetson Platforms (Nano, Orin, AGX)
+- FPGA/VHDL
 
 ### Proficient Level
-- VLA Models
-- Imitation Learning
-- SLAM
-- IoT Systems (Zigbee, Thread, MQTT)
-- CAD (Fusion 360)
+- VLA Models & Imitation Learning
+- LeRobot, Behavior Cloning
+- IoT Systems (Home Assistant, Node-RED, Coral TPU)
 - Docker
-
-## Personal Interests
-- Building custom robots and automation systems
-- Training ML models (CV, LLMs, VLA)
-- ESP32 and Jetson Nano projects
-- PC building and hardware tinkering
-- Camera systems and computer vision
-- Following latest robotics research and technologies
-
-## Career Pivot Story
-Started with passion for chip manufacturing → Interned at Microchip Technology → Realized wants to USE technology, not manufacture it → Pivoted fully to robotics and autonomous systems → Now focused on building intelligent machines that interact with the physical world
-
-## Current Focus (2026)
-- Completing MIMIC capstone project
-- Training VLA models for generalized robotic manipulation
-- Exploring career opportunities in robotics and autonomous systems
-- Teaching next generation of engineers as TA
-- Looking for full-time positions in robotics/autonomous systems after graduation
+- ArduPilot
 
 ---
 
-# Summary
-
-Thanks for checking out my portfolio. This is a compressed but honest snapshot of how my interests evolved, what changed my mind along the way, and why robotics eventually won.
-
----
-
-## A Slightly Longer but More Accurate Timeline
-
-### What I Thought I Wanted to Be (Top Row)
-
-- 🦷 Dentist  
-- 🔧 Tinkerer / Builder  
-- 💻 Programmer  
-- 🧠 Aspiring Chip Designer  
-- ⚙️ Computer Engineering Student  
-- 🤖 Robotics Engineer  
-- 🚀 Robotics Researcher and Systems Engineer (in progress)
+## Personal Interests (Non-Technical)
+- 🚀 Rockets & SpaceX (the original obsession)
+- 🌌 Space & Cosmos
+- 🎬 Movies (loves them)
+- 📸 Photography
+- 🌱 Gardening
+- 🥾 Hiking
+- ✈️ Traveling to new places
+- 📈 Portfolio management & investing
+- 🔐 Cybersecurity
+- 🎯 Trying new hobbies in general
 
 ---
 
-### Life Phases and Turning Points (Bottom Row)
+## Personality & Work Style
 
-- **Early Childhood Phase, India**  
-  Wanted to be a dentist for reasons that no longer make sense.  
-  That dream quietly disappeared.
+### Strengths
+- Comfortable across the full stack — firmware to ML inference
+- Can take a project from CAD to competition podium, solo if needed
+- Multi-disciplinary builder: robotics, electronics, FPGA, IoT, whatever needs doing
+- Thinks outside the expected solution when it matters
+- Deep technical curiosity (builds custom transformers for fun)
 
-- **Curious Kid Phase, India**  
-  Didn’t know what career I wanted, but always wanted to build, take things apart, and tinker.  
-  Creating things mattered more than the title.
-
-- **High School Phase, India**  
-  Discovered programming and realized I enjoyed making things work through code.  
-  Considered Computer Science seriously.
-
-- **Decision Phase, Montreal**  
-  Chose Computer Engineering at Concordia over Computer Science because hardware mattered.  
-  Became deeply interested in chip design and semiconductor manufacturing.
-
-- **Semiconductor Focus Phase**  
-  First internship at Microchip Technology.  
-  Worked on high performance computing systems used in aerospace contexts, including NASA-related projects.  
-  Learned a lot about chip design and manufacturing.
-
-- **First Robotics Spark, Ego Included**  
-  Entered my first robotics competition purely out of ego.  
-  Built an autonomous sumo robot for Robowars.  
-  It was my first real robotics project.  
-  It didn’t work as planned, but I had way too much fun.
-
-- **Realization Phase, Post Internship**  
-  During and after the Microchip internship, realized something important.  
-  I wanted to be the person *using* powerful computers, not the person manufacturing them.  
-  This was the moment I **doubled down on robotics**.
-
-- **Teaching and Foundations Phase**  
-  Started working as a Teaching Assistant before internships.  
-  TAed VHDL, programming basics, and electronics basics.  
-  Strengthened fundamentals while continuing to build robots on the side.
-
-- **Robotics Research Phase**  
-  Research internship at Concordia Aerospace Robotics Lab.  
-  Worked on aerospace rover systems.  
-  Contributed to computer vision, localization, and navigation pipelines.  
-  This experience locked in my interest in robotics research.
-
-- **Competition Validation Phase**  
-  Participated in multiple robotics competitions at the national level.  
-  Won the Canadian Engineering Competition in March 2025.  
-  This was the moment I **tripled down on robotics**.
-
-- **Current Phase, Montreal**  
-  Computer Engineering student focused on robotics and embedded systems.  
-  Research experience, competitions, teaching, and projects all point in the same direction now.  
-  Still building, still learning, still refining what kind of robotics engineer I want to be.
+### Weaknesses (Self-Aware)
+- Will over-scope a project if not stopped early
+- Tendency to optimize past diminishing returns
+- Sometimes prioritizes build quality over shipping speed
+- Runs on coffee. This is a hard dependency.
 
 ---
 
-## Current Focus
+## Career Direction
 
-- Robotics systems  
-- Embedded systems  
-- Computer vision and autonomy  
-- Navigation and motion planning  
-- Making machines move, sense, and behave intelligently  
+**Origin**: Came to Concordia for chip manufacturing → discovered robotics through competition → loved both → robotics won
 
-(Still taking suggestions.)
+**Goal**: Robotics engineer/researcher working on autonomous systems that perceive and act in the real world
+
+**Ideal Role**:
+- R&D in robotics or autonomous systems
+- Work that spans hardware and software
+- AI/ML applied to physical systems
+- Space robotics would be the dream (combining the original rocket obsession with robotics)
+- Preference for startups or research labs over pure corporate
+
+**Graduation**: May 2026
+
+---
+
+## Notable Quotes & Self-Descriptions
+- "I genuinely liked chip manufacturing. I just liked robotics more."
+- "I want to be the one USING that HPSC chip, not the one MAKING it."
+- "Sometimes the best solution isn't the obvious one."
+- "I built something I was proud to put my name on — and good enough to earn a spot on someone's shelf"
+- The pivot wasn't rejection of one path — it was preference when forced to choose
+- Multi-disciplinary builder: robotics, electronics, FPGA, IoT — not just one thing
+- Calls himself a robotics engineer, not software developer
+- Prefers black color for all builds
+
+---
 
 **Last Updated**: January 2026

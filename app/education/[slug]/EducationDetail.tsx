@@ -9,6 +9,7 @@ import remarkGfm from 'remark-gfm';
 import type { ContentItem, EducationFrontmatter } from '@/lib/mdx';
 import { formatDateRange } from '@/lib/utils';
 import { HorizontalGallery } from '@/components/ui/HorizontalGallery';
+import GlowWrapper from '@/components/ui/GlowWrapper';
 
 interface EducationDetailProps {
   education: ContentItem<EducationFrontmatter>;
@@ -27,13 +28,15 @@ export function EducationDetail({ education }: EducationDetailProps) {
           transition={{ duration: 0.3 }}
           className="mb-8"
         >
-          <Link
-            href="/education"
-            className="inline-flex items-center gap-2 text-foreground-secondary hover:text-accent transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Education
-          </Link>
+          <GlowWrapper preset="button" className="rounded-lg" showHighlight={false}>
+            <Link
+              href="/education"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white/5 hover:bg-white/10 text-foreground-secondary hover:text-white font-medium rounded-lg transition-all duration-200 hover:shadow-glow-sm border border-white/10 hover:border-white/20"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Education
+            </Link>
+          </GlowWrapper>
         </motion.div>
 
         {/* Header */}

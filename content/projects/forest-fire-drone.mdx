@@ -1,16 +1,15 @@
 ---
-title: The Autonomous Drone  Project
-description: Building a custom drone with GPS mission planning, optical flow altitude hold, FPV head-tracking gimba.
+title: The Autonomous Drone Project
+description: An IEEE Concordia project that evolved from competition drone to autonomous hovering platform — learning ArduPilot, optical flow, and PID tuning along the way.
 term: Summer 2024
 startDate: 2024-05-01
 endDate: 2024-11-30
 tags:
   - Drone
-  - Computer Vision
-  - MediaPipe
-  - TinyML
+  - ArduPilot
+  - Optical Flow
   - PID Control
-  - GPS
+  - Autonomous Systems
 projectType:
   - Personal
   - IEEE Concordia
@@ -31,29 +30,45 @@ date: 2024-07-01
 ---
 ## Overview
 
-Custom drone designed for forest fire prevention and safety missions, competing in the NARC UAV competition.
+This project started as an ambitious entry for the NARC UAV competition — a forest fire prevention drone with autonomous mission planning. Reality intervened: we needed drone licenses, competition applications, and funding to send a team to Ontario. None of that materialized.
 
-## Features
+So we pivoted. Instead of abandoning the project, we reduced scope and focused on what we could actually achieve: a stable autonomous hovering platform.
 
-### Navigation & Control
+## The Evolution
 
-- GPS-based mission planning & pathfinding
-- Altitude hold using optical flow sensors
-- FPV head-tracking gimbal for situational awareness
-- PID tuning and sensor data filtering for flight stability
+| Original Goal | Final Deliverable |
+|--------------|-------------------|
+| Forest fire detection | Autonomous hover mode |
+| GPS mission planning | Optical flow altitude hold |
+| Human following | Stable flight platform |
+| Competition entry | Learning experience |
 
-### Computer Vision
+## What We Built
 
-- Fire detection using MediaPipe and thermal imaging
-- Obstacle avoidance system
-- Real-time video processing and streaming
+### Altitude Hold System
+The drone hovers autonomously when hover mode is engaged — like a helicopter. No pilot input needed to maintain position.
 
-### Gesture Control (Personal Challenge)
+**Technical implementation**:
+- **Optical flow sensor**: Measures ground velocity for position hold
+- **ArduPilot firmware**: Flight controller software
+- **Custom PID tuning**: Hours of parameter adjustment for stable flight
+- **Sensor filtering**: Reducing noise for reliable altitude estimation
 
-- TinyML implementation on microcontroller
-- Gesture recognition for mode switching
-- Toggle between FPV head-tracking and gesture-controlled modes
+## What We Didn't Build (Yet)
 
-## Competition
+**Human following**: The advanced goal was a camera-based system where the drone follows a person like a dog. We had the concept but lacked the compute hardware and remaining capacity to implement it.
 
-Competing in NARC UAV competition focusing on autonomous forest fire prevention missions.
+## Team
+
+Officially 4 people, but realistically 2 full-time contributors (me and a friend). The others helped briefly but we carried the bulk of the build, tuning, and testing.
+
+## What I Learned
+
+1. **Scope management**: Ambitious goals are great, but you need to recognize when to pivot
+2. **ArduPilot ecosystem**: Flight controller configuration, PID tuning, sensor integration
+3. **Optical flow**: How vision-based velocity estimation enables indoor flight without GPS
+4. **Reality of competitions**: Licenses, funding, and logistics matter as much as technical ability
+
+## The Honest Take
+
+We didn't compete. We didn't build a fire-detection drone. But we did build something that flies, hovers autonomously, and taught us more about flight control systems than any tutorial could.

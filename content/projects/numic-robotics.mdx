@@ -1,25 +1,101 @@
 ---
-title: Mimic  — Capstone Project
-description: |-
-  Autonomous Bimanual Mobile Robotics using Imitation Learning with LeRobot and STOA VLA Models 
-
-   Details coming soon.
-startDate: 2025-04-01
+title: MIMIC — Capstone Project
+description: A Concordia-McGill collaboration building bimanual mobile robots for imitation learning research — from low-cost prototypes to industrial Kinova arms.
+startDate: 2025-09-01
 endDate: ''
 tags:
   - Robotics
-  - Coming Soon
+  - Imitation Learning
+  - VLA Models
+  - ROS2
+  - Bimanual Manipulation
+  - LeRobot
+  - Teleoperation
+  - Mobile Robotics
 projectType:
   - Academic
+  - Research
 image: /images/uploads/20250827_224916-1.gif
 coverImage: /images/uploads/20250827_191149.jpg
 github: https://github.com/orgs/The-Mimic-Robotics/repositories
 demo: ''
 featured: true
 status: in-progress
-term: Winter 2025
-date: 2025-03-01
+term: Fall 2025
+date: 2025-09-01
 ---
-## Coming Soon
+## Overview
 
-This project is currently under development. Check back later for updates!
+MIMIC is an interdisciplinary capstone project in collaboration with McGill's Mobile Robotics Lab (MRL). The goal: develop bimanual mobile robots that learn tasks through imitation, bridging the gap between low-cost research platforms and industrial-grade systems.
+
+This project is a direct continuation of my LeRobot summer exploration — taking the concepts we learned and applying them to real hardware at both ends of the cost spectrum.
+
+## The Two-Pronged Approach
+
+### Concordia Side: Low-Cost Research Platform
+Build an affordable, reproducible bimanual mobile robot for rapid experimentation:
+- **Mobile base**: Mecanum wheels (matching MOVO's architecture)
+- **Arms**: Two SO-101 arms from the LeRobot ecosystem
+- **Purpose**: Test VLA approaches, collect training data, iterate quickly
+
+### McGill Side: Industrial Robot Revival
+Bring MOVO back to life — an industrial bimanual mobile robot by Kinova:
+- **Hardware**: Two Kinova Jaco arms on a mobile base
+- **Challenge**: The robot was out of commission (old, dusty, non-functional)
+- **Goal**: Full restoration + custom teleoperation system for data collection
+
+## Why Both?
+
+MOVO is expensive, access is limited, and testing on industrial hardware is risky. Our low-cost platform mirrors MOVO's architecture so everything we develop transfers directly:
+
+| Aspect | Low-Cost Platform | MOVO |
+|--------|------------------|------|
+| Base | Mecanum wheels | Mecanum wheels |
+| Arms | SO-101 (2x) | Kinova Jaco (2x) |
+| Cost | ~$2,000 | ~$100,000+ |
+| Access | Unlimited | Scheduled lab time |
+| Risk tolerance | High | Low |
+
+## Technical Work
+
+### Teleoperation System
+MOVO's Jaco arms have no intuitive control method for collecting imitation learning data. We're building custom teleoperator arms that map human motion to robot motion in real-time.
+
+### Data Collection Pipeline
+- Camera placement optimization for VLA training
+- Synchronized recording of observations and actions
+- Dataset formatting for LeRobot/Hugging Face ecosystem
+
+### Model Training
+- Behavior cloning on collected demonstrations
+- Testing state-of-the-art VLA architectures
+- Potential development of custom models in collaboration with McGill MRL
+
+## Team
+
+**Interdisciplinary Capstone** — not a single-department project.
+
+| Role | Members |
+|------|---------|
+| Project Leads | Me (Concordia) + Partner (McGill) |
+| Mechanical Engineering | 2 students |
+| Electrical/Computer Engineering | 3 students |
+| Computer Science | 1 student |
+
+### Supervisors
+- **McGill**: Dr. Meyer (MRL Lab Director) + Master's student advisor
+- **Concordia**: Dr. Krzysztof Skonieczny (CUARL Director — my summer research supervisor)
+
+## Current Status
+
+- ✅ Low-cost platform mechanical assembly complete
+- ✅ Bimanual SO-101 arms integrated with LeRobot
+- ✅ Mobile base operational in ROS2
+- 🔄 MOVO restoration in progress
+- 🔄 Teleoperation system development
+- ⏳ Data collection for complex bimanual tasks
+- ⏳ VLA model training and evaluation
+
+## The Bigger Picture
+
+This isn't just a capstone — it's a research pipeline. Everything we learn about data collection, camera placement, and model training feeds into potential publications with McGill MRL. The low-cost platform makes this research reproducible; the MOVO integration proves it scales to industrial hardware.

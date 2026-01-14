@@ -1,18 +1,58 @@
 ---
 title: Robowars 2025
 term: Summer 2025
-description: autonomow sumorobot competetion 2025 hosted by IEEE Concordia
+description: Competed with two robots — Back with Vengeance (state machine + brushless) and Definitely Overkill (Jetson + YOLO + depth camera).
 startDate: 2025-05-17
 endDate: 2025-05-17
 type: competition
 location: Concordia University, Montreal
 tags:
-  - microcontrollers
+  - Robotics
+  - Sumo
+  - Autonomous
+  - Dual Entry
+  - Computer Vision
+  - Embedded Systems
 image: /images/uploads/20250517_105750.jpg
 coverImage: ''
 galleryImages: []
-featured: false
+featured: true
 link: ''
 award: ''
 ---
-soon
+## Overview
+
+Robowars is IEEE Concordia's annual autonomous sumo robot competition. After learning the fundamentals with Black Copy in 2024, I came back with two completely different robots.
+
+## My Entries
+
+### 1. Black Copy: Back with Vengeance
+The sequel to my first robot — same concept, properly executed:
+- Brushless motors with VESCs
+- Time-of-Flight sensors
+- Teensy 4.0 microcontroller
+- Finite state machine architecture
+
+### 2. Definitely Overkill
+Exactly what the name suggests:
+- Jetson Orin Nano for compute
+- Intel RealSense depth camera
+- YOLO-based opponent detection
+- Point cloud processing for 3D awareness
+
+## Why Two Robots?
+
+I wanted to explore two fundamentally different approaches:
+
+| Aspect | Back with Vengeance | Definitely Overkill |
+|--------|-------------------|---------------------|
+| Philosophy | Do the basics *right* | Push the boundaries |
+| Compute | Microcontroller (Teensy) | Edge AI (Jetson) |
+| Sensing | ToF distance sensors | RGB-D camera + YOLO |
+| Control | State machine | ML inference pipeline |
+
+Both robots represented different stages of my learning — one refined the traditional approach, the other explored what's possible with modern AI hardware.
+
+## Outcome
+
+Both robots competed and performed well. More importantly, building them in parallel gave me a deep understanding of the tradeoffs between classical embedded control and AI-driven robotics. And most importantly realise my own limitations in handling multiple complex projects in parallel.

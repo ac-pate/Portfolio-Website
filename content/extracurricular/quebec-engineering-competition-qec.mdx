@@ -1,15 +1,17 @@
 ---
-title: Quebec Engineering Competition (QEC)
-description: After winning Englymic at Concordia University, it was our turn to represent the university at QEC at Senior Design Challenge amongst teams from other universities in Quebec,
+title: Quebec Engineering Competition (QEC) 2025
+description: Provincial-level competition representing Concordia — 2nd place finish qualifying us for the Canadian Engineering Competition.
 term: Winter 2025
 startDate: 2025-01-23
 endDate: 2025-01-26
 type: competition
 location: Montreal, QC
 tags:
-  - Competetion
-  - runner-up
-  - robotics
+  - Competition
+  - Runner-up
+  - Robotics
+  - Hackathon
+  - ESP8266
 image: /images/uploads/2025-01-18_cqi_2025_-_banquet__evo-244.jpg
 coverImage: /images/uploads/2025-01-18_cqi_2025_-_banquet__evo-31.jpg
 galleryImages:
@@ -18,13 +20,52 @@ galleryImages:
   - /images/uploads/fb_img_1739377286918.jpg
 featured: true
 link: ''
-award: 2nd Place - Qualifying us for CEC
+award: 2nd Place
 ---
-Team:
-Mathias Deroshes
-Alex Fontaine
-Ben Benjemin
+## Overview
 
-this is the robot we maid in 8 hrs:
+After winning Englympic, we represented Concordia at the Quebec Engineering Competition (QEC) — the provincial level of Canada's engineering competition circuit. Teams from universities across Quebec compete in 8-hour design challenges.
 
-![](/images/uploads/fb_img_1739377378023.jpg)
+## The Challenge: Trailer Park Rescue
+
+**Scenario**: Two trailer parks separated by water, connected by three bridges:
+1. A narrow bridge
+2. A swinging/unstable bridge  
+3. A bridge with a button-activated gate
+
+**Objective**: Build a phone-controlled robot to hook trailers and transport them across the bridges.
+
+## Our Approach
+
+While most teams built traditional hitch mechanisms (like a truck towing a trailer), we went unconventional:
+
+**We built a forklift.**
+
+Instead of hooking trailers from behind, our robot lifted them from the side. This gave us:
+- Better visibility during transport
+- More stable load handling
+- Easier maneuvering on narrow bridges
+
+## Team
+
+| Member | Role |
+|--------|------|
+| **Me** | All programming, embedded systems, WiFi control |
+| Mathias Deroshes | Electronics |
+| Alex Fontaine | Mechanical design |
+| Ben Benjamin | Mechanical design |
+
+Same team from Englympic, same role distribution.
+
+## Technical Implementation
+
+- **Microcontroller**: ESP8266
+- **Control**: RemoteXY app over WiFi
+- **Actuation**: Servo motors for forklift mechanism
+- **Build time**: 8 hours (Solution + Presentation)
+
+## Result
+
+**2nd Place** — Qualified us to represent Quebec at the Canadian Engineering Competition in Halifax.
+
+![Our robot built in 8 hours](/images/uploads/fb_img_1739377378023.jpg)

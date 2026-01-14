@@ -11,12 +11,12 @@ export function Preloader() {
   const [progress, setProgress] = useState(0);
   const [showCurtain, setShowCurtain] = useState(false);
 
-  // Only show preloader on home page
-  if (pathname !== '/') {
-    return null;
-  }
+  // Check if we should show preloader (only on home page)
+  const isHomePage = pathname === '/';
 
   useEffect(() => {
+    // Skip all logic if not on home page
+    if (!isHomePage) return;
     const handleVideoReady = () => {
       setIsReadyToEnter(true);
     };
@@ -43,9 +43,12 @@ export function Preloader() {
       clearTimeout(fallback);
       clearInterval(interval);
     };
-  }, [isReadyToEnter]);
+  }, [isReadyToEnter, isHomePage]);
 
   useEffect(() => {
+    // Skip if not on home page
+    if (!isHomePage) return;
+    
     if (isReadyToEnter) {
       setProgress(100);
       // Delay before curtain reveal - FASTER
@@ -63,8 +66,10 @@ export function Preloader() {
         clearTimeout(hideTimer);
       };
     }
-  }, [isReadyToEnter]);
+  }, [isReadyToEnter, isHomePage]);
 
+  // Only show preloader on home page - moved AFTER all hooks
+  if (!isHomePage) return null;
   if (!isLoading) return null;
 
   return (

@@ -1,20 +1,22 @@
 ---
 title: Definitely Overkill - Robowars 2025
-description: sumo robot with computer vision on intel realsense camera an jetson orin nano inference to control hardware brushless motors interacting with analog boundary sensors
+description: A sumo robot that's exactly what the name says — Jetson Orin Nano, Intel RealSense depth camera, YOLO inference, and brushless motors. Because why not?
 term: Winter 2025
 startDate: 2025-01-01
 endDate: 2025-05-17
 tags:
   - Robotics
-  - Jetson Nano
-  - Intel Realsense
+  - Jetson Orin Nano
+  - Intel RealSense
   - OpenCV
   - YOLO
-  - PointCloud
-  - Brushless
+  - Point Cloud
+  - Brushless Motors
   - Embedded Systems
   - CAD
-  - 3d Printing
+  - 3D Printing
+  - ROS
+  - Foxglove
 projectType:
   - Personal
   - Competition
@@ -23,7 +25,56 @@ coverImage: /images/uploads/20250517_010628.jpg
 galleryImages: []
 github: https://github.com/ac-pate/Definitely-Overkill---Robowars-2025
 demo: ''
-featured: false
+featured: true
 status: completed
 ---
-soon
+## Overview
+
+The name says it all. While most sumo robots run on microcontrollers with IR sensors, I decided to bring a Jetson Orin Nano, an Intel RealSense depth camera, and YOLO-based object detection to a 3kg sumo-robot fight.
+
+This was my second entry into Robowars 2025 (alongside Back with Vengeance), built purely for the fun of pushing boundaries. If Black Copy taught me the fundamentals, Definitely Overkill taught me what happens when you throw modern AI hardware at a classic robotics problem. And how its so Overkill.
+
+## Why "Definitely Overkill"?
+
+| What most sumo bots use | What I used |
+|------------------------|-------------|
+| Arduino/STM32 | Jetson Orin Nano |
+| IR distance sensors | Intel RealSense D400 depth camera |
+| Basic threshold logic | YOLO object detection |
+| Brushed DC motors | Brushless with embedded controllers |
+
+Was it necessary? No. Was it fun? Absolutely. Made it just for the love of the game.
+
+## Technical Architecture
+
+### Perception Stack
+- **Intel RealSense D400**: RGB + depth data streaming
+- **YOLO inference**: Real-time opponent detection running on Jetson GPU
+- **Depth processing**: Point cloud analysis for precise distance and position estimation
+- **OpenCV**: Image preprocessing and visualization
+
+### Compute Platform
+- **Jetson Orin Nano**: Configured and optimized for robotics workloads
+- **Foxglove**: Remote monitoring and debugging during development
+
+### Actuation
+- **Brushless motors**: High torque-to-weight ratio
+- **Embedded microcontroller**: Bridge between Jetson commands and motor drivers
+- **Analog boundary sensors**: Edge detection for ring awareness
+
+### Mechanical
+- Custom CAD design to fit all components in competition weight limit
+- 3D printed chassis with mounting for camera, Jetson, and motors
+- Cable management for clean sensor wiring
+
+## What I Learned
+
+- **Edge AI deployment**: Setting up Jetson for real-time inference, optimizing CUDA, managing thermal constraints
+- **Depth camera integration**: Working with RealSense SDK, extracting depth maps, processing point clouds
+- **YOLO tuning**: Training and deploying object detection for a specific use case
+- **Remote debugging**: Using Foxglove and ROS tools to monitor a robot in real-time
+- **System integration**: Making GPU inference, depth processing, and motor control work together under latency constraints
+
+## Outcome
+
+Competed at Robowars 2025 alongside Back with Vengeance. Both robots performed well. More importantly, this project bridged my embedded systems background with modern AI — a combination I've continued to pursue.

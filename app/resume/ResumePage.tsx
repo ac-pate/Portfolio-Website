@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Download, ExternalLink, FileText, Github, Eye } from 'lucide-react';
+import { Download, ExternalLink, FileText, Github, Eye, Award } from 'lucide-react';
 import GlowWrapper from '@/components/ui/GlowWrapper';
 
 export function ResumePage() {
@@ -9,6 +9,10 @@ export function ResumePage() {
   const resumeRepo = 'https://github.com/ac-pate/LaTeX-Resume';
   // This URL will work once you set up GitHub Actions (see LATEX_RESUME_SETUP.md)
   const githubPdfUrl = 'https://github.com/ac-pate/LaTeX-Resume/releases/latest/download/resume.pdf';
+  
+  // Reference letters (stored in public/docs folder)
+  const researchReferenceUrl = '/docs/reference-letter-cuarl.pdf';
+  const taReferenceUrl = '/docs/reference-letter-ta.pdf';
 
   return (
     <div className="pt-24 pb-16 min-h-screen">
@@ -27,33 +31,70 @@ export function ResumePage() {
           </p>
 
           {/* Action buttons */}
-          <div className="flex flex-wrap gap-4 mb-8">
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <GlowWrapper preset="button" className="rounded-xl">
-                <a
-                  href={githubPdfUrl}
-                  download="Achal_Patel_Resume.pdf"
-                  className="flex items-center gap-2 px-6 py-3 bg-accent text-white rounded-xl font-semibold hover:bg-accent/90 transition-all shadow-glow-sm"
-                >
-                  <Download className="w-4 h-4" />
-                  Download PDF
-                </a>
-              </GlowWrapper>
-            </motion.div>
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+            {/* Left side - Resume buttons */}
+            <div className="flex flex-wrap items-center gap-4">
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <GlowWrapper preset="button" className="rounded-xl">
+                  <a
+                    href={githubPdfUrl}
+                    download="Achal_Patel_Resume.pdf"
+                    className="flex items-center gap-2 px-6 py-3 bg-accent text-white rounded-xl font-semibold hover:bg-accent/90 transition-all shadow-glow-sm"
+                  >
+                    <Download className="w-4 h-4" />
+                    Download PDF
+                  </a>
+                </GlowWrapper>
+              </motion.div>
 
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <GlowWrapper preset="button" className="rounded-xl">
-                <a
-                  href={resumeRepo}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-6 py-3 bg-white/5 text-white rounded-xl font-semibold border border-white/10 hover:bg-white/10 transition-all backdrop-blur-sm"
-                >
-                  <Github className="w-4 h-4" />
-                  View LaTeX Source
-                </a>
-              </GlowWrapper>
-            </motion.div>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <GlowWrapper preset="button" className="rounded-xl">
+                  <a
+                    href={resumeRepo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-6 py-3 bg-white/5 text-white rounded-xl font-semibold border border-white/10 hover:bg-white/10 transition-all backdrop-blur-sm"
+                  >
+                    <Github className="w-4 h-4" />
+                    View LaTeX Source
+                  </a>
+                </GlowWrapper>
+              </motion.div>
+            </div>
+
+            {/* Separator */}
+            <div className="hidden md:block h-10 w-px bg-white/20" />
+
+            {/* Right side - Reference Letter Buttons */}
+            <div className="flex flex-wrap items-center gap-4">
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <GlowWrapper preset="button" className="rounded-xl" showHighlight={false}>
+                  <a
+                    href={researchReferenceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-5 py-3 bg-white/5 text-white rounded-xl font-medium border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all backdrop-blur-sm"
+                  >
+                    <Award className="w-4 h-4" />
+                    LOR — Research Supervisor
+                  </a>
+                </GlowWrapper>
+              </motion.div>
+              
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <GlowWrapper preset="button" className="rounded-xl" showHighlight={false}>
+                  <a
+                    href={taReferenceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-5 py-3 bg-white/5 text-white rounded-xl font-medium border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all backdrop-blur-sm"
+                  >
+                    <Award className="w-4 h-4" />
+                    LOR — TA Coordinator
+                  </a>
+                </GlowWrapper>
+              </motion.div>
+            </div>
           </div>
         </motion.div>
 

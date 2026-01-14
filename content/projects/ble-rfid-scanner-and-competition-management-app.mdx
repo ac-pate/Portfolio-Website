@@ -1,6 +1,6 @@
 ---
 title: BLE RFID Scanner and Competition Management App
-description: COEN 390 Project
+description: A competition tracking system with custom RFID scanner hardware and Android app — built for COEN 390.
 term: Winter 2025
 startDate: 2025-01-01
 endDate: 2025-04-23
@@ -8,9 +8,11 @@ tags:
   - Android Studio
   - BLE
   - RFID
-  - Frontend
+  - NFC
   - Firebase
-  - Esp32
+  - ESP32
+  - Embedded C++
+  - Hardware Design
 projectType:
   - Academic
 image: /images/uploads/20250402_234759.jpg
@@ -21,4 +23,54 @@ demo: ''
 featured: false
 status: completed
 ---
-soon
+## Overview
+
+Course project for COEN 390 that combined hardware, embedded product with an android app, and database storage .
+
+Our Project's concept: 
+Give event organizers a way to track participants throughout a venue using RFID wristbands. Attendees tap their bands at checkpoints (entry, merch booth, food station, session rooms), and organizers get real-time visibility into who is where.
+Give Participants an easy way to get real-time notifications from the organizers and a dashboard to find upcoming competetions sorted by region.
+
+## System Architecture
+
+```
+[RFID Wristband] → [ESP32 Scanner] → [BLE] → [Android App] → [Firebase]
+                                                    ↓
+                                          [Organizer Dashboard]
+```
+
+## My Contributions
+
+In a team of 5, I worked on the hardware and backend integration:
+
+### Hardware Design
+- Built the physical RFID scanner device
+- Component selection, soldering, and assembly
+- Designed for portability and reliable scanning
+
+### Embedded Firmware
+- Programmed **ESP32 XIAO C6** in C++
+- Wrote RFID scanning logic and data parsing
+- Implemented **BLE (Bluetooth Low Energy)** drivers for communication with mobile app
+
+## Technical Stack
+
+| Layer | Technology |
+|-------|------------|
+| Hardware | ESP32 C6 Mini, RFID reader module |
+| Firmware | Embedded C++, BLE stack |
+| Mobile | Android Studio (Java/Kotlin) |
+| Backend | Firebase Realtime Database |
+| Protocol | Bluetooth Low Energy (BLE) |
+
+## How It Works
+
+1. **Setup**: Organizer distributes NFC/RFID wristbands to participants
+2. **Check-in**: Participants tap their band at scanner checkpoints
+3. **Data flow**: Scanner reads band ID → sends via BLE to paired phone → uploads to Firebase
+4. **Visibility**: Organizer app shows real-time participant locations and checkpoint history
+
+## Team
+
+- **Me**: Hardware, embedded firmware, BLE drivers
+- **4 teammates**: Android app UI/UX, Firebase setup, organizer dashboard, documentation

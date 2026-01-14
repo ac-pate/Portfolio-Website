@@ -1,22 +1,79 @@
 ---
 title: MakeUofT 2025
-description: Canada's Biggest Make-a-thon (24hr hardware hackathon) at University of Toronto, Second Year Participating
+description: Second year at Canada's largest make-a-thon — built a haptic navigation wearable for visually impaired users using depth sensing and voice commands.
 term: Winter 2025
 startDate: 2025-02-15
 endDate: 2025-02-16
 type: competition
-location: Toronto, ON
+location: University of Toronto, Toronto, ON
 tags:
   - OpenCV
-  - Intel Realsense
+  - Intel RealSense
   - Jetson Nano
   - Arduino Nano
+  - YOLO
+  - Whisper
+  - Accessibility
   - Hackathon
 image: /images/uploads/20250216_060005.jpg
 coverImage: /images/uploads/20250216_125707.jpg
 galleryImages: []
-featured: false
+featured: true
 link: https://github.com/ac-pate/MakeUofT
 award: ''
 ---
-soon
+## Overview
+
+Back at MakeUofT for round two. This time, we built something more ambitious: a wearable navigation system for visually impaired users that combines depth sensing, object detection, and haptic feedback.
+
+## What We Built: Haptic Navigation Wearable
+
+A hat-based wearable that helps visually impaired users locate objects through touch:
+
+### How It Works
+
+1. **Voice command**: User says "find me a red apple"
+2. **Speech recognition**: OpenAI Whisper converts speech to text
+3. **Semantic search**: YOLO v12 World model searches for the object in real-time
+4. **Depth sensing**: Intel RealSense determines object distance and position
+5. **Haptic feedback**: Motors on left/right sides of the hat vibrate to guide the user
+
+### The Guidance System
+
+- **Left motor vibrates stronger** → Turn left
+- **Right motor vibrates stronger** → Turn right
+- **Both motors intensify** → Getting closer to target
+- **Vibration peaks** → Object reached
+
+## Technical Stack
+
+| Component | Technology |
+|-----------|------------|
+| Vision | Intel RealSense D400 (RGB + Depth) |
+| Compute | Jetson Nano |
+| Detection | YOLO v12 World (runtime-configurable targets) |
+| Speech | OpenAI Whisper |
+| Actuation | Arduino Nano controlling DC haptic motors |
+| Integration | Custom pipeline connecting all subsystems |
+
+## Architecture
+
+```
+[Voice] → [Whisper] → [Semantic Token]
+                            ↓
+[RealSense] → [YOLO World] → [Detection + Depth]
+                            ↓
+              [Haptic Controller] → [L/R Motors]
+```
+
+## Why YOLO World?
+
+Traditional object detection requires pre-training for specific objects. YOLO World accepts text prompts at runtime — meaning users can search for *anything* describable in words, not just a fixed set of classes.
+
+## 24-Hour Build
+
+In one overnight session:
+- Integrated four separate AI/ML systems (vision, depth, speech, detection)
+- Built custom haptic feedback hardware
+- Created a wearable form factor
+- Demonstrated working end-to-end prototype

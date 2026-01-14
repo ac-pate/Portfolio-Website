@@ -1,6 +1,6 @@
 ---
-title: Autonomous Hovercraft Class Competition
-description: Led a team of six building an autonomous maze-solving hovercraft using C programming, achieving 95% success rate.
+title: Autonomous Hovercraft — ENGR 290
+description: Led a team of six building an autonomous hovercraft for a class competition — 4th place finish, but the best-looking hovercraft by far.
 term: Winter 2024
 startDate: 2024-01-22
 endDate: 2024-05-01
@@ -8,8 +8,12 @@ tags:
   - C
   - IMU
   - Ultrasonic Sensors
-  - Maze Solving
+  - 3D Printing
+  - CAD
+  - Arduino
   - GitHub
+projectType:
+  - Academic
 image: /images/uploads/screenshot_20241011_143625_gallery.jpg
 coverImage: /images/uploads/screenshot-2024-04-14-175432.png
 galleryImages:
@@ -23,24 +27,43 @@ date: 2024-01-01
 ---
 ## Overview
 
-Led a team of six in building an autonomous hovercraft for class competition, achieving 3rd place.
+ENGR 290 is the first introduction to robotics for engineering students at Concordia — microcontrollers, electronics, programming, and mechanical design all in one team project. Build an autonomous hovercraft. Navigate a course. Don't crash.
 
-## Key Contributions
+This was the same term as Robowars 2024, so I came in with a head start from building Black Copy. I led a team of six, handling electronics and mechanical design while my teammate focused on software.
 
-### Leadership
+## Result
 
-- Project lead overseeing all aspects
-- Component selection and design decisions
-- Team coordination and task delegation
+**4th place** — missed the podium due to design flaws (the hovercraft was a bit too large). But something better happened.
 
-### Technical
+## The Shelf Story
 
-- Implemented maze-solving algorithms in C
-- Ultrasonic sensor integration for wall detection
-- IMU integration for orientation tracking
-- Achieved 95% maze completion success rate
+One of the competition coordinators liked my hovercraft design so much that he took it and put it on his office shelf. Not a prize — just genuine appreciation for the craft.
 
-### Collaboration
+Why? Because I obsessed over the build quality:
+- Fully 3D printed chassis
+- Single-layer-thick prints to minimize weight (hovercrafts need to be light)
+- Multiple prototype iterations
+- All black (because black looks professional)
+- Clean cable management and mounting
 
-- Introduced team to Git/GitHub for version control
-- Established collaboration workflows
+These aren't my words — multiple people called it the best-looking hovercraft in the competition.
+
+## Technical Details
+
+### Navigation Logic
+Simple but effective: ultrasonic sensors check front, left, and right. Whichever direction has the most clearance, that's where we go. No fancy algorithms — just reactive wall avoidance.
+
+### Hardware
+- **Sensors**: Ultrasonic for distance, IMU for orientation
+- **Controller**: Arduino
+- **Propulsion**: DC motors for thrust and steering
+
+### My Role
+- Complete mechanical design and CAD
+- 3D printing with weight optimization
+- Electronics integration and wiring
+- Team coordination and Git workflow setup
+
+## What I Learned
+
+This project taught me that execution quality matters as much as performance. We didn't win, but I built something I was proud to put my name on — and apparently good enough to earn a spot on someone's shelf.

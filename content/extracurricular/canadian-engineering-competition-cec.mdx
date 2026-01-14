@@ -1,15 +1,16 @@
 ---
-title: Canadian Engineering Competition (CEC)
-description: at Halifax
+title: Canadian Engineering Competition (CEC) 2025
+description: National champions. Built a crane-based dry dock system that completed the challenge in 2.6 seconds — while no other team finished even one cycle.
 term: Winter 2025
 startDate: 2025-03-15
 endDate: 2025-03-17
 type: competition
-location: Halifax, NV
+location: Halifax, NS
 tags:
   - Winner
+  - National Champion
   - Robotics
-  - National Competition
+  - Hackathon
 image: /images/uploads/copy-of-img_5391.JPG
 coverImage: /images/uploads/copy-of-war_3735.jpg
 galleryImages:
@@ -17,6 +18,93 @@ galleryImages:
   - /images/uploads/img_20250318_001622_482.webp
 featured: true
 link: ''
-award: 1st Place
+award: 1st Place — National Champions
 ---
-soon
+## Overview
+
+The Canadian Engineering Competition (CEC) is the national level of Canada's engineering competition circuit. After winning at Englympic (university) and placing 2nd at QEC (provincial), we flew to Halifax to represent Concordia and Quebec on the national stage.
+
+**We brought home 1st place — Concordia's first CEC win in decades.**
+
+## The Challenge: Dry Dock System
+
+**Scenario**: Maritime Halifax theme. Build a miniature dry dock to lift ships out of water for repairs.
+
+**How dry docks work**: The dock floods, a ship floats in, then the water is pumped out and the ship settles onto supports for maintenance.
+
+**The provided approach**: Organizers gave us suction pumps and motors, expecting teams to use buoyancy — flooding and draining chambers to raise and lower ships.
+
+**The benchmark**: The organizers' own solution took **1 minute per ship**.
+
+## What Everyone Else Did
+
+Every other team followed the expected approach:
+- Built buoyancy-based systems
+- Attempted to pump air in and out to control water levels
+- Struggled with sealing, timing, and stability
+
+**Result**: Out of 12 teams, not a single one successfully completed even one lift-and-lower cycle. Zero. The closest competitor managed one boat in **2 minutes 30 seconds**.
+
+## What We Did
+
+We read the rules carefully. Very carefully.
+
+The rules said the dock had to float. They didn't say *how* the boat had to be lifted.
+
+**We built a crane.**
+
+A floating platform with a mechanical crane that:
+1. Positions over the boat
+2. Lifts it out of the water
+3. Sets it back down
+
+No pumps. No buoyancy manipulation. No waiting for water levels.
+
+## The Numbers
+
+| Metric | Our Solution | Organizers' Solution | Best Competitor |
+|--------|-------------|---------------------|-----------------|
+| Time per cycle | **2.6 seconds** | 60 seconds | 150+ seconds (incomplete) |
+| Boats completed | All 3 weight classes | All 3 | 1 (partially) |
+| Reliability | 100% | — | 0% |
+
+**2.6 seconds.** The max allocated time was 3 minutes per boat.
+
+The scoring was curved based on performance. We got full points. Every other team got zero.
+
+## Technical Implementation
+
+- **Microcontroller**: ESP32
+- **Control**: RemoteXY app over WiFi (same stack as Englympic and QEC)
+- **Actuation**: Servo motors with zero-latency C++ code
+- **Features**: Safety lights, smooth motion profiles, reliable operation
+- **Build time**: 8 hours (Solution + Presentation)
+
+I wrote all the embedded code, optimizing for minimal latency so the servos responded instantly. No delays, no stuttering — just fast, precise motion.
+
+## Team
+
+
+| Member | Role |
+|--------|------|
+| **Me** | All programming, embedded systems, WiFi control |
+| Mathias Deroshes | Electronics |
+| Alex Fontaine | Mechanical design |
+| Ben Benjamin | Mechanical design |
+
+Same team through all three levels of competition.
+
+## The Reaction
+
+The organizers came to us after the competition, genuinely impressed. They told us they hadn't even considered our approach when designing the challenge. Our out-of-the-box thinking caught everyone off guard.
+
+## What This Meant
+
+- **First CEC win for Concordia in decades**
+- Proved that reading the rules creatively is a legitimate strategy
+- Validated our team's ability to perform under national-level pressure
+- A fitting end to the Englympic → QEC → CEC journey
+
+---
+
+*Sometimes the best solution isn't the obvious one. Sometimes you just build a crane.*
