@@ -90,7 +90,7 @@ export interface ExtracurricularFrontmatter {
   description?: string; // Optional body/description
   startDate?: string; // Optional - not used for term calculation
   endDate?: string; // Optional - not used for term calculation
-  type: 'competition' | 'workshop' | 'photography' | 'event' | 'other';
+  type: 'competition' | 'workshop' | 'photography' | 'event' | 'volunteer' | 'leadership' | 'other';
   location?: string;
   tags?: string[];
   image?: string;
