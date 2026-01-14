@@ -323,7 +323,9 @@ export function getAllVolunteerSlugs(): string[] {
  * Parses term string (e.g., "Fall 2025") into sortable components
  * Returns [year, seasonOrder] for sorting: [2025, 1] where 1=Fall, 2=Winter, 3=Summer
  */
-function parseTermForSorting(term: string): [number, number] {
+function parseTermForSorting(term: string | undefined): [number, number] {
+  if (!term) return [0, 0]; // Handle undefined/null term
+  
   const parts = term.trim().split(' ');
   const season = parts[0]; // "Fall", "Winter", or "Summer"
   const year = parseInt(parts[1] || '0', 10);
