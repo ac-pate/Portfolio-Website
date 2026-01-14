@@ -7,21 +7,18 @@ import {
   Github, 
   Linkedin, 
   MapPin,
-  Briefcase,
   GraduationCap,
   Code,
   Cpu,
   Cog,
   Wrench,
   ArrowRight,
-  Users,
   LucideIcon
 } from 'lucide-react';
-import { SectionHeading } from '@/components/ui/SectionHeading';
 import GlowWrapper from '@/components/ui/GlowWrapper';
 import { siteConfig } from '@/lib/config';
 import { formatDateRange } from '@/lib/utils';
-import type { ContentItem, JobFrontmatter, EducationFrontmatter, VolunteerFrontmatter, AboutPageContent } from '@/lib/mdx';
+import type { ContentItem, EducationFrontmatter, AboutPageContent } from '@/lib/mdx';
 
 // Map string icon names to Lucide components
 const iconMap: Record<string, LucideIcon> = {
@@ -29,9 +26,7 @@ const iconMap: Record<string, LucideIcon> = {
   Cog,
   Code,
   Wrench,
-  Briefcase,
   GraduationCap,
-  Users,
   Mail,
   Github,
   Linkedin,
@@ -39,13 +34,11 @@ const iconMap: Record<string, LucideIcon> = {
 };
 
 interface AboutPageProps {
-  jobs: ContentItem<JobFrontmatter>[];
   education: ContentItem<EducationFrontmatter>[];
-  volunteer: ContentItem<VolunteerFrontmatter>[];
   content: AboutPageContent;
 }
 
-export function AboutPage({ jobs, education, volunteer, content }: AboutPageProps) {
+export function AboutPage({ education, content }: AboutPageProps) {
   return (
     <div className="pt-24 pb-16">
       <div className="section-container">
@@ -124,51 +117,6 @@ export function AboutPage({ jobs, education, volunteer, content }: AboutPageProp
                 </div>
               </div>
             </motion.div>
-            {/* Experience Preview */}
-            <section>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-display font-bold text-foreground">Experience</h2>
-                <Link href="/experience" className="text-sm text-accent hover:underline flex items-center gap-1">
-                  View all <ArrowRight className="w-3 h-3" />
-                </Link>
-              </div>
-              {jobs.length === 0 ? (
-                <p className="text-foreground-secondary">Experience details coming soon.</p>
-              ) : (
-                <div className="space-y-4">
-                  {jobs.slice(0, 2).map((job, index) => (
-                    <motion.div
-                      key={job.slug}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.5, delay: index * 0.1 }}
-                    >
-                      <Link href={`/experience/${job.slug}`} className="block group">
-                        <div className="glass rounded-xl p-5 transition-all duration-300 hover:shadow-glow-sm hover:border-accent/30">
-                          <div className="flex items-start gap-4">
-                            <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
-                              <Briefcase className="w-5 h-5 text-emerald-500" />
-                            </div>
-                            <div className="flex-1">
-                              <h3 className="font-display font-semibold text-foreground group-hover:text-accent transition-colors">
-                                {job.frontmatter.title}
-                              </h3>
-                              <p className="text-accent text-sm">{job.frontmatter.company}</p>
-                              {job.frontmatter.startDate && (
-                                <p className="text-xs text-muted mt-1">
-                                  {formatDateRange(job.frontmatter.startDate, job.frontmatter.endDate)}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </Link>
-                    </motion.div>
-                  ))}
-                </div>
-              )}
-            </section>
 
             {/* Education Preview */}
             <section>
@@ -216,40 +164,6 @@ export function AboutPage({ jobs, education, volunteer, content }: AboutPageProp
                 </div>
               )}
             </section>
-
-            {/* Volunteer/Leadership */}
-            {volunteer.length > 0 && (
-              <section>
-                <h2 className="text-2xl font-display font-bold text-foreground mb-6">Leadership</h2>
-                <div className="space-y-4">
-                  {volunteer.map((vol, index) => (
-                    <motion.div
-                      key={vol.slug}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.5, delay: index * 0.1 }}
-                      className="glass rounded-xl p-5"
-                    >
-                      <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
-                          <Users className="w-5 h-5 text-accent" />
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-display font-semibold text-foreground">
-                            {vol.frontmatter.title}
-                          </h3>
-                          <p className="text-accent text-sm">{vol.frontmatter.organization}</p>
-                          <p className="text-foreground-secondary text-sm mt-2">
-                            {vol.frontmatter.description}
-                          </p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </section>
-            )}
           </div>
 
           {/* Sidebar */}

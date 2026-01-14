@@ -25,6 +25,8 @@ collections:
   - name: "projects"
     label: "Projects"
     folder: "content/projects"
+    media_folder: "/public/images/projects"
+    public_folder: "/images/projects"
     create: true
     slug: "{{slug}}"
     extension: "mdx"
@@ -59,6 +61,8 @@ collections:
   - name: "jobs"
     label: "Jobs / Experience"
     folder: "content/jobs"
+    media_folder: "/public/images/jobs"
+    public_folder: "/images/jobs"
     create: true
     slug: "{{slug}}"
     extension: "mdx"
@@ -86,6 +90,8 @@ collections:
   - name: "education"
     label: "Education"
     folder: "content/education"
+    media_folder: "/public/images/education"
+    public_folder: "/images/education"
     create: true
     slug: "{{slug}}"
     extension: "mdx"
@@ -114,6 +120,8 @@ collections:
   - name: "volunteer"
     label: "Volunteer Work"
     folder: "content/volunteer"
+    media_folder: "/public/images/volunteer"
+    public_folder: "/images/volunteer"
     create: true
     slug: "{{slug}}"
     extension: "mdx"
@@ -138,6 +146,8 @@ collections:
   - name: "extracurricular"
     label: "Extracurricular"
     folder: "content/extracurricular"
+    media_folder: "/public/images/extracurricular"
+    public_folder: "/images/extracurricular"
     create: true
     slug: "{{slug}}"
     extension: "mdx"
@@ -147,7 +157,7 @@ collections:
       - {label: "Description", name: "description", widget: "text"}
       - {label: "Start Date", name: "startDate", widget: "datetime", format: "YYYY-MM-DD", time_format: false}
       - {label: "End Date", name: "endDate", widget: "datetime", format: "YYYY-MM-DD", time_format: false, required: false}
-      - {label: "Type", name: "type", widget: "select", options: ["competition", "workshop", "photography", "event", "other"]}
+      - {label: "Type", name: "type", widget: "select", options: ["competition", "workshop", "photography", "event", "volunteer", "leadership", "other"]}
       - {label: "Location", name: "location", widget: "string", required: false}
       - {label: "Tags", name: "tags", widget: "list", default: []}
       - {label: "Image", name: "image", widget: "image", required: false}

@@ -24,9 +24,10 @@ interface ExtracurricularCardProps {
   slug: string;
   frontmatter: ExtracurricularFrontmatter;
   index?: number;
+  basePath?: string; // Optional base path for routing (default: /extracurricular)
 }
 
-export function ExtracurricularCard({ slug, frontmatter, index = 0 }: ExtracurricularCardProps) {
+export function ExtracurricularCard({ slug, frontmatter, index = 0, basePath = '/extracurricular' }: ExtracurricularCardProps) {
   const { title, description, startDate, endDate, tags, image, link, award, type } = frontmatter;
 
   // Determine link wrapper based on whether external link exists
@@ -43,7 +44,7 @@ export function ExtracurricularCard({ slug, frontmatter, index = 0 }: Extracurri
         </a>
       )
     : (children: React.ReactNode) => (
-        <Link href={`/extracurricular/${slug}`} className="block h-full">
+        <Link href={`${basePath}/${slug}`} className="block h-full">
           {children}
         </Link>
       );

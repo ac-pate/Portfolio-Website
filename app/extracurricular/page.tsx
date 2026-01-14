@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { ExtracurricularList } from './ExtracurricularList';
-import { getExtracurricular } from '@/lib/mdx';
+import { getExtracurricular, getVolunteer } from '@/lib/mdx';
 
 export const metadata: Metadata = {
   title: 'Extracurricular',
@@ -9,7 +9,8 @@ export const metadata: Metadata = {
 
 export default function ExtracurricularPage() {
   const extracurricular = getExtracurricular();
+  const volunteer = getVolunteer();
 
-  return <ExtracurricularList extracurricular={extracurricular} />;
+  return <ExtracurricularList extracurricular={extracurricular} volunteer={volunteer} />;
 }
 
