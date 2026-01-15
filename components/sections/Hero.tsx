@@ -301,9 +301,9 @@ export function Hero({ content }: HeroProps) {
                 <div 
                     ref={captionRef}
                     style={{ opacity: 0.1 }}
-                    className="absolute bottom-10 left-1/2 -translate-x-1/2 z-[6] text-center pointer-events-none w-full max-w-[90vw] sm:max-w-[80vw] md:max-w-none px-4"
+                    className="absolute bottom-10 left-1/2 -translate-x-1/2 z-[6] text-center pointer-events-none w-auto max-w-[90vw] sm:max-w-[85vw] md:max-w-[75vw] lg:max-w-[70vw] px-4 sm:px-6 md:px-8"
                 >
-                    <p className="text-white/70 text-xs sm:text-sm md:text-[11px] font-['Poppins'] font-bold italic tracking-wide px-3 sm:px-5 py-2 rounded-full backdrop-blur-md bg-black/60 border border-white/10 break-words" 
+                    <p className="text-white/70 text-xs sm:text-sm md:text-[11px] font-['Poppins'] font-bold italic tracking-wide px-4 sm:px-6 md:px-8 py-2 rounded-full backdrop-blur-md bg-black/60 border border-white/10 break-words whitespace-normal" 
                         style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
                         {content.videoCaption}
                     </p>

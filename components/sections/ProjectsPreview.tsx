@@ -29,10 +29,10 @@ export function ProjectsPreview({ projects, content }: ProjectsPreviewProps) {
   const stickyRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Show only featured projects (max 4)
+  // Show only featured projects (max 6)
   const featuredProjects = projects
     .filter(p => p.frontmatter.featured)
-    .slice(0, 4);
+    .slice(0, 6);
 
   useEffect(() => {
     // Optional: Add simple fade-in or other non-pinning animations here if desired
@@ -46,7 +46,7 @@ export function ProjectsPreview({ projects, content }: ProjectsPreviewProps) {
     >
       <div className="section-container w-full pt-24 md:pt-24">
         {/* Sticky Header */}
-        <div className="sticky top-16 z-10 pt-2 pb-1 bg-background/80 backdrop-blur-md -mx-4 px-4 mb-8 border-b border-white/5">
+        <div className="sticky top-16 z-10 py-1.5 bg-background/80 backdrop-blur-md -mx-4 px-4 mb-6 border-b border-white/5">
           <SectionHeading
             title="Featured Projects"
             subtitle={content.subtitle}
