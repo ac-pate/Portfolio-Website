@@ -118,7 +118,7 @@ export function AboutPreview({ content }: AboutPreviewProps) {
     >
       <div className="section-container w-full relative z-10 pt-12 lg:px-4">
         {/* Sticky Header - Follows dynamic section pattern */}
-        <div className="sticky top-16 z-20 py-2 bg-background/80 backdrop-blur-md -mx-4 px-4 mb-6 border-b border-white/5">
+        <div className="sticky top-16 z-20 pt-2 pb-1 bg-background/80 backdrop-blur-md -mx-4 px-4 mb-6 border-b border-white/5">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
