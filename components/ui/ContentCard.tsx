@@ -63,15 +63,15 @@ export function ContentCard({
       {linkWrapper(
         <GlowWrapper className="rounded-2xl h-full" preset="card">
           <div className="relative h-full rounded-2xl border border-transparent bg-background-secondary/50 transition-all duration-300 glass overflow-hidden flex">
-            {/* Image - Left side (2/5 = 40%) */}
+            {/* Image - Left side (2/5 = 40%) with fixed aspect ratio */}
             {image && (
-              <div className="relative w-2/5 flex-shrink-0 overflow-hidden bg-gradient-to-br from-background-secondary to-background">
+              <div className="relative w-2/5 flex-shrink-0 overflow-hidden bg-gradient-to-br from-background-secondary to-background aspect-[4/3]">
                 {image.src ? (
                   imageIsGif ? (
                     <img
                       src={image.src}
                       alt={image.alt}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : (
                     <Image
