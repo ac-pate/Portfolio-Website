@@ -1,6 +1,6 @@
 ---
 title: RNA Folding Prediction — Custom Transformer Architecture
-description: Built a DeepResUNet-Transformer hybrid from scratch, achieving the highest F1 score in a class of PhD and Master's students.
+description: Built HybridRNA (DeepResUNetSE + Transformer) from scratch, achieving highest F1 score (0.75) in a class of PhD and Master's students.
 term: Fall 2025
 startDate: 2025-10-01
 endDate: 2025-12-01
@@ -32,61 +32,49 @@ date: 2025-09-01
 ---
 ## Overview
 
-Course project for COEN 432 (Evolutionary Algorithms and Machine Learning) that turned into one of my biggest academic wins. The task: predict how RNA sequences fold in 3D space — which nucleotides pair with which.
+COEN 432 project: predict RNA secondary structure by determining which nucleotides form base pairs. Framed as binary classification predicting a 128×128 contact map.
 
-**Result: Highest F1 score in the entire class.**
+**Result: Highest F1 score in class — 0.75 (single model), 0.768 (ensemble of 6 models).**
 
-The class was full of PhD and Master's students. I'm an undergraduate. I beat them all — and not by a small margin.
+Beat all PhD and Master's students in this grad class as an undergraduate — and not by a small margin.
 
 ## The Challenge
-
 Given an RNA sequence (a string of A, U, G, C nucleotides), predict its 3D folding pattern. Specifically: output a contact map showing which bases pair with each other.
 
-This is a real bioinformatics problem. RNA structure determines function, and accurate prediction has implications for drug design, genetic research, and understanding disease mechanisms.
+Three critical problems:
+1. **Long-range Dependencies**: Base pairs span 100+ positions. Baseline CNN receptive field (~7×7) insufficient.
+2. **Class Imbalance (187:1)**: Only ~0.5% of position pairs form bonds.
+3. **Tensor Alignment**: U-Net skip connections require matching dimensions. Solved with MAX_LEN=128 (power of 2).
 
-## My Approach
+## Architecture Evolution
 
-Instead of using an off-the-shelf architecture, I built a hybrid model from scratch:
+Systematic progression from baseline to final solution:
 
-### DeepResUNet-Transformer
+| Model | Params | F1 | Innovation |
+|-------|--------|----|-----------| 
+| BaselineCNN | 40K | 0.36 | Insufficient receptive field |
+| DilatedCNN | 77K | 0.53 | Dilated convolutions expand receptive field |
+| U-Net | 7.8M | 0.67 | Encoder-decoder with skip connections |
+| DeepResUNet | 15.2M | 0.74 | Residual blocks enable 25+ layers |
+| DeepResUNetSE | 15.3M | 0.75 | SE attention blocks (+0.6% params) |
 
-| Component | Purpose |
-|-----------|---------|
-| **ResNet backbone** | Extract hierarchical features from sequence data |
-| **U-Net architecture** | Encoder-decoder with skip connections for spatial precision |
-| **Custom Transformer** | Capture long-range dependencies between nucleotides |
+## Final Architecture: HybridRNA
 
-I implemented the transformer attention mechanism myself — not imported from a library, but built from scratch to understand exactly how it works.
+**HybridRNA** (~17M params) combines DeepResUNetSE (CNN path) and TransformerRNA (attention path) with learned attention fusion. CNNs excel at local/multi-scale patterns; Transformers excel at long-range dependencies. Fusion layer learns per-position attention weights, enabling adaptive combination during training. F1: 0.75 (matches DeepResUNetSE, captures complementary patterns for ensemble).
 
-## The Learning Process
+## Key Findings
 
-This wasn't just about winning. I spent immense time learning:
-- How U-Net works (and why skip connections matter)
-- How ResNet's residual connections enable deep networks
-- How transformers capture relationships across long sequences
-- Training dynamics, hyperparameter sweeps, and debugging loss curves
-
-## Competition Format
-
-This was structured as a Kaggle competition with:
-- **Public leaderboard**: Feedback during development
-- **Private leaderboard**: Final evaluation (hidden test set)
-
-I had the highest score on both.
-
-When I asked the professor for feedback, he confirmed: *"You have the highest score by far, by a big margin."*
-
-## Why Solo?
-
-The project allowed teams of two. I chose to work alone — not because I don't like collaboration, but because I wanted to learn everything deeply. Every architecture choice, every training run, every failure was mine to understand.
+- **Pos-weight**: Lower values (1.0-2.0) outperformed higher (5.0) despite 187:1 imbalance. Optimal: pos_weight=1.0.
+- **Batch size**: Smaller batches (16) outperformed larger (64) by 2.8% F1.
+- **Ensemble**: 6 models averaged to F1=0.768 on Kaggle test set.
 
 ## Technical Details
 
-- **Framework**: PyTorch
-- **Training**: Multiple architecture experiments, hyperparameter sweeps
-- **Metrics**: F1 score optimization for imbalanced base-pair prediction
-- **Hardware**: GPU training with mixed precision (FP16)
+- **Framework**: PyTorch with FP16 mixed precision
+- **Training**: 200 epochs, batch size 16
+- **Loss**: BCEWithLogitsLoss with pos_weight tuning
+- **Architecture**: U-Net encoder-decoder, residual connections, dilated convolutions {1,2,4,8}, SE attention blocks
 
-## What This Proved
+## Why Solo?
 
-I can compete with graduate students in ML when I put in the work. The key wasn't being smarter — it was investing the time to truly understand what I was building instead of copy-pasting someone else's solution.
+Chose to work alone to learn everything deeply. Every architecture choice, training run, and failure was mine to understand. This systematic approach—identifying failure modes, applying principled solutions, iterating—gave me confidence to tackle any ML problem.
