@@ -54,7 +54,7 @@ export function Navbar() {
         className={cn(
           'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
           isScrolled
-            ? 'py-3 glass-strong shadow-glass'
+            ? 'py-3 bg-background/80 backdrop-blur-md border-b border-white/5 shadow-sm'
             : 'py-5 bg-transparent'
         )}
       >
@@ -139,7 +139,7 @@ export function Navbar() {
             className="fixed inset-x-0 top-16 z-40 md:hidden"
           >
             <div className="section-container py-4">
-              <div className="glass-strong rounded-2xl p-4 shadow-glass-lg">
+              <div className="bg-background/80 backdrop-blur-md rounded-2xl p-4 border border-white/5 shadow-lg">
                 <nav className="flex flex-col gap-1">
                   {siteConfig.navItems.map((item, index) => (
                     <motion.div
