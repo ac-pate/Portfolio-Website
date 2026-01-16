@@ -30,8 +30,22 @@ export function ProjectsPreview({ projects, content }: ProjectsPreviewProps) {
   const contentRef = useRef<HTMLDivElement>(null);
 
   // Show only featured projects (max 6)
+  // Sort: ongoing projects first, then by start date (newest first)
   const featuredProjects = projects
     .filter(p => p.frontmatter.featured)
+    .sort((a, b) => {
+      const aIsOngoing = a.frontmatter.status === 'in-progress';
+      const bIsOngoing = b.frontmatter.status === 'in-progress';
+      
+      // Ongoing projects come first
+      if (aIsOngoing && !bIsOngoing) return -1;
+      if (!aIsOngoing && bIsOngoing) return 1;
+      
+      // Both ongoing or both not ongoing - sort by start date (newest first)
+      const aDate = a.frontmatter.startDate ? new Date(a.frontmatter.startDate).getTime() : 0;
+      const bDate = b.frontmatter.startDate ? new Date(b.frontmatter.startDate).getTime() : 0;
+      return bDate - aDate; // Descending order (newest first)
+    })
     .slice(0, 6);
 
   useEffect(() => {
@@ -44,13 +58,14 @@ export function ProjectsPreview({ projects, content }: ProjectsPreviewProps) {
       id="projects" 
       className="sticky top-0 min-h-screen bg-background z-20 pb-20 mb-[60vh]"
     >
-      <div className="section-container w-full pt-24 md:pt-24">
+      {/* <div className="section-container w-full pt-24 md:pt-24"> */}
+      <div className="section-container w-full relative z-10 pt-12 lg:px-4">
         {/* Sticky Header */}
-        <div className="sticky top-16 z-10 py-1.5 bg-background/80 backdrop-blur-md -mx-4 px-4 mb-6 border-b border-white/5">
+        <div className="sticky top-16 z-10 py-1.5 bg-background/80 backdrop-blur-md -mx-2 px-2 mb-6 border-b border-white/5">
           <SectionHeading
             title="Featured Projects"
             subtitle={content.subtitle}
-            className="mb-0 md:mb-0"
+            className="!mb-0"
           />
         </div>
 

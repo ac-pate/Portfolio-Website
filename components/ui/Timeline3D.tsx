@@ -103,9 +103,9 @@ const MAX_DISTANCE_AHEAD = 1000; // Hide cards that are too far ahead
 const STARFIELD_CONFIG = {
   count: 6000, // Number of stars
   depth: 300, // How far back stars extend (Z units)
-  speed: 0.5, // Base speed multiplier for star movement
-  twinkleSpeed: 100, // Speed of twinkling animation (lower = slower, softer blink)
-  size: 0.35, // Base star size (reduced for smaller stars)
+  speed: 0.7, // Base speed multiplier for star movement
+  twinkleSpeed: 300, // Speed of twinkling animation (lower = slower, softer blink)
+  size: 0.75, // Base star size (reduced for smaller stars)
   color: 0xffffff, // Star color (white)
   opacity: 0.99, // Base star opacity
 };
@@ -245,7 +245,7 @@ export function Timeline3D({ items, onToggleView }: Timeline3DProps) {
       starSizes[i] = STARFIELD_CONFIG.size * (0.5 + Math.random() * 0.5);
       
       // Random opacity for twinkling variation
-      starOpacities[i] = STARFIELD_CONFIG.opacity * (0.6 + Math.random() * 0.4);
+      starOpacities[i] = STARFIELD_CONFIG.opacity * (0.75 + Math.random() * 0.25);
       
       // Random phase offset (0 to 2π) for unique twinkle timing
       starPhases[i] = Math.random() * Math.PI * 2;

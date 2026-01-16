@@ -29,15 +29,9 @@ export function ExtracurricularPreview({ extracurricular, content }: Extracurric
   const stickyRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Show only featured accomplishments (max 6, but only 3 for now)
+  // Show only featured accomplishments (max 6)
   const featuredAccomplishments = extracurricular
-    .filter(ec => {
-      const slug = ec.slug;
-      // Only show: CEC win, QEC 2nd place, Robowars 2025
-      return slug === 'canadian-engineering-competition-cec' ||
-             slug === 'quebec-engineering-competition-qec' ||
-             slug === 'robowars-2025';
-    })
+    .filter(ec => ec.frontmatter.featured)
     .slice(0, 6);
 
   useEffect(() => {
@@ -56,7 +50,7 @@ export function ExtracurricularPreview({ extracurricular, content }: Extracurric
           <SectionHeading
             title="Featured Accomplishments"
             subtitle={content.subtitle}
-            className="mb-0 md:mb-0"
+            className="!mb-0"
           />
         </div>
 
