@@ -10,6 +10,7 @@
  * - Global Components: Navbar, Footer, GrainOverlay
  */
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { SoundProvider } from '@/components/providers/SoundProvider';
 import { Navbar } from '@/components/layout/Navbar';
@@ -71,6 +72,13 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} ${spaceGrotesk.variable} font-sans`}
       >
+        <Script
+          id="theme-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `document.documentElement.classList.add('dark');`,
+          }}
+        />
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

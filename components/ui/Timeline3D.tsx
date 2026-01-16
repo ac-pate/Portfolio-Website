@@ -242,7 +242,7 @@ export function Timeline3D({ items, onToggleView }: Timeline3DProps) {
       starDepths[i] = depth;
       
       // Random size variation
-      starSizes[i] = STARFIELD_CONFIG.size * (0.5 + Math.random() * 0.5);
+      starSizes[i] = STARFIELD_CONFIG.size * (0.75 + Math.random() * 0.25);
       
       // Random opacity for twinkling variation
       starOpacities[i] = STARFIELD_CONFIG.opacity * (0.75 + Math.random() * 0.25);

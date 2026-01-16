@@ -4,12 +4,12 @@
 
 @layer base {
   :root {
-    --background: #ffffff;
-    --background-secondary: #fafafa;
-    --foreground: #0a0a0a;
-    --foreground-secondary: #525252;
-    --border: #e5e5e5;
-    --muted: #a3a3a3;
+    --background: #0a0a0a;
+    --background-secondary: #242424;
+    --foreground: #fafafa;
+    --foreground-secondary: #a3a3a3;
+    --border: #1f1f1f;
+    --muted: #737373;
     --accent: #800020;
     --accent-light: #a3002a;
     --accent-dark: #5c0017;
@@ -501,4 +501,35 @@
   @apply prose-headings:font-display prose-headings:font-bold;
   @apply prose-a:text-accent prose-a:no-underline hover:prose-a:underline;
   @apply prose-code:text-accent prose-code:bg-accent/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded;
+}
+
+/* ===========================================
+   NEXT.JS IMAGE ERROR HANDLING
+   Hide broken image placeholders and ensure dark backgrounds
+   =========================================== */
+/* Hide Next.js broken image placeholder (white box with sad face icon) */
+img[src*="/_next/image"][src*="data:image"],
+img[src*="data:image/svg+xml"][src*="x_x"],
+span[data-nimg] img[src*="data:image"] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+/* Ensure image containers have dark background */
+.dark img,
+img {
+  background-color: var(--background) !important;
+}
+
+/* Hide broken image placeholders */
+img[alt]:not([src]),
+img[src=""],
+img:not([src]) {
+  display: none !important;
+}
+
+/* Ensure Next.js Image wrapper has dark background */
+span[data-nimg] {
+  background-color: var(--background) !important;
 }
