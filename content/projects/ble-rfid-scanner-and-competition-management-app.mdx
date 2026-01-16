@@ -1,7 +1,7 @@
 ---
-title: BLE RFID Scanner and Competition Management App
-description: A competition tracking system with custom RFID scanner hardware and Android app — built for COEN 390.
+title: BLE RFID Scanner & Comp. Management App
 term: Winter 2025
+description: A competition tracking system with custom RFID scanner hardware and Android app — built for COEN 390.
 startDate: 2025-01-01
 endDate: 2025-04-23
 tags:
@@ -27,13 +27,13 @@ status: completed
 
 Course project for COEN 390 that combined hardware, embedded product with an android app, and database storage .
 
-Our Project's concept: 
+Our Project's concept:
 Give event organizers a way to track participants throughout a venue using RFID wristbands. Attendees tap their bands at checkpoints (entry, merch booth, food station, session rooms), and organizers get real-time visibility into who is where.
 Give Participants an easy way to get real-time notifications from the organizers and a dashboard to find upcoming competetions sorted by region.
 
 ## System Architecture
 
-```
+```plain
 [RFID Wristband] → [ESP32 Scanner] → [BLE] → [Android App] → [Firebase]
                                                     ↓
                                           [Organizer Dashboard]
@@ -44,11 +44,13 @@ Give Participants an easy way to get real-time notifications from the organizers
 In a team of 5, I worked on the hardware and backend integration:
 
 ### Hardware Design
+
 - Built the physical RFID scanner device
 - Component selection, soldering, and assembly
 - Designed for portability and reliable scanning
 
 ### Embedded Firmware
+
 - Programmed **ESP32 XIAO C6** in C++
 - Wrote RFID scanning logic and data parsing
 - Implemented **BLE (Bluetooth Low Energy)** drivers for communication with mobile app
@@ -56,7 +58,7 @@ In a team of 5, I worked on the hardware and backend integration:
 ## Technical Stack
 
 | Layer | Technology |
-|-------|------------|
+| --- | --- |
 | Hardware | ESP32 C6 Mini, RFID reader module |
 | Firmware | Embedded C++, BLE stack |
 | Mobile | Android Studio (Java/Kotlin) |
