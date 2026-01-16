@@ -116,6 +116,9 @@ export interface HomepageContent {
   projectsPreview: {
     subtitle: string;
   };
+  extracurricularPreview: {
+    subtitle: string;
+  };
   experiencePreview: {
     subtitle: string;
   };
@@ -476,6 +479,9 @@ const defaultHomepageContent: HomepageContent = {
   projectsPreview: {
     subtitle: 'Selected work in robotics, embedded systems, and software.',
   },
+  extracurricularPreview: {
+    subtitle: 'Competitions, awards, and notable achievements.',
+  },
   experiencePreview: {
     subtitle: 'Professional experience in robotics, embedded systems, and engineering.',
   },
@@ -507,6 +513,9 @@ export function getHomepageContent(): HomepageContent {
       },
       projectsPreview: {
         subtitle: data.projectsPreview?.subtitle || defaultHomepageContent.projectsPreview.subtitle,
+      },
+      extracurricularPreview: {
+        subtitle: data.extracurricularPreview?.subtitle || defaultHomepageContent.extracurricularPreview.subtitle,
       },
       experiencePreview: {
         subtitle: data.experiencePreview?.subtitle || defaultHomepageContent.experiencePreview.subtitle,
