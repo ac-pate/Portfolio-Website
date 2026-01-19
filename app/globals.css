@@ -503,33 +503,3 @@
   @apply prose-code:text-accent prose-code:bg-accent/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded;
 }
 
-/* ===========================================
-   NEXT.JS IMAGE ERROR HANDLING
-   Hide broken image placeholders and ensure dark backgrounds
-   =========================================== */
-/* Hide Next.js broken image placeholder (white box with sad face icon) */
-img[src*="/_next/image"][src*="data:image"],
-img[src*="data:image/svg+xml"][src*="x_x"],
-span[data-nimg] img[src*="data:image"] {
-  display: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-}
-
-/* Ensure image containers have dark background */
-.dark img,
-img {
-  background-color: var(--background) !important;
-}
-
-/* Hide broken image placeholders */
-img[alt]:not([src]),
-img[src=""],
-img:not([src]) {
-  display: none !important;
-}
-
-/* Ensure Next.js Image wrapper has dark background */
-span[data-nimg] {
-  background-color: var(--background) !important;
-}
