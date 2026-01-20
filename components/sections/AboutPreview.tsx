@@ -24,15 +24,16 @@ const ENABLE_IMAGE_FLICKER = true;
 const FLICKER_IMAGES = [
   "/images/hero/031058170035.jpg", // Original image
   "/images/uploads/DSCF3024.JPG",
-  "/images/uploads/IMG_7789.JPG",
+  "/images/uploads/IMG_7786.JPG",
   "/images/uploads/DSCF3078.JPG",
-  "/images/uploads/20240317-p1933148.jpg",
-  "/images/uploads/IMG_7782.JPG",
+  "/images/uploads/20240801_162018.jpg",
+  "/images/uploads/img_20241024_121548_698.jpg",
   "/images/uploads/20240217_145723.jpg",
   "/images/uploads/DSCF2999.JPG",
   "/images/uploads/20250216_060005.jpg",
   "/images/uploads/IMG_7778.JPG",
   "/images/uploads/20241220_151604.jpg",
+  "/images/uploads/20241220_165236.jpg",
 ];
 
 function InfographicSummary() {
