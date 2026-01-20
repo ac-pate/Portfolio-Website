@@ -21,7 +21,7 @@ export default function HomePage() {
       <Hero content={homepageContent.hero} />
       <AboutPreview content={homepageContent.aboutPreview} />
       <ProjectsPreview projects={featuredProjects} content={homepageContent.projectsPreview} />
-      <ExtracurricularPreview extracurricular={allExtracurricular} content={homepageContent.extracurricularPreview} />
+      {/* <ExtracurricularPreview extracurricular={allExtracurricular} content={homepageContent.extracurricularPreview} /> */}
       <ExperiencePreview jobs={featuredJobs} content={homepageContent.experiencePreview} />
       <TimelineSection items={allTimelineItems} content={homepageContent.timeline} />
     </>
