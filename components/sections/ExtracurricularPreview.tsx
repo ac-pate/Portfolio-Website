@@ -78,7 +78,7 @@ export function ExtracurricularPreview({ extracurricular, content }: Extracurric
                 href="/extracurricular"
                 className="inline-flex items-center gap-2 text-accent font-medium hover:underline"
               >
-                View all accomplishments
+                View other Extracurricular Activities
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
