@@ -69,6 +69,7 @@ export function ExtracurricularCardWithThumbnail({
                   alt={title}
                   fill
                   className="object-cover"
+                  priority
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-yellow-500/10">

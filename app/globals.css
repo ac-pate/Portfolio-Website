@@ -503,3 +503,7 @@
   @apply prose-code:text-accent prose-code:bg-accent/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded;
 }
 
+/* Fix for Next.js Image white box artifacts */
+span[data-nimg] {
+  background-color: transparent !important;
+}
