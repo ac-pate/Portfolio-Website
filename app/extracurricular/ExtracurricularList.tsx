@@ -64,7 +64,7 @@ export function ExtracurricularList({ extracurricular, volunteer }: Extracurricu
             Extracurricular<span className="text-accent">.</span>
           </h1>
           <p className="text-lg text-foreground-secondary max-w-2xl">
-            Competitions, workshops, events, and other activities beyond academics.
+            Competitions, Events, Workshops, Leadership roles, and Volunteer Activities beyond academics and jobs.
           </p>
         </motion.div>
 

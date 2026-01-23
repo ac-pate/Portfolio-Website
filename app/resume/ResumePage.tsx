@@ -27,7 +27,7 @@ export function ResumePage() {
             Resume<span className="text-accent">.</span>
           </h1>
           <p className="text-lg text-foreground-secondary max-w-2xl mb-6">
-            My professional experience, education, and skills. The resume is maintained in LaTeX and automatically compiled via GitHub Actions.
+            My professional experience, education, and skills. Additionally, Letter of Reccomendations from my previous employers.
           </p>
 
           {/* Action buttons - stacks vertically on mobile */}
