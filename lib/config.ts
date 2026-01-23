@@ -24,11 +24,11 @@ export const siteConfig: SiteConfig = {
     linkedin: 'https://www.linkedin.com/in/achal-patel-3ab6b7270',
   },
   navItems: [
-    { label: 'About', href: '/about' },
+    { label: 'Resume', href: '/resume' },
     { label: 'Projects', href: '/projects' },
     { label: 'Experience', href: '/experience' },
     { label: 'Extracurricular', href: '/extracurricular' },
-    { label: 'Resume', href: '/resume' },
+    { label: 'About', href: '/about' },
     { label: 'Photography', href: '/photography' },
   ],
 };
