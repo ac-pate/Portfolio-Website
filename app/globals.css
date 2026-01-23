@@ -14,6 +14,7 @@
     --accent-light: #a3002a;
     --accent-dark: #5c0017;
     --accent-rgb: 128, 0, 32;
+    --accent-light-rgb: 163, 0, 42;
   }
 
   .dark {

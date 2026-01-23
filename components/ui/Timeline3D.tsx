@@ -35,8 +35,8 @@ const EXIT_HOLD_VH = 150;
 const LANES = {
   project: { x: -2.5, parallaxSpeed: 1.0 },
   job: { x: 0, parallaxSpeed: 0.85 },
-  education: { x: 0.5, parallaxSpeed: 0.85 },
-  extracurricular: { x: 2.5, parallaxSpeed: 0.7 },
+  education: { x: 0, parallaxSpeed: 0.85 },
+  extracurricular: { x: 2.5, parallaxSpeed: 0.85 },
 };
 
 // ============================================
@@ -54,14 +54,14 @@ const LANES = {
 // ============================================
 
 // Card spacing in Z-depth (increase for more space between cards in same lane)
-const CARD_Z_SPACING = 50; // Distance between consecutive cards
+const CARD_Z_SPACING = 60; // Distance between consecutive cards
 const CAMERA_START_Z = 5; // Initial camera Z position
 
 // Scroll speed control (increase to slow down animation)
 // Scroll speed control (increase to slow down animation)
-const SCROLL_DISTANCE_PER_CARD = 1000; // Pixels per card (higher = slower)
+const SCROLL_DISTANCE_PER_CARD = 400; // Pixels per card (higher = slower)
 // Switch from vh to px to fix massive scroll height
-const SCROLL_SCRUB_SPEED = 5.5; // Scroll smoothing (higher = more lag, smoother)
+const SCROLL_SCRUB_SPEED = 1.5; // Scroll smoothing (higher = more lag, smoother)
 
 // Card starting properties (when far back, before coming into focus)
 const CARD_START_SCALE = 0.01; // How small cards start (0.01 = 1% size - grow from a point)
@@ -857,13 +857,12 @@ export function Timeline3D({ items, onToggleView }: Timeline3DProps) {
       
       {/* View Toggle Button */}
       <div className="absolute top-24 right-8 z-50 overflow-visible">
-        <GlowWrapper preset="button" className="rounded-full">
+        <GlowWrapper preset="button" className="rounded-sm">
           <button
             onClick={onToggleView}
-            className="flex items-center gap-2 px-4 py-2 text-xs font-medium uppercase tracking-wider text-muted hover:text-accent bg-background/50 backdrop-blur-sm border border-white/10 rounded-full transition-all"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent hover:bg-accent-dark text-white font-medium rounded-lg transition-all duration-200 hover:shadow-glow-sm whitespace-nowrap hover:scale-105"
           >
-            <span>List View</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="8" y1="6" x2="21" y2="6"></line>
               <line x1="8" y1="12" x2="21" y2="12"></line>
               <line x1="8" y1="18" x2="21" y2="18"></line>
@@ -871,6 +870,7 @@ export function Timeline3D({ items, onToggleView }: Timeline3DProps) {
               <line x1="3" y1="12" x2="3.01" y2="12"></line>
               <line x1="3" y1="18" x2="3.01" y2="18"></line>
             </svg>
+            List View
           </button>
         </GlowWrapper>
       </div>

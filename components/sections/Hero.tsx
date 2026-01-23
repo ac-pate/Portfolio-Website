@@ -274,7 +274,7 @@ export function Hero({ content }: HeroProps) {
 
         // Video caption fades in with scroll (video itself is now time-based, not scroll-dependent)
         tl.to(captionRef.current, { opacity: 1, duration: 0.8 }, 0.5)
-          .to(captionRef.current.querySelector('p'), { color: '#a3002a', fontSize: '0.875rem', duration: 0.8 }, 1.0);
+          .to(captionRef.current.querySelector('p'), { color: 'var(--accent-light)', fontSize: '0.875rem', duration: 0.8 }, 1.0);
 
         if (nav) {
             tl.to(nav, { opacity: 0, duration: 0.4 }, 0.6)
@@ -321,9 +321,9 @@ export function Hero({ content }: HeroProps) {
                         className="pointer-events-none"
                     >
                         <span 
-                            className="text-accent text-sm md:text-base lg:text-lg font-['Poppins'] font-bold tracking-[0.25em] uppercase"
+                            className="text-accent-light text-sm md:text-base lg:text-lg font-['Poppins'] font-bold tracking-[0.25em] uppercase"
                             style={{
-                                textShadow: '0 0 15px rgba(var(--accent-rgb), 1), 0 0 30px rgba(var(--accent-rgb), 0.7), 0 0 45px rgba(var(--accent-rgb), 0.4)'
+                                textShadow: '0 0 15px rgba(var(--accent-light-rgb), 1), 0 0 30px rgba(var(--accent-light-rgb), 0.7), 0 0 45px rgba(var(--accent-light-rgb), 0.4)'
                             }}
                         >
                             Undergraduate Portfolio
@@ -388,8 +388,8 @@ export function Hero({ content }: HeroProps) {
                             initial={{ opacity: 0, y: 15 }} 
                             animate={preloaderDone ? { opacity: 1, y: 0 } : {}}
                             transition={{ duration: 0.6, delay: 0.85 }}
-                            className="mt-8 md:mt-10 text-sm md:text-base lg:text-lg text-white/80 font-['Poppins'] font-normal tracking-wide"
-                            style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}
+                            className="mt-8 md:mt-10 text-sm md:text-base lg:text-lg text-white/90 font-['Poppins'] font-normal tracking-wide"
+                            style={{ textShadow: '0 4px 20px rgba(0,0,0,0.8)' }}
                         >
                             {content.tagline}
                         </motion.p>
@@ -407,7 +407,7 @@ export function Hero({ content }: HeroProps) {
                         <GlowWrapper preset="button" className="rounded-lg">
                             <Link
                                 href="/projects"
-                                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent hover:bg-accent-dark text-white font-medium rounded-lg transition-all duration-200 hover:shadow-glow-sm whitespace-nowrap"
+                                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent hover:bg-accent-dark text-white font-medium rounded-lg transition-all duration-200 hover:shadow-glow-sm whitespace-nowrap hover:scale-105  "
                             >
                                 <FolderOpen className="w-4 h-4" />
                                 View Projects
@@ -418,7 +418,7 @@ export function Hero({ content }: HeroProps) {
                         <GlowWrapper preset="button" className="rounded-lg">
                             <Link
                                 href="/resume"
-                                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-medium rounded-lg transition-all duration-200 hover:shadow-glow-sm whitespace-nowrap border border-white/20"
+                                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 text-white hover:text-accent-light font-medium rounded-lg transition-all duration-200 hover:shadow-glow-sm hover:scale-105 whitespace-nowrap border border-white/20"
                             >
                                 <FileText className="w-4 h-4" />
                                 Resume

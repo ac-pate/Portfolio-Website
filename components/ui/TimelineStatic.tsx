@@ -81,21 +81,19 @@ export function TimelineStatic({ items, onToggleView }: TimelineStaticProps) {
             
             {/* View Toggle Button */}
             <div className="absolute top-0 right-0 hidden md:block overflow-visible">
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <GlowWrapper preset="button" className="rounded-full">
-                  <button
-                    onClick={onToggleView}
-                    className="flex items-center gap-2 px-4 py-2 text-xs font-medium uppercase tracking-wider text-muted hover:text-accent bg-background-secondary/50 border border-border rounded-full transition-all"
-                  >
-                    <span>3D View</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                      <polyline points="2 17 12 22 22 17"></polyline>
-                      <polyline points="2 12 12 17 22 12"></polyline>
-                    </svg>
-                  </button>
-                </GlowWrapper>
-              </motion.div>
+              <GlowWrapper preset="button" className="rounded-sm">
+                <button
+                  onClick={onToggleView}
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent hover:bg-accent-dark text-white font-medium rounded-lg transition-all duration-200 hover:shadow-glow-sm whitespace-nowrap hover:scale-105"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                    <polyline points="2 17 12 22 22 17"></polyline>
+                    <polyline points="2 12 12 17 22 12"></polyline>
+                  </svg>
+                  3D View
+                </button>
+              </GlowWrapper>
             </div>
           </div>
 
