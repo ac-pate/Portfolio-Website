@@ -407,7 +407,7 @@ export function Hero({ content }: HeroProps) {
                         <GlowWrapper preset="button" className="rounded-lg">
                             <Link
                                 href="/projects"
-                                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent hover:bg-accent-dark text-white font-medium rounded-lg transition-all duration-200 hover:shadow-glow-sm whitespace-nowrap hover:scale-105  "
+                                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent hover:bg-accent-dark text-white font-medium rounded-lg transition-all duration-200 hover:shadow-glow-sm whitespace-nowrap hover:scale-103  "
                             >
                                 <FolderOpen className="w-4 h-4" />
                                 View Projects
@@ -418,7 +418,7 @@ export function Hero({ content }: HeroProps) {
                         <GlowWrapper preset="button" className="rounded-lg">
                             <Link
                                 href="/resume"
-                                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 text-white hover:text-accent-light font-medium rounded-lg transition-all duration-200 hover:shadow-glow-sm hover:scale-105 whitespace-nowrap border border-white/20"
+                                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 text-white hover:text-accent-light font-medium rounded-lg transition-all duration-200 hover:shadow-glow-sm hover:scale-103 whitespace-nowrap border border-white/20"
                             >
                                 <FileText className="w-4 h-4" />
                                 Resume

@@ -27,7 +27,7 @@ interface ProjectCardProps {
 
 export function ProjectCard({ slug, frontmatter, index = 0 }: ProjectCardProps) {
   const { title, description, tags, image, github, demo, status, projectType } = frontmatter;
-  const { playHoverSound, playClickSound } = useSound();
+  const { playHoverSound, stopHoverSound, playClickSound } = useSound();
 
   // Status badge overlay
   const statusOverlay =
@@ -54,6 +54,7 @@ export function ProjectCard({ slug, frontmatter, index = 0 }: ProjectCardProps) 
             target="_blank"
             rel="noopener noreferrer"
             onMouseEnter={playHoverSound}
+            onMouseLeave={stopHoverSound}
             onClick={(e) => {
               e.stopPropagation();
               playClickSound();
@@ -70,6 +71,7 @@ export function ProjectCard({ slug, frontmatter, index = 0 }: ProjectCardProps) 
             target="_blank"
             rel="noopener noreferrer"
             onMouseEnter={playHoverSound}
+            onMouseLeave={stopHoverSound}
             onClick={(e) => {
               e.stopPropagation();
               playClickSound();

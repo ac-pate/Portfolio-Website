@@ -7,7 +7,7 @@ import GlowWrapper from '@/components/ui/GlowWrapper';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
-  const { playHoverSound, playClickSound } = useSound();
+  const { playHoverSound, stopHoverSound, playClickSound } = useSound();
 
   return (
     <footer className="relative group border-t border-border bg-background-secondary/30 transition-colors duration-300 hover:bg-background-secondary/50 hover:border-accent/20" style={{ zIndex: 100000 }}>
@@ -25,6 +25,7 @@ export function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               onMouseEnter={playHoverSound}
+              onMouseLeave={stopHoverSound}
               onClick={playClickSound}
               className="p-2 rounded-lg text-foreground-secondary hover:text-accent hover:bg-accent/10 hover:scale-110 transition-all duration-200 hover:shadow-glow-sm border border-transparent hover:border-accent/30"
               aria-label="GitHub"
@@ -37,6 +38,7 @@ export function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               onMouseEnter={playHoverSound}
+              onMouseLeave={stopHoverSound}
               onClick={playClickSound}
               className="p-2 rounded-lg text-foreground-secondary hover:text-accent hover:bg-accent/10 hover:scale-110 transition-all duration-200 hover:shadow-glow-sm border border-transparent hover:border-accent/30"
               aria-label="LinkedIn"
@@ -47,6 +49,7 @@ export function Footer() {
             <a
               href={`mailto:${siteConfig.email}`}
               onMouseEnter={playHoverSound}
+              onMouseLeave={stopHoverSound}
               onClick={playClickSound}
               className="p-2 rounded-lg text-foreground-secondary hover:text-accent hover:bg-accent/10 hover:scale-110 transition-all duration-200 hover:shadow-glow-sm border border-transparent hover:border-accent/30"
               aria-label="Email"

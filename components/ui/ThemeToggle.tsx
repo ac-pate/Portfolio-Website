@@ -9,7 +9,7 @@ import { useSound } from '@/components/providers/SoundProvider';
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const { playHoverSound, playClickSound } = useSound();
+  const { playHoverSound, stopHoverSound, playClickSound } = useSound();
 
   useEffect(() => {
     setMounted(true);
@@ -26,6 +26,7 @@ export function ThemeToggle() {
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       onHoverStart={playHoverSound}
+      onHoverEnd={stopHoverSound}
       onClick={() => {
         playClickSound();
         setTheme(theme === 'dark' ? 'light' : 'dark');

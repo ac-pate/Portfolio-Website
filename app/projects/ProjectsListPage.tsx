@@ -26,7 +26,7 @@ export function ProjectsListPage({ projects }: ProjectsListPageProps) {
             Projects<span className="text-accent">.</span>
           </h1>
           <p className="text-lg text-foreground-secondary max-w-2xl">
-            A collection of my work in AI/ML,robotics, electronics, and software engineering.
+            A collection of my work in AI/ML, robotics, electronics, and software engineering.
           </p>
         </motion.div>
 

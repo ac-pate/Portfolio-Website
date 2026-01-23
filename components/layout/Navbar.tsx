@@ -27,7 +27,7 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
-  const { playHoverSound, playClickSound } = useSound();
+  const { playHoverSound, stopHoverSound, playClickSound } = useSound();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -64,6 +64,7 @@ export function Navbar() {
             href="/" 
             className="relative group"
             onMouseEnter={playHoverSound}
+            onMouseLeave={stopHoverSound}
             onClick={playClickSound}
           >
             <motion.span
@@ -82,6 +83,7 @@ export function Navbar() {
                 key={item.href}
                 href={item.href}
                 onMouseEnter={playHoverSound}
+                onMouseLeave={stopHoverSound}
                 onClick={playClickSound}
                 className={cn(
                   'relative px-4 py-2 text-sm font-medium transition-colors',
@@ -111,6 +113,7 @@ export function Navbar() {
             <motion.button
               whileTap={{ scale: 0.95 }}
               onHoverStart={playHoverSound}
+              onHoverEnd={stopHoverSound}
               onClick={() => {
                 playClickSound();
                 setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -151,6 +154,7 @@ export function Navbar() {
                       <Link
                         href={item.href}
                         onMouseEnter={playHoverSound}
+                        onMouseLeave={stopHoverSound}
                         onClick={() => {
                           playClickSound();
                           setIsMobileMenuOpen(false);
