@@ -110,7 +110,7 @@ export function ProjectCardWithThumbnail({
               )}
               
               {!compact && description && (
-                <p className="hidden md:block text-sm text-foreground-secondary line-clamp-2 mb-2">
+                <p className="text-sm text-foreground-secondary line-clamp-1 md:line-clamp-2 mb-2">
                   {description}
                 </p>
               )}
