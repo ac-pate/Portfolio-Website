@@ -18,7 +18,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowUpRight, Trophy } from 'lucide-react';
 import type { ExtracurricularFrontmatter } from '@/lib/mdx';
-import { cn } from '@/lib/utils';
+import { cn, formatDateRange } from '@/lib/utils';
 import GlowWrapper from '@/components/ui/GlowWrapper';
 import { useSound } from '@/components/providers/SoundProvider';
 
@@ -35,7 +35,7 @@ export function ExtracurricularCardWithThumbnail({
   index = 0,
   compact = false 
 }: ExtracurricularCardWithThumbnailProps) {
-  const { title, description, tags, image, award } = frontmatter;
+  const { title, description, tags, image, award, startDate, endDate } = frontmatter;
   const { playHoverSound, stopHoverSound } = useSound();
 
   return (
@@ -63,13 +63,13 @@ export function ExtracurricularCardWithThumbnail({
               "transition-transform duration-300 group-hover:scale-105",
               compact ? "w-16 h-16" : "w-24 h-24 md:w-32 md:h-24"
             )}>
-              {image ? (
+              {image && image.trim() !== '' ? (
                 <Image
                   src={image}
                   alt={title}
                   fill
                   className="object-cover"
-                  priority
+                  
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-yellow-500/10">
@@ -89,19 +89,22 @@ export function ExtracurricularCardWithThumbnail({
                 </h3>
               </div>
               
-              {award && (
-                <p className="text-xs text-accent font-medium mb-1">🏆 {award}</p>
+              {/* Date Range */}
+              {startDate && (
+                <p className="text-xs text-muted mb-1">
+                  {formatDateRange(startDate, endDate)}
+                </p>
               )}
               
               {!compact && description && (
-                <p className="text-sm text-foreground-secondary line-clamp-2 mb-2">
+                <p className="hidden md:block text-sm text-foreground-secondary line-clamp-2 mb-2">
                   {description}
                 </p>
               )}
 
               {/* Tags */}
               {tags && tags.length > 0 && (
-                <div className="flex flex-wrap gap-1.5">
+                <div className="hidden md:flex flex-wrap gap-1.5">
                   {tags.slice(0, compact ? 2 : 3).map((tag) => (
                     <span
                       key={tag}

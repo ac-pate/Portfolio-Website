@@ -29,9 +29,16 @@ export function ExtracurricularPreview({ extracurricular, content }: Extracurric
   const stickyRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Show only featured accomplishments (max 6)
-  const featuredAccomplishments = extracurricular
+  // Show only featured extracurricular (max 6)
+  // Sort: by start date (newest first)
+  const featuredExtracurricular = extracurricular
     .filter(ec => ec.frontmatter.featured)
+    .sort((a, b) => {
+      // Sort by start date (newest first)
+      const aDate = a.frontmatter.startDate ? new Date(a.frontmatter.startDate).getTime() : 0;
+      const bDate = b.frontmatter.startDate ? new Date(b.frontmatter.startDate).getTime() : 0;
+      return bDate - aDate; // Descending order (newest first)
+    })
     .slice(0, 6);
 
   useEffect(() => {
@@ -41,33 +48,34 @@ export function ExtracurricularPreview({ extracurricular, content }: Extracurric
   return (
     <section 
       ref={sectionRef} 
-      id="accomplishments" 
-      className="sticky top-0 min-h-screen bg-background z-[25] pb-20 mb-[60vh]"
+      id="extracurricular" 
+      className="sticky top-0 min-h-screen bg-background z-20 pb-20 mb-[60vh]"
     >
-      <div className="section-container w-full pt-24 md:pt-24">
+      {/* <div className="section-container w-full pt-24 md:pt-24"> */}
+      <div className="section-container w-full relative z-10 pt-12 lg:px-4">
         {/* Sticky Header */}
-        <div className="sticky top-16 z-10 py-1.5 bg-background/80 backdrop-blur-md -mx-4 px-4 mb-6 border-b border-white/5">
+        <div className="sticky top-16 z-10 py-1.5 bg-background/80 backdrop-blur-md -mx-2 px-2 mb-6 border-b border-white/5">
           <SectionHeading
-            title="Featured Accomplishments"
+            title="Featured Extracurricular"
             subtitle={content.subtitle}
             className="!mb-0"
           />
         </div>
 
-        {featuredAccomplishments.length === 0 ? (
+        {featuredExtracurricular.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-foreground-secondary">
-              Accomplishments coming soon.
+              Extracurricular activities coming soon.
             </p>
           </div>
         ) : (
           <div ref={contentRef}>
             <div className="grid md:grid-cols-2 gap-4 md:gap-8">
-              {featuredAccomplishments.map((accomplishment, index) => (
+              {featuredExtracurricular.map((item, index) => (
                 <ExtracurricularCardWithThumbnail
-                  key={accomplishment.slug}
-                  slug={accomplishment.slug}
-                  frontmatter={accomplishment.frontmatter}
+                  key={item.slug}
+                  slug={item.slug}
+                  frontmatter={item.frontmatter}
                   index={index}
                 />
               ))}
@@ -78,7 +86,7 @@ export function ExtracurricularPreview({ extracurricular, content }: Extracurric
                 href="/extracurricular"
                 className="inline-flex items-center gap-2 text-accent font-medium hover:underline"
               >
-                View other Extracurricular Activities
+                View all extracurricular activities
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
