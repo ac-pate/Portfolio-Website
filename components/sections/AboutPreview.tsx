@@ -148,7 +148,7 @@ export function AboutPreview({ content }: AboutPreviewProps) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="w-full mb-12 md:mb-16 mt-8 md:mt-12 relative -mx-4 md:-mx-8"
+          className="hidden md:block w-full mb-12 md:mb-16 mt-8 md:mt-12 relative -mx-4 md:-mx-8"
         >
           <div className="relative overflow-x-auto md:overflow-hidden z-20 group scrollbar-hide">
             <Image 
@@ -160,8 +160,6 @@ export function AboutPreview({ content }: AboutPreviewProps) {
               priority
             />
           </div>
-          {/* Mobile scroll hint */}
-          <p className="text-xs text-muted text-center mt-2 md:hidden">← Scroll to see full timeline →</p>
         </motion.div>
 
         {/* 2. Image and Overlapping Text Grid */}
@@ -186,7 +184,7 @@ export function AboutPreview({ content }: AboutPreviewProps) {
             >
               <Link 
                 href="/about"
-                className="block relative w-[260px] h-[260px] sm:w-[280px] sm:h-[280px] md:w-[300px] md:h-[300px] lg:w-[320px] lg:h-[320px] xl:w-[380px] xl:h-[380px] 2xl:w-[420px] 2xl:h-[420px]"
+                className="block relative w-[180px] h-[180px] sm:w-[280px] sm:h-[280px] md:w-[300px] md:h-[300px] lg:w-[320px] lg:h-[320px] xl:w-[380px] xl:h-[380px] 2xl:w-[420px] 2xl:h-[420px]"
                 onMouseEnter={() => {
                   setIsHovering(true);
                   playFlickerSound();
@@ -230,7 +228,7 @@ export function AboutPreview({ content }: AboutPreviewProps) {
             {/* 1. Overlapping Quote Row - only overlap on xl+ screens */}
             <div className="relative z-20 xl:-ml-32 xl:mt-0 xl:pr-4">
               <p 
-                className="text-base sm:text-lg md:text-xl xl:text-2xl text-foreground font-display font-bold leading-tight italic"
+                className="text-sm sm:text-lg md:text-xl xl:text-2xl text-foreground font-display font-bold leading-tight italic"
               >
                 &ldquo;{content.quote}&rdquo;
               </p>
@@ -251,7 +249,7 @@ export function AboutPreview({ content }: AboutPreviewProps) {
                       whileInView={{ opacity: 1, scale: 1 }}
                       viewport={{ once: true }}
                       transition={{ delay: 0.1 + index * 0.05 }}
-                      className="px-3 py-1.5 text-xs rounded-lg bg-background-secondary border border-border text-foreground-secondary hover:border-accent/50 hover:text-accent transition-all duration-200 cursor-default"
+                      className="px-2 py-0.5 sm:px-3 sm:py-1.5 text-[10px] sm:text-xs rounded-lg bg-background-secondary border border-border text-foreground-secondary hover:border-accent/50 hover:text-accent transition-all duration-200 cursor-default"
                     >
                       {tech}
                     </motion.span>
@@ -261,10 +259,10 @@ export function AboutPreview({ content }: AboutPreviewProps) {
 
               {/* Action Buttons Section */}
               <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4">
-                <GlowWrapper preset="button" className="rounded-lg w-full sm:w-auto">
+                <GlowWrapper preset="button" className="rounded-lg w-auto">
                   <Link
                     href="/about"
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent hover:bg-accent-dark text-white font-medium rounded-lg transition-all duration-200 hover:shadow-glow-sm whitespace-nowrap w-full sm:w-auto"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent hover:bg-accent-dark text-white font-medium rounded-lg transition-all duration-200 hover:shadow-glow-sm whitespace-nowrap"
                   >
                     Read My Full Story
                     <ArrowRight className="w-4 h-4" />

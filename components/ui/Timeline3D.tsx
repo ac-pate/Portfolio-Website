@@ -967,13 +967,13 @@ const TimelineCard3D = forwardRef<HTMLAnchorElement, TimelineCard3DProps>(({ ite
         </h3>
 
         {/* Subtitle */}
-        <p className="text-sm text-white/60 mb-3 line-clamp-2">
+        <p className="hidden md:block text-sm text-white/60 mb-3 line-clamp-2">
           {item.subtitle}
         </p>
 
         {/* Tags */}
         {item.tags && item.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2">
+          <div className="hidden md:flex flex-wrap gap-2">
             {item.tags.slice(0, 3).map((tag) => (
               <span
                 key={tag}

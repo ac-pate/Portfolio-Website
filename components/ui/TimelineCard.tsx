@@ -80,7 +80,7 @@ export function TimelineCard({ item }: TimelineCardProps) {
 
             {/* Subtitle */}
             {item.subtitle && (
-              <p className="mb-2 text-xs text-foreground-secondary line-clamp-1">
+              <p className="hidden md:block mb-2 text-xs text-foreground-secondary line-clamp-1">
                 {item.subtitle}
               </p>
             )}
@@ -94,7 +94,7 @@ export function TimelineCard({ item }: TimelineCardProps) {
 
             {/* Tags */}
             {displayTags.length > 0 && (
-              <div className="mt-auto flex flex-wrap gap-1">
+              <div className="hidden md:flex mt-auto flex-wrap gap-1">
                 {displayTags.map((tag) => (
                   <span
                     key={tag}

@@ -18,7 +18,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowUpRight } from 'lucide-react';
 import type { ProjectFrontmatter } from '@/lib/mdx';
-import { cn } from '@/lib/utils';
+import { cn, formatDateRange } from '@/lib/utils';
 import GlowWrapper from '@/components/ui/GlowWrapper';
 import { useSound } from '@/components/providers/SoundProvider';
 
@@ -35,7 +35,7 @@ export function ProjectCardWithThumbnail({
   index = 0,
   compact = false 
 }: ProjectCardWithThumbnailProps) {
-  const { title, description, tags, image, status } = frontmatter;
+  const { title, description, tags, image, status, startDate, endDate } = frontmatter;
   const { playHoverSound, stopHoverSound } = useSound();
 
   return (
@@ -102,14 +102,21 @@ export function ProjectCardWithThumbnail({
                 </h3>
               </div>
               
+              {/* Date Range */}
+              {startDate && (
+                <p className="text-xs text-muted mb-1">
+                  {formatDateRange(startDate, endDate)}
+                </p>
+              )}
+              
               {!compact && description && (
-                <p className="text-sm text-foreground-secondary line-clamp-2 mb-2">
+                <p className="hidden md:block text-sm text-foreground-secondary line-clamp-2 mb-2">
                   {description}
                 </p>
               )}
 
               {/* Tags */}
-              <div className="flex flex-wrap gap-1.5">
+              <div className="hidden md:flex flex-wrap gap-1.5">
                 {tags.slice(0, compact ? 2 : 3).map((tag) => (
                   <span
                     key={tag}

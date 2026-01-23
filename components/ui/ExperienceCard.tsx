@@ -107,7 +107,7 @@ export function ExperienceCard({
 
                 {/* Technologies */}
                 {technologies && technologies.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="hidden md:flex flex-wrap gap-1.5">
                     {technologies.slice(0, 2).map((tech) => (
                       <span
                         key={tech}
@@ -176,14 +176,14 @@ export function ExperienceCard({
           )}
 
           {description && (
-            <p className="text-sm text-foreground-secondary leading-relaxed mb-4 line-clamp-3">
+            <p className="hidden md:block text-sm text-foreground-secondary leading-relaxed mb-4 line-clamp-3">
               {description}
             </p>
           )}
 
           {/* Technologies */}
           {technologies && technologies.length > 0 && (
-            <div className="flex flex-wrap gap-2">
+            <div className="hidden md:flex flex-wrap gap-2">
               {technologies.slice(0, 4).map((tech) => (
                 <span
                   key={tech}
