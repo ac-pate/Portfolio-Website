@@ -24,24 +24,22 @@ term: Summer 2025
 
 ### ROS2 Control Stack Development
 
-- Brought up and stabilized ROS2 motion controllers for motor control over CAN (EPOS4)
 - Integrated ros2_control/ros2_controllers with Virtual CAN workflow using ros2_canopen
-- Enabled hardware-identical testing without the physical rover
+- Enabled hardware-identical testing without the physical rover by simulating motor drivers on Gazebo via Virtual CAN
 
-### Simulation/Hardware Switching
+### Moveit2/Simulation
 
-- Implemented Xacro conditional plugin loading and launch-time arguments
-- Removed manual config edits when moving between Gazebo simulation and real hardware
-- Streamlined development workflow for the entire team
+- Learned how to do trajectory planning and execution using Moveit2 on fist a simulated robotic arm.
+- Transferd that knowledge to integrate motion planning pipeline for the rover simulation 
 
 ### Teleoperation System
 
-- Built complete Xbox joystick teleoperation package
+- Built complete Xbox joystick teleoperation package - enabling user control of the robot for the very first time
 - Pipeline: Joy → Twist → diff-drive/skid-steer solver → Float64MultiArray → CAN
-- Validated in Gazebo and on hardware during field trials
+- Validated in Gazebo and on hardware.
 
 ### Perception System
 
 - Implemented perception-based position estimation for closed-loop experiments
-- Used ZED2/ZED SDK and ArUco markers
-- Achieved 20–30 Hz estimation with ROS2 message type integration for Simulink control stack
+- Used ArUco markers and offboard camera first, then swithing to ZED2/ZED SDK an onboard Jetson AGX Xavier 
+- Achieved 20–30 Hz estimation with ROS2 message send wirelessly over the network for feedback for closed loop Simulink controller.
