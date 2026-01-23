@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { ExtracurricularCard } from '@/components/ui/ExtracurricularCard';
 import type { ContentItem, ExtracurricularFrontmatter, VolunteerFrontmatter } from '@/lib/mdx';
-import { groupByAcademicTerm, formatAcademicTermDateRangeFromLabel } from '@/lib/utils';
+import { groupByAcademicTerm } from '@/lib/utils';
 
 interface ExtracurricularListProps {
   extracurricular: ContentItem<ExtracurricularFrontmatter>[];
@@ -70,14 +70,11 @@ export function ExtracurricularList({ extracurricular, volunteer }: Extracurricu
 
         {groupedActivities.size > 0 ? (
           Array.from(groupedActivities.entries()).map(([termLabel, termActivities]) => {
-            // Get term date range for display based on the term label itself
-            const termDateRange = formatAcademicTermDateRangeFromLabel(termLabel);
-            
             return (
               <section key={termLabel} className="mb-16">
                 <div className="mb-6 relative z-10">
                   <h2 className="text-4xl font-display font-bold text-foreground mb-1">
-                    {termLabel}{termDateRange ? ` (${termDateRange})` : ''}
+                    {termLabel}
                   </h2>
                   <p className="text-sm text-foreground-secondary">
                     {termActivities.length} {termActivities.length === 1 ? 'Activity' : 'Activities'}

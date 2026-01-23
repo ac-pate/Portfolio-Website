@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { ExperienceCard } from '@/components/ui/ExperienceCard';
 import type { ContentItem, JobFrontmatter } from '@/lib/mdx';
-import { groupByAcademicTerm, formatAcademicTermDateRangeFromLabel } from '@/lib/utils';
+import { groupByAcademicTerm } from '@/lib/utils';
 
 interface ExperienceListProps {
   jobs: ContentItem<JobFrontmatter>[];
@@ -32,14 +32,11 @@ export function ExperienceList({ jobs }: ExperienceListProps) {
 
         {groupedJobs.size > 0 ? (
           Array.from(groupedJobs.entries()).map(([termLabel, termJobs]) => {
-            // Get term date range for display based on the term label itself
-            const termDateRange = formatAcademicTermDateRangeFromLabel(termLabel);
-            
             return (
               <section key={termLabel} className="mb-16">
                 <div className="mb-6 relative z-10">
                   <h2 className="text-4xl font-display font-bold text-foreground mb-1">
-                    {termLabel}{termDateRange ? ` (${termDateRange})` : ''}
+                    {termLabel}
                   </h2>
                   <p className="text-sm text-foreground-secondary">
                     {termJobs.length} {termJobs.length === 1 ? 'Position' : 'Positions'}

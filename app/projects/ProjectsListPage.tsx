@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { ProjectCard } from '@/components/ui/ProjectCard';
 import type { ContentItem, ProjectFrontmatter } from '@/lib/mdx';
-import { groupByAcademicTerm, formatAcademicTermDateRangeFromLabel } from '@/lib/utils';
+import { groupByAcademicTerm } from '@/lib/utils';
 
 interface ProjectsListPageProps {
   projects: ContentItem<ProjectFrontmatter>[];
@@ -33,14 +33,11 @@ export function ProjectsListPage({ projects }: ProjectsListPageProps) {
         {/* Projects grouped by academic term */}
         {groupedProjects.size > 0 ? (
           Array.from(groupedProjects.entries()).map(([termLabel, termProjects]) => {
-            // Get term date range for display based on the term label itself
-            const termDateRange = formatAcademicTermDateRangeFromLabel(termLabel);
-            
             return (
               <section key={termLabel} className="mb-12 sm:mb-16">
                 <div className="mb-4 sm:mb-6 relative z-10">
                   <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-foreground mb-1">
-                    {termLabel}{termDateRange ? ` (${termDateRange})` : ''}
+                    {termLabel}
                   </h2>
                   <p className="text-xs sm:text-sm text-foreground-secondary">
                     {termProjects.length} {termProjects.length === 1 ? 'Project' : 'Projects'}
