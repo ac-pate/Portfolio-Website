@@ -101,7 +101,9 @@ export function ExperienceCard({
                 {startDate && (
                   <p className="text-xs text-muted mb-2">
                     {formatDateRange(startDate, endDate)} • {location}
-                    {type && ` • ${type}`}
+                    {type && type.trim() !== '' && (
+                      <> • <span className="text-accent">{type}</span></>
+                    )}
                   </p>
                 )}
 
@@ -171,7 +173,9 @@ export function ExperienceCard({
           {startDate && (
             <p className="text-xs text-muted mb-3">
               {formatDateRange(startDate, endDate)} • {location}
-              {type && ` • ${type}`}
+              {type && type.trim() !== '' && (
+                <> • <span className="text-accent">{type}</span></>
+              )}
             </p>
           )}
 
