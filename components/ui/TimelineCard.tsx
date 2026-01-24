@@ -66,27 +66,33 @@ export function TimelineCard({ item }: TimelineCardProps) {
           {/* Content */}
           <div className="flex flex-1 flex-col">
             {/* Date Range */}
-            <p className="mb-2 text-xs font-medium text-muted uppercase tracking-wide">
+            <p className="hidden md:block mb-2 text-xs font-medium text-muted uppercase tracking-wide">
               {dateRange}
             </p>
 
             {/* Title with subtle glitch on hover */}
             <h3 
-              className="glitch-hover mb-1 line-clamp-2 text-sm font-semibold text-foreground group-hover:text-accent transition-colors duration-300"
+              className="glitch-hover mb-1 line-clamp-3 text-sm font-semibold text-foreground group-hover:text-accent transition-colors duration-300"
               data-text={item.title}
             >
               {item.title}
             </h3>
 
-            {/* Subtitle */}
+            {/* Subtitle/Description */}
             {item.subtitle && (
-              <p className="hidden md:block mb-2 text-xs text-foreground-secondary line-clamp-1">
+              <p className="mb-2 text-xs text-foreground-secondary line-clamp-1 md:line-clamp-2">
                 {item.subtitle}
+              </p>
+            )}
+            
+            {item.description && (
+              <p className="mb-2 text-[11px] text-foreground-secondary/80 line-clamp-2 md:hidden">
+                {item.description}
               </p>
             )}
 
             {/* Type Badge */}
-            <div className="mb-3 inline-flex w-fit">
+            <div className="mb-3 hidden md:inline-flex w-fit">
               <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getTypeBadgeStyle(item.type)}`}>
                 {getTypeLabel(item.type)}
               </span>

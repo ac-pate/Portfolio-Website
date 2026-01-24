@@ -241,7 +241,7 @@ export function AboutPreview({ content }: AboutPreviewProps) {
                 <h5 className="text-[12px] uppercase tracking-[0.2em] text-accent/90 font-bold ml-1">
                   Technical Interests & Expertise
                 </h5>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 line-clamp-3 max-h-[7.5rem] overflow-hidden">
                   {content.technicalInterests.map((tech, index) => (
                     <motion.span
                       key={tech}
@@ -249,7 +249,7 @@ export function AboutPreview({ content }: AboutPreviewProps) {
                       whileInView={{ opacity: 1, scale: 1 }}
                       viewport={{ once: true }}
                       transition={{ delay: 0.1 + index * 0.05 }}
-                      className="px-2 py-0.5 sm:px-3 sm:py-1.5 text-[10px] sm:text-xs rounded-lg bg-background-secondary border border-border text-foreground-secondary hover:border-accent/50 hover:text-accent transition-all duration-200 cursor-default"
+                      className="px-1.5 py-0.5 sm:px-3 sm:py-1.5 text-[9px] sm:text-xs rounded-lg bg-background-secondary border border-border text-foreground-secondary hover:border-accent/50 hover:text-accent transition-all duration-200 cursor-default"
                     >
                       {tech}
                     </motion.span>
