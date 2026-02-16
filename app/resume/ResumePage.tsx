@@ -10,8 +10,8 @@ export function ResumePage() {
   // This URL will work once you set up GitHub Actions (see LATEX_RESUME_SETUP.md)
   const githubPdfUrl = 'https://github.com/ac-pate/LaTeX-Resume/releases/latest/download/resume.pdf';
   
-  // Reference letters (stored in public/docs folder)
-  const researchReferenceUrl = '/docs/reference-letter-cuarl.pdf';
+  // Reference letters: files in public/ are served from root (no "public" in URL)
+  const researchReferenceUrl = '/pdf/reference-letter-cuarl.pdf';
   const taReferenceUrl = '/docs/reference-letter-ta.pdf';
 
   return (
@@ -47,19 +47,7 @@ export function ResumePage() {
                 </GlowWrapper>
               </motion.div>
 
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto">
-                <GlowWrapper preset="button" className="rounded-xl">
-                  <a
-                    href={resumeRepo}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 px-6 py-3 bg-white/5 text-white rounded-xl font-semibold border border-white/10 hover:bg-white/10 transition-all backdrop-blur-sm w-full sm:w-auto"
-                  >
-                    <Github className="w-4 h-4" />
-                    View LaTeX Source
-                  </a>
-                </GlowWrapper>
-              </motion.div>
+              
             </div>
 
             {/* Separator - only visible on xl screens */}
@@ -77,10 +65,10 @@ export function ResumePage() {
                     href={researchReferenceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 px-5 py-3 bg-white/5 text-white rounded-xl font-medium border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all backdrop-blur-sm w-full sm:w-auto text-sm sm:text-base"
+                    className="flex items-center justify-center gap-2 px-5 py-3 bg-white/5 text-white rounded-xl font-medium border border-white/20 hover:bg-accent hover:border-white/20 transition-all backdrop-blur-sm w-full sm:w-auto text-sm sm:text-base"
                   >
                     <Award className="w-4 h-4" />
-                    <span className="hidden sm:inline">LOR — Research Supervisor</span>
+                    <span className="hidden sm:inline">LOR — Research Supervisor (Concordia CUARL)</span>
                     <span className="sm:hidden">Research Supervisor LOR</span>
                   </a>
                 </GlowWrapper>
@@ -92,10 +80,10 @@ export function ResumePage() {
                     href={taReferenceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 px-5 py-3 bg-white/5 text-white rounded-xl font-medium border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all backdrop-blur-sm w-full sm:w-auto text-sm sm:text-base"
+                    className="flex items-center justify-center gap-2 px-5 py-3 bg-white/5 text-white rounded-xl font-medium border border-white/20 hover:bg-accent hover:border-white/20 transition-all backdrop-blur-sm w-full sm:w-auto text-sm sm:text-base"
                   >
                     <Award className="w-4 h-4" />
-                    <span className="hidden sm:inline">LOR — TA Coordinator</span>
+                    <span className="hidden sm:inline">LOR — Capstone Supervisor (McGill MRL)</span>
                     <span className="sm:hidden">TA Coordinator LOR</span>
                   </a>
                 </GlowWrapper>
